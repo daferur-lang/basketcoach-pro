@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>BasketCoach Pro</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FF6B00">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BasketCoach">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── DESIGN TOKENS ─────────────────────────────── */
+    :root {
+      --bg:        #08080f;
+      --bg2:       #10101a;
+      --card:      #181825;
+      --card2:     #1e1e2e;
+      --border:    rgba(255,107,0,.12);
+      --orange:    #FF6B00;
+      --orange2:   #FF8C42;
+      --gold:      #FFD060;
+      --text:      #f0f0ff;
+      --text2:     #8888aa;
+      --text3:     #44445a;
+      --green:     #00e676;
+      --red:       #ff4d6d;
+      --r:         18px;
+      --rs:        10px;
+    }
+
+    /* ── RESET ─────────────────────────────────────── */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family:'Inter',system-ui,sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      max-width: 430px;
+      margin: 0 auto;
+      overflow-x: hidden;
+      position: relative;
+    }
+    button { border:none; cursor:pointer; font-family:inherit; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── SCREEN SYSTEM ─────────────────────────────── */
+    .screen { display:none; min-height:100dvh; animation: fadeUp .35s ease both; }
+    .screen.active { display:flex; flex-direction:column; }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(18px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ── SCROLLABLE BODY AREA ──────────────────────── */
+    .scroll-area {
+      flex:1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 90px;
+    }
+    .scroll-area::-webkit-scrollbar { display:none; }
+
+    /* ── COURT BACKGROUND ──────────────────────────── */
+    .court-bg {
+      position: fixed; inset:0; pointer-events:none; z-index:0;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255,107,0,.08) 0%, transparent 70%);
+    }
+    .court-bg::after {
+      content:'';
+      position:absolute;
+      bottom:0; left:0; right:0;
+      height:300px;
+      background: radial-gradient(ellipse 60% 40% at 50% 110%, rgba(255,107,0,.06) 0%, transparent 70%);
+    }
+
+    /* ── TYPOGRAPHY ────────────────────────────────── */
+    .title-xl { font-family:'Oswald',sans-serif; font-size:2.8rem; font-weight:700; line-height:1.1; letter-spacing:.5px; }
+    .title-lg { font-family:'Oswald',sans-serif; font-size:2rem; font-weight:700; line-height:1.2; }
+    .title-md { font-family:'Oswald',sans-serif; font-size:1.4rem; font-weight:600; }
+    .title-sm { font-family:'Oswald',sans-serif; font-size:1.1rem; font-weight:600; letter-spacing:.3px; }
+    .body-md   { font-size:.9rem; line-height:1.5; }
+    .body-sm   { font-size:.8rem; line-height:1.4; }
+    .label     { font-size:.7rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; }
+    .clr2      { color: var(--text2); }
+    .clr-orange { color: var(--orange); }
+    .clr-gold   { color: var(--gold); }
+
+    /* ── BUTTON ─────────────────────────────────────── */
+    .btn {
+      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      padding:.9rem 1.8rem; border-radius:50px; font-weight:600;
+      font-size:.95rem; transition:all .2s; letter-spacing:.3px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg,var(--orange),var(--orange2));
+      color:#fff; box-shadow:0 4px 24px rgba(255,107,0,.35);
+    }
+    .btn-primary:active { transform:scale(.96); box-shadow:0 2px 12px rgba(255,107,0,.25); }
+    .btn-ghost {
+      background: var(--card); color: var(--text2); border:1px solid var(--border);
+    }
+    .btn-ghost:active { background: var(--card2); }
+    .btn-block { width:100%; }
+
+    /* ── CARD ───────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.2rem;
+      transition: all .2s;
+    }
+    .card:active { background: var(--card2); transform:scale(.99); }
+    .card-glow {
+      box-shadow: 0 0 0 0 transparent;
+      transition: box-shadow .3s;
+    }
+    .card-glow:hover { box-shadow:0 0 30px rgba(255,107,0,.12); }
+
+    /* ── BADGE ──────────────────────────────────────── */
+    .badge {
+      display:inline-flex; align-items:center; gap:.3rem;
+      padding:.25rem .7rem; border-radius:50px; font-size:.72rem;
+      font-weight:600; letter-spacing:.3px;
+    }
+    .badge-orange { background:rgba(255,107,0,.15); color:var(--orange); border:1px solid rgba(255,107,0,.25); }
+    .badge-gold   { background:rgba(255,208,96,.12); color:var(--gold);   border:1px solid rgba(255,208,96,.2); }
+    .badge-green  { background:rgba(0,230,118,.12);  color:var(--green);  border:1px solid rgba(0,230,118,.2); }
+    .badge-gray   { background:rgba(255,255,255,.06); color:var(--text2);  border:1px solid var(--border); }
+
+    /* ── DIVIDER ────────────────────────────────────── */
+    .divider { height:1px; background:var(--border); margin:1rem 0; }
+
+    /* ── TOP BAR ────────────────────────────────────── */
+    .topbar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1rem 1.2rem .8rem;
+      position:sticky; top:0; z-index:10;
+      background:rgba(8,8,15,.85); backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+    }
+    .topbar-back {
+      width:36px; height:36px; border-radius:10px;
+      background:var(--card); border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--text); font-size:1.1rem; cursor:pointer;
+    }
+    .topbar-title { font-family:'Oswald',sans-serif; font-size:1.2rem; font-weight:600; }
+    .topbar-action {
+      width:36px; height:36px; border-radius:10px;
+      background:transparent; display:flex; align-items:center; justify-content:center;
+      color:var(--text2); font-size:1.1rem; cursor:pointer;
+    }
+
+    /* ── BOTTOM NAV ─────────────────────────────────── */
+    .bottom-nav {
+      position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+      width:100%; max-width:430px; z-index:20;
+      background:rgba(8,8,15,.92); backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      border-top:1px solid var(--border);
+      display:flex; align-items:center;
+      padding:.6rem .5rem calc(.6rem + env(safe-area-inset-bottom));
+    }
+    .nav-item {
+      flex:1; display:flex; flex-direction:column; align-items:center; gap:.2rem;
+      padding:.3rem .2rem; cursor:pointer; transition:all .2s;
+      border-radius:var(--rs); color:var(--text3);
+    }
+    .nav-item.active { color:var(--orange); }
+    .nav-item svg { width:22px; height:22px; }
+    .nav-item span { font-size:.65rem; font-weight:600; letter-spacing:.3px; }
+    .nav-item:active { background:var(--card); }
+
+    /* ── PROGRESS RING ──────────────────────────────── */
+    .progress-ring { position:relative; display:inline-flex; align-items:center; justify-content:center; }
+    .progress-ring svg { transform:rotate(-90deg); }
+    .progress-ring .ring-bg  { fill:none; stroke:var(--card2); }
+    .progress-ring .ring-fill { fill:none; stroke:var(--orange); stroke-linecap:round; transition:stroke-dashoffset .6s ease; }
+    .progress-ring .ring-text {
+      position:absolute; display:flex; flex-direction:column; align-items:center; gap:.1rem;
+    }
+
+    /* ── PROGRESS BAR ───────────────────────────────── */
+    .prog-bar { height:6px; background:var(--card2); border-radius:3px; overflow:hidden; }
+    .prog-bar-fill { height:100%; background:linear-gradient(90deg,var(--orange),var(--orange2)); border-radius:3px; transition:width .6s ease; }
+
+    /* ── AVATAR POSITION ────────────────────────────── */
+    .pos-icon {
+      width:48px; height:48px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center; font-size:1.5rem;
+      flex-shrink:0;
+    }
+
+    /* ── DIFFICULTY DOTS ─────────────────────────────── */
+    .diff-dots { display:flex; gap:.25rem; }
+    .diff-dot { width:7px; height:7px; border-radius:50%; background:var(--card2); }
+    .diff-dot.fill { background:var(--orange); }
+
+    /* ── TIMER RING ─────────────────────────────────── */
+    #timer-ring .ring-fill { stroke: var(--orange); }
+    #timer-display { font-family:'Oswald',sans-serif; font-size:2.4rem; font-weight:700; }
+
+    /* ═══════════════════════════════════════════════════
+       SCREEN 1 — WELCOME
+    ═══════════════════════════════════════════════════ */
+    #screen-welcome {
+      justify-content: center;
+      align-items: center;
+      min-height: 100dvh;
+      padding: 2rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .welcome-ball {
+      width:260px; height:260px; border-radius:50%;
+      background: radial-gradient(circle at 35% 35%, #FF8C42, #CC4400);
+      position:absolute; top:-80px; right:-80px; opacity:.12;
+      animation: floatBall 6s ease-in-out infinite;
+    }
+    .welcome-ball-2 {
+      width:160px; height:160px; border-radius:50%;
+      background: radial-gradient(circle at 35% 35%, #FF8C42, #CC4400);
+      position:absolute; bottom:-40px; left:-40px; opacity:.08;
+      animation: floatBall 4s ease-in-out infinite reverse;
+    }
+    @keyframes floatBall {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(-20px) rotate(15deg); }
+    }
+    .welcome-logo {
+      width:90px; height:90px; border-radius:24px;
+      background: linear-gradient(135deg, var(--orange), #FF4500);
+      display:flex; align-items:center; justify-content:center;
+      font-size:2.5rem; margin-bottom:1.5rem;
+      box-shadow: 0 8px 32px rgba(255,107,0,.4);
+      animation: pulseLogo 3s ease-in-out infinite;
+    }
+    @keyframes pulseLogo {
+      0%,100% { box-shadow:0 8px 32px rgba(255,107,0,.4); }
+      50%      { box-shadow:0 8px 48px rgba(255,107,0,.65); }
+    }
+    .welcome-content { position:relative; z-index:1; text-align:center; }
+    .welcome-tagline {
+      font-size:1rem; color:var(--text2); max-width:280px; margin:.8rem auto 2.5rem;
+      line-height:1.6;
+    }
+    .welcome-features { display:flex; gap:.8rem; margin:2rem auto; justify-content:center; flex-wrap:wrap; }
+
+    /* ═══════════════════════════════════════════════════
+       SCREEN 2 — POSITION SELECT
+    ═══════════════════════════════════════════════════ */
+    .pos-select-header { padding:1.5rem 1.2rem 1rem; }
+    .pos-grid { display:flex; flex-direction:column; gap:.9rem; padding:0 1.2rem 2rem; }
+
+    .pos-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.2rem;
+      display: flex; align-items: center; gap: 1rem;
+      cursor: pointer; transition: all .2s;
+      position: relative; overflow: hidden;
+    }
+    .pos-card::before {
+      content:''; position:absolute; right:-20px; top:50%; transform:translateY(-50%);
+      width:80px; height:80px; border-radius:50%;
+      background:currentColor; opacity:.04;
+      transition: all .3s;
+    }
+    .pos-card:active { transform:scale(.98); background:var(--card2); }
+    .pos-card.selected {
+      border-color: var(--orange);
+      background: rgba(255,107,0,.08);
+      box-shadow: 0 0 0 1px rgba(255,107,0,.2);
+    }
+    .pos-card-info { flex:1; }
+    .pos-card-name { font-family:'Oswald',sans-serif; font-size:1.25rem; font-weight:700; }
+    .pos-card-en { color:var(--text2); font-size:.8rem; margin:.15rem 0 .5rem; }
+    .pos-card-tags { display:flex; gap:.4rem; flex-wrap:wrap; }
+    .pos-card-arrow { color:var(--text3); font-size:1.1rem; }
+
+    /* ═══════════════════════════════════════════════════
+       SCREEN 3 — HOME DASHBOARD
+    ═══════════════════════════════════════════════════ */
+    .home-header {
+      padding: 1.2rem 1.2rem .4rem;
+      background: linear-gradient(180deg, rgba(255,107,0,.06) 0%, transparent 100%);
+    }
+    .home-greeting { color:var(--text2); font-size:.9rem; }
+    .home-title { font-family:'Oswald',sans-serif; font-size:1.6rem; font-weight:700; }
+    .home-pos-badge {
+      display:inline-flex; align-items:center; gap:.4rem; margin-top:.4rem;
+      padding:.3rem .8rem; background:rgba(255,107,0,.12);
+      border:1px solid rgba(255,107,0,.2); border-radius:50px;
+      font-size:.78rem; font-weight:600; color:var(--orange);
+    }
+
+    .stats-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.7rem; padding:1rem 1.2rem; }
+    .stat-card {
+      background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
+      padding:.9rem .8rem; text-align:center;
+    }
+    .stat-num { font-family:'Oswald',sans-serif; font-size:1.6rem; font-weight:700; color:var(--orange); }
+    .stat-lbl { font-size:.68rem; color:var(--text2); font-weight:500; margin-top:.15rem; letter-spacing:.3px; text-transform:uppercase; }
+
+    .section-header { display:flex; align-items:center; justify-content:space-between; padding:.6rem 1.2rem .4rem; }
+    .section-title { font-family:'Oswald',sans-serif; font-size:1.05rem; font-weight:600; }
+    .section-link { font-size:.8rem; color:var(--orange); font-weight:600; }
+
+    .today-card {
+      margin:0 1.2rem; background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+      overflow:hidden;
+    }
+    .today-card-header {
+      background: linear-gradient(135deg, rgba(255,107,0,.2), rgba(255,107,0,.05));
+      padding:1rem 1.2rem; display:flex; align-items:center; gap:.8rem;
+      border-bottom:1px solid var(--border);
+    }
+    .today-icon { width:40px; height:40px; border-radius:10px; background:rgba(255,107,0,.2); display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+    .today-card-body { padding:1rem 1.2rem; }
+    .today-drill { display:flex; align-items:center; gap:.8rem; padding:.7rem 0; border-bottom:1px solid var(--border); }
+    .today-drill:last-child { border-bottom:none; }
+    .today-drill-num {
+      width:28px; height:28px; border-radius:8px; background:rgba(255,107,0,.12);
+      border:1px solid rgba(255,107,0,.2); display:flex; align-items:center; justify-content:center;
+      font-family:'Oswald',sans-serif; font-size:.85rem; color:var(--orange); flex-shrink:0;
+    }
+    .today-drill-info { flex:1; }
+    .today-drill-name { font-size:.88rem; font-weight:600; }
+    .today-drill-meta { font-size:.76rem; color:var(--text2); margin-top:.1rem; }
+    .today-drill-check { color:var(--green); font-size:1rem; }
+
+    .modules-scroll { display:flex; gap:.9rem; padding:.4rem 1.2rem 1rem; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .modules-scroll::-webkit-scrollbar { display:none; }
+    .module-chip {
+      flex-shrink:0; background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
+      padding:.85rem 1rem; cursor:pointer; transition:all .2s; min-width:130px; text-align:center;
+    }
+    .module-chip:active { background:var(--card2); transform:scale(.97); }
+    .module-chip.active-module { border-color:var(--orange); background:rgba(255,107,0,.08); }
+    .module-chip-icon { font-size:1.5rem; margin-bottom:.4rem; }
+    .module-chip-name { font-size:.82rem; font-weight:600; }
+    .module-chip-count { font-size:.72rem; color:var(--text2); margin-top:.15rem; }
+
+    /* ═══════════════════════════════════════════════════
+       SCREEN 4 — TRAINING / DRILLS LIST
+    ═══════════════════════════════════════════════════ */
+    .drills-grid { display:flex; flex-direction:column; gap:.8rem; padding:1rem 1.2rem; }
+    .drill-item {
+      background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+      padding:1.1rem; display:flex; align-items:center; gap:.9rem; cursor:pointer;
+      transition:all .2s;
+    }
+    .drill-item:active { background:var(--card2); transform:scale(.99); }
+    .drill-thumb {
+      width:52px; height:52px; border-radius:12px;
+      background: linear-gradient(135deg, rgba(255,107,0,.2), rgba(255,107,0,.05));
+      border:1px solid rgba(255,107,0,.15);
+      display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;
+    }
+    .drill-info { flex:1; }
+    .drill-name { font-weight:600; font-size:.92rem; }
+    .drill-meta { display:flex; align-items:center; gap:.6rem; margin-top:.4rem; }
+    .drill-arrow { color:var(--text3); }
+
+    /* ═══════════════════════════════════════════════════
+       SCREEN 5 — DRILL DETAIL
+    ═══════════════════════════════════════════════════ */
+    .drill-hero {
+      background: linear-gradient(180deg, rgba(255,107,0,.15) 0%, transparent 100%);
+      padding: 1.5rem 1.2rem 1rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .drill-hero-icon {
+      width:72px; height:72px; border-radius:18px;
+      background:linear-gradient(135deg, rgba(255,107,0,.3), rgba(255,107,0,.1));
+      border:1px solid rgba(255,107,0,.3);
+      display:flex; align-items:center; justify-content:center; font-size:2.2rem;
+    }
+    .drill-hero-info { flex:1; }
+    .drill-hero-name { font-family:'Oswald',sans-serif; font-size:1.5rem; font-weight:700; line-height:1.2; }
+
+    .timer-section {
+      margin:1rem 1.2rem;
+      background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+      padding:1.5rem; text-align:center;
+    }
+    .timer-controls { display:flex; gap:.8rem; justify-content:center; margin-top:1.2rem; }
+    .timer-btn {
+      width:48px; height:48px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer; transition:all .2s;
+    }
+    .timer-btn-start { background:linear-gradient(135deg,var(--orange),var(--orange2)); color:#fff; box-shadow:0 4px 16px rgba(255,107,0,.4); }
+    .timer-btn-reset { background:var(--card2); color:var(--text2); border:1px solid var(--border); }
+    .timer-btn-start:active,.timer-btn-reset:active { transform:scale(.92); }
+
+    .steps-section { padding:0 1.2rem 1rem; }
+    .step-item { display:flex; gap:.9rem; padding:.9rem 0; border-bottom:1px solid var(--border); }
+    .step-item:last-child { border-bottom:none; }
+    .step-num {
+      width:32px; height:32px; border-radius:10px; flex-shrink:0;
+      background:rgba(255,107,0,.12); border:1px solid rgba(255,107,0,.2);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Oswald',sans-serif; font-size:.95rem; color:var(--orange);
+    }
+    .step-text { font-size:.88rem; line-height:1.55; color:var(--text); padding-top:.3rem; }
+    .step-text strong { color:var(--orange); }
+
+    .tips-section {
+      margin:0 1.2rem 1rem;
+      background:rgba(255,208,96,.05); border:1px solid rgba(255,208,96,.15);
+      border-radius:var(--r); padding:1rem 1.2rem;
+    }
+    .tips-title { font-size:.78rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--gold); margin-bottom:.6rem; }
+    .tip-row { display:flex; gap:.6rem; margin-bottom:.5rem; font-size:.85rem; color:var(--text2); }
+    .tip-row:last-child { margin-bottom:0; }
+    .tip-icon { color:var(--gold); flex-shrink:0; }
+
+    /* ═══════════════════════════════════════════════════
+       SCREEN 6 — WEEKLY PLAN
+    ═══════════════════════════════════════════════════ */
+    .week-header { padding:1.2rem 1.2rem .8rem; }
+    .day-tabs { display:flex; gap:.5rem; padding:.2rem 1.2rem .8rem; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .day-tabs::-webkit-scrollbar { display:none; }
+    .day-tab {
+      flex-shrink:0; text-align:center; padding:.6rem .9rem; border-radius:var(--rs); cursor:pointer;
+      background:var(--card); border:1px solid var(--border); transition:all .2s; min-width:52px;
+    }
+    .day-tab.today  { border-color:var(--orange); background:rgba(255,107,0,.1); }
+    .day-tab.active { border-color:var(--orange); background:var(--orange); }
+    .day-tab.active .day-name, .day-tab.active .day-num { color:#fff; }
+    .day-name { font-size:.68rem; font-weight:600; color:var(--text2); text-transform:uppercase; }
+    .day-num  { font-family:'Oswald',sans-serif; font-size:1.1rem; font-weight:700; }
+
+    .day-plan-content { padding:0 1.2rem 1rem; }
+    .plan-block {
+      background:var(--card); border:1px solid var(--border); border-radius:var(--r); margin-bottom:.9rem;
+      overflow:hidden;
+    }
+    .plan-block-header {
+      display:flex; align-items:center; gap:.8rem; padding:.9rem 1rem;
+      border-bottom:1px solid var(--border);
+      background: linear-gradient(90deg, rgba(255,107,0,.07) 0%, transparent 100%);
+    }
+    .plan-block-icon { font-size:1.2rem; }
+    .plan-block-title { font-family:'Oswald',sans-serif; font-size:1rem; font-weight:600; flex:1; }
+    .plan-block-time { font-size:.78rem; color:var(--text2); font-weight:500; }
+    .plan-block-drills { padding:.5rem .5rem; }
+    .plan-drill-row { display:flex; align-items:center; gap:.7rem; padding:.55rem .7rem; border-radius:var(--rs); cursor:pointer; }
+    .plan-drill-row:hover { background:var(--card2); }
+    .plan-drill-dot { width:7px; height:7px; border-radius:50%; background:var(--orange); flex-shrink:0; }
+    .plan-drill-name { flex:1; font-size:.85rem; }
+    .plan-drill-dur  { font-size:.78rem; color:var(--text2); font-weight:500; }
+
+    /* ═══════════════════════════════════════════════════
+       SCREEN 7 — PROGRESS
+    ═══════════════════════════════════════════════════ */
+    .progress-header { padding:1.2rem 1.2rem .8rem; }
+    .achievements { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; padding:.4rem 1.2rem; }
+    .achievement-card {
+      background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
+      padding:1rem; text-align:center;
+    }
+    .achievement-icon { font-size:2rem; margin-bottom:.4rem; }
+    .achievement-name { font-size:.8rem; font-weight:600; }
+    .achievement-desc { font-size:.72rem; color:var(--text2); margin-top:.15rem; }
+    .achievement-card.locked { opacity:.35; filter:grayscale(.8); }
+
+    .cat-progress { padding:.4rem 1.2rem; }
+    .cat-prog-row { margin-bottom:1.1rem; }
+    .cat-prog-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.4rem; }
+    .cat-prog-name { font-size:.88rem; font-weight:600; display:flex; align-items:center; gap:.5rem; }
+    .cat-prog-pct { font-size:.8rem; color:var(--orange); font-weight:700; }
+
+    .chart-bar-area {
+      background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+      padding:1.1rem; margin:0 1.2rem .9rem;
+    }
+    .chart-bars { display:flex; align-items:flex-end; gap:.4rem; height:70px; margin-top:.8rem; }
+    .chart-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:.25rem; }
+    .chart-bar { width:100%; border-radius:4px 4px 0 0; background:var(--card2); transition: height .6s ease; position:relative; }
+    .chart-bar.fill { background: linear-gradient(180deg, var(--orange2), var(--orange)); }
+    .chart-bar.fill.today-bar { background: linear-gradient(180deg, var(--gold), var(--orange)); }
+    .chart-day { font-size:.65rem; color:var(--text3); font-weight:600; }
+
+    /* ═══════════════════════════════════════════════════
+       UTILITIES
+    ═══════════════════════════════════════════════════ */
+    .px { padding-left:1.2rem; padding-right:1.2rem; }
+    .py { padding-top:.8rem; padding-bottom:.8rem; }
+    .mt { margin-top:.8rem; }
+    .mb { margin-bottom:.8rem; }
+    .flex { display:flex; }
+    .items-center { align-items:center; }
+    .gap { gap:.6rem; }
+    .w-full { width:100%; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="court-bg"></div>
+
+  <!-- ╔══════════════════════════════════╗
+       ║  SCREEN 1 — WELCOME             ║
+       ╚══════════════════════════════════╝ -->
+  <section id="screen-welcome" class="screen active">
+    <div class="welcome-ball"></div>
+    <div class="welcome-ball-2"></div>
+    <div class="welcome-content">
+      <div class="welcome-logo">🏀</div>
+      <h1 class="title-xl">BASKET<span class="clr-orange">COACH</span><br>PRO</h1>
+      <p class="welcome-tagline">Tu entrenador personal de baloncesto. Tecnificación profesional según tu posición.</p>
+      <div class="welcome-features">
+        <span class="badge badge-orange">📍 5 posiciones</span>
+        <span class="badge badge-gold">⚡ Plan semanal</span>
+        <span class="badge badge-green">📴 Sin internet</span>
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-top:1.5rem;font-size:1rem;" onclick="goTo('screen-pos-select')">
+        Empezar entrenamiento →
+      </button>
+      <p class="body-sm clr2" style="margin-top:1rem;">Instala la app para usarla offline</p>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════════╗
+       ║  SCREEN 2 — POSITION SELECT     ║
+       ╚══════════════════════════════════╝ -->
+  <section id="screen-pos-select" class="screen">
+    <div class="topbar">
+      <button class="topbar-back" onclick="goTo('screen-welcome')">←</button>
+      <span class="topbar-title">Elige tu posición</span>
+      <div class="topbar-action"></div>
+    </div>
+    <div class="scroll-area" style="padding-bottom:2rem;">
+      <div class="pos-select-header">
+        <p class="body-md clr2">Tu posición en cancha determina el programa de tecnificación más adecuado para ti.</p>
+      </div>
+      <div class="pos-grid" id="pos-grid"></div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════════╗
+       ║  SCREEN 3 — HOME DASHBOARD      ║
+       ╚══════════════════════════════════╝ -->
+  <section id="screen-home" class="screen">
+    <div class="topbar">
+      <button class="topbar-back" onclick="goTo('screen-pos-select')" title="Cambiar posición">⇄</button>
+      <span class="topbar-title">BasketCoach Pro</span>
+      <button class="topbar-action" onclick="goTo('screen-progress')">📊</button>
+    </div>
+    <div class="scroll-area">
+      <div class="home-header">
+        <div class="home-greeting">Bienvenido de nuevo</div>
+        <div class="home-title" id="home-title">Entrenamiento</div>
+        <div class="home-pos-badge" id="home-pos-badge">🏀 Posición</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-sesiones">12</div>
+          <div class="stat-lbl">Sesiones</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-drills">47</div>
+          <div class="stat-lbl">Drills</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-racha">5🔥</div>
+          <div class="stat-lbl">Racha</div>
+        </div>
+      </div>
+
+      <!-- Today's workout -->
+      <div class="section-header">
+        <span class="section-title">🗓 Entrenamiento de hoy</span>
+        <span class="section-link" onclick="goTo('screen-plan')">Ver plan →</span>
+      </div>
+      <div class="today-card">
+        <div class="today-card-header">
+          <div class="today-icon">⚡</div>
+          <div>
+            <div style="font-weight:700;font-size:.95rem;" id="today-session-name">Sesión de hoy</div>
+            <div class="body-sm clr2" id="today-session-meta">3 ejercicios · 45 min</div>
+          </div>
+        </div>
+        <div class="today-card-body" id="today-drills-list"></div>
+        <div style="padding:0 1.2rem 1rem;">
+          <button class="btn btn-primary btn-block" onclick="startTodaySession()">▶ Iniciar sesión</button>
+        </div>
+      </div>
+
+      <!-- Modules -->
+      <div class="section-header" style="margin-top:.8rem;">
+        <span class="section-title">📚 Módulos</span>
+      </div>
+      <div class="modules-scroll" id="modules-scroll"></div>
+
+      <!-- Quick drills -->
+      <div class="section-header">
+        <span class="section-title">⚡ Drills rápidos</span>
+        <span class="section-link" onclick="goTo('screen-training')">Todos →</span>
+      </div>
+      <div style="padding:0 1.2rem 1rem;" id="quick-drills"></div>
+    </div>
+    <nav class="bottom-nav" id="bottom-nav-home">
+      <div class="nav-item active" onclick="goTo('screen-home')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Inicio</span>
+      </div>
+      <div class="nav-item" onclick="goTo('screen-training')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.72L13 18v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5v-5l-2.28 1.65C7.81 18 6 15.21 6 12c0-4.08 3.05-7.44 7-7.93V2.05z"/></svg>
+        <span>Drills</span>
+      </div>
+      <div class="nav-item" onclick="goTo('screen-plan')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+        <span>Plan</span>
+      </div>
+      <div class="nav-item" onclick="goTo('screen-progress')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+        <span>Progreso</span>
+      </div>
+    </nav>
+  </section>
+
+  <!-- ╔══════════════════════════════════╗
+       ║  SCREEN 4 — TRAINING LIST       ║
+       ╚══════════════════════════════════╝ -->
+  <section id="screen-training" class="screen">
+    <div class="topbar">
+      <button class="topbar-back" onclick="goTo('screen-home')">←</button>
+      <span class="topbar-title" id="training-topbar-title">Drills</span>
+      <div class="topbar-action"></div>
+    </div>
+    <!-- Module filter tabs -->
+    <div style="overflow-x:auto; -webkit-overflow-scrolling:touch; border-bottom:1px solid var(--border);">
+      <div style="display:flex; gap:.5rem; padding:.8rem 1.2rem; width:max-content;" id="module-filter-tabs"></div>
+    </div>
+    <div class="scroll-area">
+      <div class="drills-grid" id="drills-grid"></div>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item" onclick="goTo('screen-home')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Inicio</span>
+      </div>
+      <div class="nav-item active" onclick="goTo('screen-training')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.72L13 18v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5v-5l-2.28 1.65C7.81 18 6 15.21 6 12c0-4.08 3.05-7.44 7-7.93V2.05z"/></svg>
+        <span>Drills</span>
+      </div>
+      <div class="nav-item" onclick="goTo('screen-plan')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+        <span>Plan</span>
+      </div>
+      <div class="nav-item" onclick="goTo('screen-progress')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+        <span>Progreso</span>
+      </div>
+    </nav>
+  </section>
+
+  <!-- ╔══════════════════════════════════╗
+       ║  SCREEN 5 — DRILL DETAIL        ║
+       ╚══════════════════════════════════╝ -->
+  <section id="screen-drill" class="screen">
+    <div class="topbar">
+      <button class="topbar-back" id="drill-back-btn" onclick="goTo('screen-training')">←</button>
+      <span class="topbar-title">Detalle del drill</span>
+      <button class="topbar-action" id="drill-fav-btn" onclick="toggleFav()">♡</button>
+    </div>
+    <div class="scroll-area">
+      <div class="drill-hero">
+        <div class="drill-hero-icon" id="drill-detail-icon">🏀</div>
+        <div class="drill-hero-info">
+          <div class="drill-hero-name" id="drill-detail-name">Nombre del Drill</div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem;" id="drill-detail-badges"></div>
+        </div>
+      </div>
+
+      <!-- Timer -->
+      <div class="timer-section">
+        <div class="label clr2" style="margin-bottom:.8rem;">⏱ Temporizador</div>
+        <div class="progress-ring">
+          <svg width="130" height="130" id="timer-ring">
+            <circle class="ring-bg" cx="65" cy="65" r="58" stroke-width="8"/>
+            <circle class="ring-fill" id="timer-circle" cx="65" cy="65" r="58" stroke-width="8"
+              stroke-dasharray="364.4" stroke-dashoffset="0"/>
+          </svg>
+          <div class="ring-text">
+            <div id="timer-display">2:00</div>
+            <div class="label clr2" style="font-size:.65rem;">min</div>
+          </div>
+        </div>
+        <div class="timer-controls">
+          <button class="timer-btn timer-btn-reset" onclick="resetTimer()">↺</button>
+          <button class="timer-btn timer-btn-start" id="timer-play-btn" onclick="toggleTimer()">▶</button>
+          <button class="timer-btn timer-btn-reset" onclick="adjustTimer(-30)" title="-30s">−</button>
+          <button class="timer-btn timer-btn-reset" onclick="adjustTimer(30)" title="+30s">+</button>
+        </div>
+      </div>
+
+      <!-- Steps -->
+      <div class="steps-section">
+        <div class="label clr2" style="margin:0 0 .6rem; padding-left:.2rem;">📋 Ejecución</div>
+        <div id="drill-steps"></div>
+      </div>
+
+      <!-- Tips -->
+      <div class="tips-section" id="drill-tips-section">
+        <div class="tips-title">💡 Tips del entrenador</div>
+        <div id="drill-tips"></div>
+      </div>
+
+      <div style="padding:1rem 1.2rem;">
+        <button class="btn btn-primary btn-block" onclick="markDrillDone()">✓ Marcar como completado</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════════╗
+       ║  SCREEN 6 — WEEKLY PLAN         ║
+       ╚══════════════════════════════════╝ -->
+  <section id="screen-plan" class="screen">
+    <div class="topbar">
+      <button class="topbar-back" onclick="goTo('screen-home')">←</button>
+      <span class="topbar-title">Plan Semanal</span>
+      <div class="topbar-action"></div>
+    </div>
+    <div class="scroll-area">
+      <div class="week-header">
+        <p class="body-sm clr2">Tu programa personalizado para esta semana. Adaptado a tu posición.</p>
+      </div>
+      <div class="day-tabs" id="day-tabs"></div>
+      <div class="day-plan-content" id="day-plan-content"></div>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item" onclick="goTo('screen-home')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Inicio</span>
+      </div>
+      <div class="nav-item" onclick="goTo('screen-training')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.72L13 18v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5v-5l-2.28 1.65C7.81 18 6 15.21 6 12c0-4.08 3.05-7.44 7-7.93V2.05z"/></svg>
+        <span>Drills</span>
+      </div>
+      <div class="nav-item active" onclick="goTo('screen-plan')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+        <span>Plan</span>
+      </div>
+      <div class="nav-item" onclick="goTo('screen-progress')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+        <span>Progreso</span>
+      </div>
+    </nav>
+  </section>
+
+  <!-- ╔══════════════════════════════════╗
+       ║  SCREEN 7 — PROGRESS            ║
+       ╚══════════════════════════════════╝ -->
+  <section id="screen-progress" class="screen">
+    <div class="topbar">
+      <button class="topbar-back" onclick="goTo('screen-home')">←</button>
+      <span class="topbar-title">Mi Progreso</span>
+      <div class="topbar-action"></div>
+    </div>
+    <div class="scroll-area">
+      <div class="progress-header">
+        <p class="body-sm clr2">Seguimiento de tu evolución técnica.</p>
+      </div>
+
+      <!-- Activity chart -->
+      <div class="chart-bar-area">
+        <div class="flex items-center" style="justify-content:space-between;">
+          <span class="title-sm">Actividad semanal</span>
+          <span class="label clr-orange" id="chart-total">47 drills</span>
+        </div>
+        <div class="chart-bars" id="chart-bars"></div>
+      </div>
+
+      <!-- Category progress -->
+      <div class="section-header">
+        <span class="section-title">📈 Por módulo</span>
+      </div>
+      <div class="cat-progress" id="cat-progress"></div>
+
+      <!-- Achievements -->
+      <div class="section-header">
+        <span class="section-title">🏆 Logros</span>
+      </div>
+      <div class="achievements" id="achievements-grid"></div>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item" onclick="goTo('screen-home')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Inicio</span>
+      </div>
+      <div class="nav-item" onclick="goTo('screen-training')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.72L13 18v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5v-5l-2.28 1.65C7.81 18 6 15.21 6 12c0-4.08 3.05-7.44 7-7.93V2.05z"/></svg>
+        <span>Drills</span>
+      </div>
+      <div class="nav-item" onclick="goTo('screen-plan')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+        <span>Plan</span>
+      </div>
+      <div class="nav-item active" onclick="goTo('screen-progress')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+        <span>Progreso</span>
+      </div>
+    </nav>
+  </section>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════════╗
+     ║                    APP DATA & LOGIC                      ║
+     ╚══════════════════════════════════════════════════════════╝ -->
+<script>
+// ── DATA ────────────────────────────────────────────────────────
+const POSITIONS = [
+  {
+    id:'base', name:'Base', en:'Point Guard', num:'#1', icon:'🎯',
+    color:'#FF6B00',
+    desc:'Director del juego. Control, visión y liderazgo.',
+    tags:['Manejo de balón','Pase','Pick & Roll'],
+    modules:[
+      {
+        id:'manejo', name:'Manejo de Balón', icon:'🤲', drills:[
+          {
+            id:'dribble-alt', name:'Dribble Estático Alternado', icon:'🤲', diff:1, time:120,
+            tags:['Base','Fundamental'],
+            desc:'Dribla el balón de forma alternada con ambas manos manteniendo control y postura defensiva.',
+            steps:[
+              {t:'Posición básica', d:'Rodillas semiflexionadas, espalda recta, ojos al frente (no al balón). Peso en la parte delantera del pie.'},
+              {t:'Mano dominante', d:'Dribla <strong>15 veces</strong> con mano dominante. Dedos abiertos, contacto con la yema. Empuja el balón, no lo golpees.'},
+              {t:'Mano débil', d:'Cambia. <strong>15 veces</strong> con la mano no dominante. Mantén la misma altura de rebote.'},
+              {t:'Alternancia rítmica', d:'Alterna cada dribble: derecha-izquierda-derecha. <strong>30 segundos</strong> sin perder el ritmo.'},
+              {t:'Progresión', d:'Baja el punto de contacto del balón (más cerca al suelo = más control). Sube el ritmo un 20%.'},
+            ],
+            tips:[
+              '🧠 No mires el balón — entrena la percepción periférica desde el primer día.',
+              '📐 El balón debe rebotar por debajo de la cadera para máximo control.',
+              '🔄 Repite 3 series. Descansa 45 segundos entre series.',
+            ]
+          },
+          {
+            id:'crossover', name:'Crossover Básico', icon:'✂️', diff:1, time:150,
+            tags:['Base','Escolta','Fundamental'],
+            desc:'El movimiento fundamental de cambio de mano en frente del cuerpo.',
+            steps:[
+              {t:'Inicio con mano derecha', d:'Posición baja, dribla <strong>3 veces</strong> con mano derecha, controlado.'},
+              {t:'El cruce', d:'En el cuarto dribble, empuja el balón <strong>hacia adelante y en diagonal</strong> hacia la izquierda. El balón cruza frente a ti a la altura de la rodilla.'},
+              {t:'Recepción mano izquierda', d:'La mano izquierda recibe el balón con dedos abiertos. El cuerpo ya está desplazándose hacia la izquierda.'},
+              {t:'Ritmo de cambio', d:'Practica el ciclo <strong>3 derechos + crossover + 3 izquierdos</strong> de forma continua durante 30 segundos.'},
+              {t:'Con desplazamiento', d:'Añade un paso de avance en el momento del cruce. Acelera después del crossover.'},
+            ],
+            tips:[
+              '⚡ La velocidad del crossover engaña al defensor — no lo hagas lento.',
+              '🎯 El balón debe cruzar bajo (rodillas), no por delante del pecho.',
+              '👣 El paso de aceleración post-crossover es clave para crear ventaja.',
+            ]
+          },
+          {
+            id:'between-legs', name:'Dribble Entre Piernas', icon:'🦵', diff:2, time:180,
+            tags:['Base','Intermedio'],
+            desc:'Cambio de mano pasando el balón entre las piernas para mayor protección.',
+            steps:[
+              {t:'Postura de zancada', d:'Un pie adelantado (el contrario a la mano que dribla). Rodilla delantera flexionada, espalda recta.'},
+              {t:'El pase interno', d:'Empuja el balón <strong>a través de las piernas</strong>, de mano derecha a izquierda. El balón pasa por debajo de la ingle.'},
+              {t:'Recepción limpia', d:'La mano receptora espera detrás de la pierna trasera. Cacha el balón y continúa driblando.'},
+              {t:'Alternancia de zancada', d:'Cambia el pie adelantado cada vez que cambias de mano. Crea un patrón rítmico.'},
+              {t:'Velocidad progresiva', d:'Empieza lento. Aumenta el ritmo cada 15 segundos hasta que el movimiento sea fluido.'},
+            ],
+            tips:[
+              '🦵 El pie adelantado determina cuál mano inicia el movimiento.',
+              '👁 Mantén la vista al frente — el objetivo es no depender de la visión.',
+              '🔁 En partido se usa para proteger el balón del defensor lateral.',
+            ]
+          },
+          {
+            id:'hesitation', name:'Hesitation + Drive', icon:'⚡', diff:3, time:120,
+            tags:['Base','Avanzado','Penetración'],
+            desc:'Finta de pausa para desequilibrar al defensor seguida de penetración explosiva.',
+            steps:[
+              {t:'Avance con dribble', d:'Avanza hacia el defensor con dribble controlado. Crea presión sobre él.'},
+              {t:'La pausa (hesitation)', d:'Para el dribble con el balón alto durante <strong>0.5 segundos</strong>. Planta el pie, mira al aro — el defensor se "congela".'},
+              {t:'Lectura del defensor', d:'Si el defensor retrocede → tiro de media distancia. Si se mantiene → explosión hacia el aro.'},
+              {t:'El drive', d:'Primer paso largo y explosivo, el balón bajo y protegido. Ataca el hombro del defensor, no su cuerpo.'},
+              {t:'Finalización', d:'Layup, floater o pase exterior según la ayuda defensiva.'},
+            ],
+            tips:[
+              '🎭 La hesitation es teatro — vende el tiro con los ojos y los hombros.',
+              '💨 La explosión post-hesitation debe ser el movimiento más rápido de la acción.',
+              '📖 Lee SIEMPRE al defensor antes de decidir: tiro o drive.',
+            ]
+          },
+        ]
+      },
+      {
+        id:'pase', name:'Pase y Visión', icon:'👁', drills:[
+          {
+            id:'pase-pecho', name:'Pase de Pecho Técnico', icon:'🎯', diff:1, time:120,
+            tags:['Base','Fundamental'],
+            desc:'El pase más fiable del baloncesto. Velocidad, precisión y lectura defensiva.',
+            steps:[
+              {t:'Agarre', d:'Ambas manos en los laterales del balón. Pulgares hacia abajo, dedos abiertos. Balón a la altura del pecho.'},
+              {t:'Preparación', d:'Paso corto de avance con el pie dominante. Codos ligeramente hacia fuera.'},
+              {t:'Extensión', d:'Empuja el balón <strong>de forma explosiva</strong> hacia el receptor. Brazos totalmente extendidos al final.'},
+              {t:'Rotación de muñecas', d:'En la extensión final, gira las muñecas hacia afuera. Los pulgares apuntan al suelo. Esto genera potencia y precisión.'},
+              {t:'Objetivo', d:'El balón debe llegar al receptor <strong>entre la cadera y el pecho</strong> — zona de comodidad para recibir.'},
+            ],
+            tips:[
+              '⚡ Un buen pase llega con velocidad — el pase lento es interceptado.',
+              '👁 No mires al receptor antes de pasar — crea líneas de pase con los ojos.',
+              '🎯 La rotación de muñecas genera el efecto "backspin" que facilita el control del receptor.',
+            ]
+          },
+          {
+            id:'nolook', name:'Pase Sin Mirar', icon:'🎪', diff:3, time:90,
+            tags:['Base','Avanzado','Visión'],
+            desc:'El pase más espectacular del baloncesto. Mirada falsa, pase real.',
+            steps:[
+              {t:'Visión periférica', d:'Antes del pase, identifica la posición de tu compañero <strong>sin mirarle directamente</strong>. Usa el campo visual periférico.'},
+              {t:'La mirada falsa', d:'Dirige la mirada hacia el lado contrario al pase real. El defensor seguirá tu mirada.'},
+              {t:'El pase', d:'Mientras miras a un lado, ejecuta el pase al otro lado: bounce pass o pase lateral. La muñeca y el hombro dirigen el balón.'},
+              {t:'Timing', d:'El pase debe salir en el momento en que el defensor ya reaccionó a tu mirada falsa. No antes.'},
+              {t:'Variantes', d:'Practica: (a) no-look a la derecha mirando izquierda, (b) no-look hacia atrás, (c) no-look en penetración.'},
+            ],
+            tips:[
+              '🧠 Este pase requiere mapa mental del campo — saber dónde están todos.',
+              '🎭 La mirada falsa debe ser convincente. Mueve también los hombros.',
+              '⚠️ Úsalo solo cuando estés seguro de la posición del compañero.',
+            ]
+          },
+        ]
+      },
+      {
+        id:'pickroll', name:'Pick & Roll', icon:'🔄', drills:[
+          {
+            id:'reconocer-bloqueo', name:'Reconocer el Bloqueo', icon:'🔍', diff:1, time:90,
+            tags:['Base','Táctica','P&R'],
+            desc:'Leer cuándo y cómo llegar al bloqueo correctamente.',
+            steps:[
+              {t:'Posicionamiento previo', d:'Lleva al defensor hacia el lado contrario al bloqueo (2-3 dribbles). Créale una dirección falsa.'},
+              {t:'Cambio de dirección', d:'Cuando el bloqueador está en posición, cambia de dirección con un crossover o entre-piernas. Ataca hacia el bloqueo.'},
+              {t:'Frotar el hombro', d:'Tu hombro debe "frotar" el hombro del bloqueador. Si hay espacio entre tú y el bloqueo, el defensor puede colarse.'},
+              {t:'Leer la defensa', d:'¿El defensor se queda pegado? → Continúa al aro. ¿Ayuda interior? → Pase al bloqueador libre.'},
+            ],
+            tips:[
+              '🧱 El bloqueo legal requiere que el bloqueador esté quieto antes del contacto.',
+              '👀 La lectura post-bloqueo se toma en el momento de "frotar" — no antes ni después.',
+              '🏃 El timing del base y el bloqueador debe estar sincronizado.',
+            ]
+          },
+        ]
+      },
+      {
+        id:'defensa', name:'Defensa', icon:'🛡', drills:[
+          {
+            id:'posicion-def', name:'Posición Defensiva', icon:'🛡', diff:1, time:120,
+            tags:['Base','Defensa','Fundamental'],
+            desc:'La base de toda buena defensa: postura correcta y desplazamiento lateral.',
+            steps:[
+              {t:'Stance defensivo', d:'Pies separados (más anchos que hombros). Rodillas flexionadas al 45°. Caderas bajas. Espalda recta, NO inclinada.'},
+              {t:'Manos activas', d:'Una mano señala el balón, la otra señala el pase interior. Manos siempre visibles, nunca en los bolsillos.'},
+              {t:'Desplazamiento lateral', d:'Desliza los pies sin cruzarlos: push con el pie interno, cierre con el externo. Mantén siempre la misma postura baja.'},
+              {t:'Distancia al atacante', d:'Un brazo extendido de distancia: ni tan lejos que permita el tiro, ni tan cerca que permita el drive.'},
+              {t:'Práctica de slides', d:'Realiza desplazamientos laterales durante <strong>30 segundos</strong> con postura perfecta. 3 series.'},
+            ],
+            tips:[
+              '⚡ La defensa se gana con los pies, no con las manos.',
+              '👀 Mira el pecho/cintura del atacante — no el balón ni los pies.',
+              '💪 El cansancio baja la postura defensiva. Entrena la resistencia en posición baja.',
+            ]
+          },
+        ]
+      },
+      {
+        id:'finalizacion', name:'Finalización', icon:'🎯', drills:[
+          {
+            id:'layup-debil', name:'Layup Mano Débil', icon:'🤚', diff:1, time:120,
+            tags:['Base','Escolta','Alero','Fundamental'],
+            desc:'Dominar el layup con la mano no dominante multiplica tu efectividad en el aro.',
+            steps:[
+              {t:'Aproximación', d:'Corre hacia el lado izquierdo del aro (si eres diestro). Último dribble antes del salto.'},
+              {t:'Penúltimo paso', d:'Paso largo con el pie derecho (si eres diestro). Absorbe el impulso.'},
+              {t:'Salto', d:'Salto vertical desde el pie izquierdo. La rodilla derecha sube para generar elevación.'},
+              {t:'Mano izquierda al aro', d:'La mano izquierda lanza el balón contra el cuadrado de la backboard con suavidad. Muñeca relajada.'},
+              {t:'Progresión', d:'Empieza parado. Luego caminando. Luego trotando. Luego a velocidad de partido.'},
+            ],
+            tips:[
+              '🎯 Apunta al cuadrado de la tabla — siempre, sin excepción.',
+              '🤚 La mano débil requiere el doble de repeticiones. No hay atajos.',
+              '⚡ En partido, la capacidad de usar ambas manos en el aro es determinante.',
+            ]
+          },
+          {
+            id:'floater', name:'Floater / Globito', icon:'🎈', diff:3, time:90,
+            tags:['Base','Avanzado','Finalización'],
+            desc:'Tiro en suspensión corto para superar a los bloqueadores interiores.',
+            steps:[
+              {t:'Situación de uso', d:'Penetras al aro y hay un pívot esperando para tapar. En lugar de ir al contacto, lanza un floater.'},
+              {t:'Timing del tiro', d:'Lanza el balón <strong>antes</strong> de llegar a la zona del bloqueador. La parábola alta sobrepasa sus manos.'},
+              {t:'Mecánica', d:'Impulso desde una pierna (como layup). La mano lanzadora empuja el balón hacia arriba con muñeca relajada. Parábola muy alta.'},
+              {t:'Puntería', d:'Apunta al frontal del aro (la parte más cercana) o al cuadrado de la tabla según el ángulo.'},
+              {t:'Práctica', d:'Practica desde 2-3 metros frente al aro. Siente la parábola alta. Añade movimiento progresivamente.'},
+            ],
+            tips:[
+              '🎯 La parábola alta es la clave — si el tiro va plano, el interior lo tapa.',
+              '⚡ El floater se lanza con más rapidez que un layup — no hay tiempo de cargar.',
+              '🧠 Practica de ambos lados del aro y a distintas distancias.',
+            ]
+          },
+        ]
+      },
+    ]
+  },
+  {
+    id:'escolta', name:'Escolta', en:'Shooting Guard', num:'#2', icon:'🎯',
+    color:'#6B8FFF',
+    desc:'El tirador. Movimiento constante y mecánica de tiro perfecta.',
+    tags:['Tiro exterior','Movimiento','Creación'],
+    modules:[
+      {
+        id:'tiro', name:'Mecánica de Tiro', icon:'🏹', drills:[
+          {
+            id:'beef', name:'Técnica BEEF de Tiro', icon:'🏹', diff:1, time:150,
+            tags:['Escolta','Fundamental','Tiro'],
+            desc:'El acrónimo fundamental de la mecánica del tiro: Balance, Eyes, Elbow, Follow-through.',
+            steps:[
+              {t:'B — Balance (Equilibrio)', d:'Pies paralelos o ligeramente escalonados, separados al ancho de hombros. Centro de gravedad bajo. <strong>Rodillas siempre flexionadas</strong>.'},
+              {t:'E — Eyes (Ojos)', d:'Fija la vista en el <strong>frente del aro</strong> — el borde más cercano a ti. No mires el balón, tus manos, ni la backboard.'},
+              {t:'E — Elbow (Codo)', d:'El codo de la mano dominante debe apuntar <strong>directamente al aro</strong>. Forma una "L" perfecta con el antebrazo. Codo DENTRO, nunca hacia afuera.'},
+              {t:'F — Follow-through (Continuación)', d:'Al lanzar, extiende completamente el brazo. La muñeca se dobla hacia abajo (<strong>"la garra del ganso"</strong>). Mantén la posición hasta que el balón entre.'},
+              {t:'Repetición desde 3 metros', d:'Practica la mecánica 20 veces desde 3 metros. Sin preocuparte del porcentaje — solo la mecánica.'},
+            ],
+            tips:[
+              '👁 El punto de mira en el frente del aro da mejor porcentaje que apuntar a la tablilla.',
+              '🦢 El follow-through ("la garra") es lo que da al tiro su efecto y suavidad.',
+              '📐 Grábate en video — los errores de mecánica son difíciles de notar solo.',
+            ]
+          },
+          {
+            id:'catch-shoot', name:'Catch & Shoot', icon:'⚡', diff:2, time:120,
+            tags:['Escolta','Intermedio','Tiro'],
+            desc:'Recibir el pase y disparar en el menor tiempo posible con mecánica perfecta.',
+            steps:[
+              {t:'Preparación previa', d:'Antes de recibir, ya debes estar en postura de tiro: rodillas flexionadas, manos listas a la altura del pecho.'},
+              {t:'Movimiento hacia el balón', d:'Ve a buscar el pase — no esperes quieto. Un paso hacia el pase te da tiempo y separa al defensor.'},
+              {t:'Recepción y carga simultánea', d:'Al coger el balón, <strong>inmediatamente</strong> inicia el movimiento ascendente. El tiempo de "pausa" debe ser cero.'},
+              {t:'Un tiempo', d:'El secreto del catch & shoot es que recepción y carga del tiro son <strong>el mismo movimiento</strong>, no dos movimientos separados.'},
+              {t:'Series de práctica', d:'Un compañero te pasa desde distintos ángulos. Tú disparas en un tiempo. 30 tiros desde cada posición.'},
+            ],
+            tips:[
+              '⏱ Los mejores tiradores reducen el tiempo de catch-to-release al mínimo.',
+              '👣 El foot-work (orientación de pies al recibir) determina el ángulo del tiro.',
+              '🎯 Practica con el compañero pasando desde distintos ángulos y velocidades.',
+            ]
+          },
+          {
+            id:'stepback', name:'Step-Back', icon:'⬅️', diff:3, time:120,
+            tags:['Escolta','Avanzado','Tiro'],
+            desc:'Creación de espacio propio retrocediendo antes de tirar.',
+            steps:[
+              {t:'Situación', d:'Tienes al defensor muy encima. El tiro directo está bloqueado.'},
+              {t:'El stepback', d:'Con un dribble, salta <strong>hacia atrás</strong> con ambos pies simultáneamente. Aterrizas 1-2 pasos por detrás del defensor.'},
+              {t:'Balance en el aterrizaje', d:'Aterrizas en equilibrio, rodillas flexionadas, ya en postura de tiro. No des un paso extra.'},
+              {t:'Disparo inmediato', d:'Desde el aterrizaje, lanza sin demora. El espacio creado es temporal.'},
+              {t:'Variantes', d:'Stepback lateral (para mejorar el ángulo), stepback en esquina, stepback desde media distancia.'},
+            ],
+            tips:[
+              '⚖️ El equilibrio al aterrizar es lo que determina si el tiro es bueno.',
+              '🦘 Practica el salto hacia atrás por separado antes de combinarlo con tiro.',
+              '📏 Un buen stepback crea 2-3 metros de ventaja sobre el defensor.',
+            ]
+          },
+        ]
+      },
+      {
+        id:'movimiento', name:'Movimiento sin Balón', icon:'🏃', drills:[
+          {
+            id:'curl-cut', name:'Curl Cut', icon:'〰️', diff:1, time:90,
+            tags:['Escolta','Movimiento'],
+            desc:'Corte en curva alrededor de un bloqueo para recibir en posición de tiro.',
+            steps:[
+              {t:'Leer al defensor', d:'Antes del bloqueo, observa cómo te defiende. ¿Está pegado a tu espalda? → Curl cut. ¿Sale por fuera del bloqueo? → Fade cut.'},
+              {t:'Set-up del defensor', d:'Camina hacia el bloqueo (como si no fuera a usarlo). En el último momento, acelera y "toca" al bloqueador.'},
+              {t:'El curl', d:'Rodea el bloqueo en curva cerrada. El hombro interno del bloqueador es tu guía. Sal cerca de él.'},
+              {t:'Recepción en tiro', d:'Sal del bloqueo en postura de tiro: rodillas flexionadas, manos listas. Recibe y dispara en uno o dos tiempos.'},
+            ],
+            tips:[
+              '🎭 El set-up previo (caminar) es el 50% del éxito. Engaña al defensor primero.',
+              '🏃 La aceleración en el momento del corte debe ser explosiva.',
+              '📐 Sal del bloqueo orientado al aro — si tienes que girar los pies, pierdes tiempo.',
+            ]
+          },
+        ]
+      },
+    ]
+  },
+  {
+    id:'alero', name:'Alero', en:'Small Forward', num:'#3', icon:'⚡',
+    color:'#00C853',
+    desc:'El más versátil. Juega en toda la cancha con armas múltiples.',
+    tags:['Versatilidad','Triple','Penetración'],
+    modules:[
+      {
+        id:'polivalencia', name:'Polivalencia Ofensiva', icon:'🗡', drills:[
+          {
+            id:'drive-ala', name:'Driving desde el Ala', icon:'💨', diff:1, time:120,
+            tags:['Alero','Penetración'],
+            desc:'El alero ataca el aro desde la posición de ala (3 metros en el lateral).',
+            steps:[
+              {t:'Recepción en triple amenaza', d:'Recibe el pase en postura de triple amenaza: puedes tirar, pasar o drinar. Esta postura obliga al defensor a decidir.'},
+              {t:'Jab step (finta)', d:'Un paso corto y explosivo hacia el defensor. Si retrocede → tiro. Si no reacciona → drive.'},
+              {t:'El primer paso', d:'El primer paso del drive debe ser largo y bajo. El pie cae más allá de los pies del defensor.'},
+              {t:'Atacar el hombro', d:'Dirígete al hombro del defensor, no a su cuerpo. Esto te permite mantener tu carril hacia el aro.'},
+              {t:'Finalización', d:'Lee la defensa en el aire: layup si estás solo, pase si hay ayuda.'},
+            ],
+            tips:[
+              '⚡ El primer paso es el más importante de todo el drive.',
+              '🎯 La triple amenaza real (que el defensor crea que puedes hacer las 3 cosas) abre el drive.',
+              '👁 Siempre lee la ayuda defensiva antes de finalizar — no tengas la mente hecha.',
+            ]
+          },
+        ]
+      },
+      {
+        id:'tiro3', name:'Tiro de Tres', icon:'🎯', drills:[
+          {
+            id:'corner3', name:'Triples desde los Corners', icon:'📐', diff:1, time:120,
+            tags:['Alero','Escolta','Tiro'],
+            desc:'Las esquinas son el tiro de 3 más cercano al aro. El porcentaje más alto.',
+            steps:[
+              {t:'Posición en corner', d:'En la esquina, los pies orientados al aro (no paralelos a la línea de fondo). Esto mejora el ángulo.'},
+              {t:'Recepción', d:'Muévete hacia el pase (no esperes estático). Planta un pie primero — establece el pivot.'},
+              {t:'Mecánica BEEF', d:'Aplica la mecánica completa: Balance, Eyes, Elbow, Follow-through. En los corners, el eje del codo es especialmente crítico.'},
+              {t:'Fuerza de piernas', d:'En el corner, la distancia y el ángulo requieren más fuerza de piernas. No uses solo brazos.'},
+              {t:'Series de corners', d:'30 tiros corner derecho, 30 corner izquierdo. Alterna el tipo de catch (estático, en movimiento, tras corte).'},
+            ],
+            tips:[
+              '📐 El corner derecho e izquierdo dan ángulos distintos — practica ambos por igual.',
+              '💪 La fuerza proviene de las piernas — los tiros de brazos se van cortos o con efecto incorrecto.',
+              '🎯 El porcentaje más alto de 3 en la NBA es consistentemente desde las corners.',
+            ]
+          },
+        ]
+      },
+    ]
+  },
+  {
+    id:'alapivot', name:'Ala-Pívot', en:'Power Forward', num:'#4', icon:'🔨',
+    color:'#FF4D6D',
+    desc:'Potencia y versatilidad. Domina el juego interior y exterior.',
+    tags:['Poste bajo','Rebote','Face-up'],
+    modules:[
+      {
+        id:'postebajo', name:'Juego de Poste Bajo', icon:'🔨', drills:[
+          {
+            id:'dropstep', name:'Drop Step Básico', icon:'👟', diff:1, time:120,
+            tags:['Ala-Pívot','Pívot','Poste'],
+            desc:'El movimiento de poste bajo más efectivo y fundamental. Sorpresa y explosión.',
+            steps:[
+              {t:'Establecimiento en el poste', d:'Posición de poste: espalda al aro, pie del bloqueo pivotando, cuerpo ancho para ganar terreno.'},
+              {t:'Recepción del pase', d:'Recibe el balón con manos fuertes. Al momento de recibir, ya sabes de qué lado está el defensor (línea de base o fondo).'},
+              {t:'El drop step', d:'Si el defensor está al lado de la línea de fondo: pivot con el pie de línea de fondo, "deja caer" el pie hacia el aro por el otro lado (lado del poste).'},
+              {t:'Explosión al aro', d:'Tras el pivot, das un paso explosivo hacia el aro. El cuerpo queda entre el balón y el defensor.'},
+              {t:'Finalización', d:'Layup de potencia (con fuerza para aguantar el contacto) o gancho corto a la tabla.'},
+            ],
+            tips:[
+              '🔒 Gana posición ANTES de recibir el balón — es una batalla de posicionamiento.',
+              '⚡ La velocidad del pivot es clave: si lo haces lento, el defensor se recupera.',
+              '🏋️ La fuerza de cadera y espalda amplía tu radio de acción en el poste.',
+            ]
+          },
+        ]
+      },
+      {
+        id:'rebote', name:'Rebote', icon:'💪', drills:[
+          {
+            id:'boxout', name:'Box-Out Técnica', icon:'📦', diff:1, time:90,
+            tags:['Ala-Pívot','Pívot','Defensa'],
+            desc:'El contacto inicial que asegura el rebote defensivo antes de que el tiro llegue al aro.',
+            steps:[
+              {t:'Lectura del tiro', d:'En el momento en que el tirador lanza, deja de mirar el balón. <strong>Mira a tu atacante</strong>.'},
+              {t:'Contacto inicial', d:'Da un paso hacia el atacante y busca su cadera con la tuya. Espalda al aro, cuerpo entre atacante y aro.'},
+              {t:'Box-out position', d:'Postura baja, base ancha, brazos extendidos lateralmente. Haz tu cuerpo lo más ancho posible.'},
+              {t:'Mantener el contacto', d:'El atacante intentará rodear tu box-out. Sigue sus caderas con las tuyas — pivot si es necesario, pero mantén el contacto.'},
+              {t:'Salto al balón', d:'Cuando el balón cae, salta con las dos manos arriba. Coge el rebote en el punto más alto.'},
+            ],
+            tips:[
+              '👁 El error más común: mirar el balón en lugar de hacer el box-out primero.',
+              '📐 El que llega primero al box-out tiene ventaja — actúa en el momento del tiro.',
+              '💪 El rebote es 70% actitud y 30% técnica — requiere agresividad.',
+            ]
+          },
+        ]
+      },
+    ]
+  },
+  {
+    id:'pivot', name:'Pívot', en:'Center', num:'#5', icon:'🏰',
+    color:'#A855F7',
+    desc:'El dominador interior. Protege el aro y controla la zona pintada.',
+    tags:['Poste bajo','Rebote','Defensa interior'],
+    modules:[
+      {
+        id:'movimientos-poste', name:'Movimientos de Poste', icon:'🏰', drills:[
+          {
+            id:'gancho', name:'Tiro de Gancho', icon:'🪝', diff:1, time:120,
+            tags:['Pívot','Poste'],
+            desc:'El tiro más difícil de defender en el baloncesto. Insuperable desde el poste bajo.',
+            steps:[
+              {t:'Posición de inicio', d:'En el bloque del poste bajo, espalda al aro, balón protegido con el cuerpo.'},
+              {t:'Pivot de apertura', d:'Pivota con el pie exterior para quedar de perfil al aro. El pie interior queda como pivot.'},
+              {t:'El balanceo', d:'El brazo de la mano de tiro sube en arco largo: comienza al nivel de la cadera y sube hacia el aro. El codo apunta al aro.'},
+              {t:'Punto de liberación', d:'El balón se libera en el punto más alto del arco — por encima de la cabeza. La mano guía (no dominante) solo estabiliza, no lanza.'},
+              {t:'Follow-through', d:'La muñeca se dobla al final. El balón debe ir al cuadrado de la tabla desde el lado correspondiente.'},
+            ],
+            tips:[
+              '🪝 El gancho debe lanzarse siempre desde el punto más alto — si lo bajas, lo tapan.',
+              '🛡 El cuerpo actúa como escudo entre el balón y el defensor durante todo el movimiento.',
+              '📐 Practica primero el movimiento sin balón — el arco del brazo debe ser fluido.',
+            ]
+          },
+          {
+            id:'fadeaway', name:'Fadeaway', icon:'🌟', diff:3, time:90,
+            tags:['Pívot','Ala-Pívot','Avanzado'],
+            desc:'Tiro en suspensión alejándose del aro. Prácticamente intapable.',
+            steps:[
+              {t:'Setup en poste medio', d:'Recibe el balón en el poste medio o bloue. El defensor está pegado a tu espalda.'},
+              {t:'El pivot de cara al aro', d:'Pivota para quedar cara al aro. El defensor reacciona.'},
+              {t:'El fadeaway', d:'Al saltar, inclina el cuerpo <strong>hacia atrás y ligeramente lateral</strong>. El balón se lanza mientras te alejas del defensor.'},
+              {t:'Mecánica en fadeaway', d:'La mecánica de tiro es la misma que el tiro normal, pero el cuerpo va hacia atrás. El equilibrio es diferente.'},
+              {t:'Práctica progresiva', d:'Empieza desde el bloque, luego poste medio, luego elbow. Aumenta la distancia gradualmente.'},
+            ],
+            tips:[
+              '⭐ Michael Jordan y Kobe Bryant basaron su juego en este movimiento.',
+              '💪 Requiere mucha fuerza de piernas para generar potencia mientras el cuerpo retrocede.',
+              '🎯 Practica siempre con spot shooting primero, nunca directamente con oposición.',
+            ]
+          },
+        ]
+      },
+      {
+        id:'rebote-elite', name:'Rebote Elite', icon:'💥', drills:[
+          {
+            id:'timing-rebote', name:'Timing y Posición de Rebote', icon:'⏱', diff:1, time:90,
+            tags:['Pívot','Ala-Pívot','Rebote'],
+            desc:'El pívot debe dominar el timing del salto y la lectura de la trayectoria del balón.',
+            steps:[
+              {t:'Lectura de trayectoria', d:'Desde donde sale el tiro, predice dónde caerá. Tiros desde la esquina → rebotes largos al lado contrario. Tiros frontales → rebotes más cortos y centrados.'},
+              {t:'Anticipación del salto', d:'El salto debe iniciar <strong>justo cuando el balón toca el aro</strong>, no antes ni después. El timing se entrena.'},
+              {t:'Dos manos por encima', d:'El rebote siempre se coge con dos manos, por encima de la cabeza. Nunca con una mano ni a la altura del pecho.'},
+              {t:'Protección del rebote', d:'Al coger el rebote, abraza el balón con los codos abiertos. Baja al nivel del pecho y rodéalo con el cuerpo.'},
+              {t:'Outlet pass rápido', d:'Si hay un compañero libre, el outlet pass (pase rápido de inicio de contraataque) es el siguiente movimiento.'},
+            ],
+            tips:[
+              '📊 El 70% de los rebotes caen al lado contrario de donde salió el tiro.',
+              '⏱ El timing del salto se entrena solo con repetición. No hay atajo.',
+              '🦅 El "wingspan" (envergadura de brazos) es tu mayor ventaja — úsala siempre a máxima extensión.',
+            ]
+          },
+        ]
+      },
+      {
+        id:'defensa-interior', name:'Defensa Interior', icon:'🛡', drills:[
+          {
+            id:'tape', name:'Bloqueo de Tiro (Taper)', icon:'✋', diff:2, time:90,
+            tags:['Pívot','Defensa','Interior'],
+            desc:'La habilidad que define a un gran pívot defensivo: tapar sin cometer falta.',
+            steps:[
+              {t:'Lectura del atacante', d:'Identifica cuándo el atacante está en posición de lanzar. La clave: cuando el balón llega a su cintura en la subida.'},
+              {t:'Timing del salto', d:'Salta <strong>en el momento en que el balón sube</strong> del atacante, no antes. Si saltas antes, el atacante para el tiro y tú caes.'},
+              {t:'Mano activa', d:'La mano de tapa va hacia el balón (no hacia el atacante). Nunca golpees al atacante ni su brazo.'},
+              {t:'Salto vertical', d:'El salto debe ser vertical: hacia arriba, no hacia el atacante. Inclinarse hacia el atacante es falta.'},
+              {t:'Recuperación', d:'Tras el taper, mantén los pies en el suelo y el cuerpo en posición. El rebote del taper puede ir en cualquier dirección.'},
+            ],
+            tips:[
+              '⚖️ La diferencia entre taper limpio y falta es el timing. Un microsegundo separa ambos.',
+              '✋ La presencia defensiva (amenaza de taper) es tan valiosa como el taper real.',
+              '🎯 Los mejores tapadores modifican el tiro — no necesariamente lo bloquean.',
+            ]
+          },
+        ]
+      },
+    ]
+  },
+];
+
+// ── APP STATE ────────────────────────────────────────────────────
+const state = {
+  position: null,
+  currentDrill: null,
+  activeModule: 0,
+  activePlanDay: new Date().getDay() || 6,
+  timer: { total:120, remaining:120, running:false, interval:null },
+  progress: JSON.parse(localStorage.getItem('bcp_progress') || '{}'),
+  stats: JSON.parse(localStorage.getItem('bcp_stats') || '{"sessions":0,"drills":0,"streak":0}'),
+};
+
+// ── HELPERS ──────────────────────────────────────────────────────
+function getPosition() {
+  return POSITIONS.find(p => p.id === state.position);
+}
+function saveProgress() {
+  localStorage.setItem('bcp_progress', JSON.stringify(state.progress));
+  localStorage.setItem('bcp_stats', JSON.stringify(state.stats));
+}
+function diffLabel(n) {
+  return ['','Básico','Intermedio','Avanzado'][n] || '';
+}
+function diffBadge(n) {
+  const cls = ['','badge-green','badge-orange','badge-gold'][n];
+  return `<span class="badge ${cls}">${diffLabel(n)}</span>`;
+}
+function makeDotsHTML(n) {
+  return [1,2,3].map(i => `<div class="diff-dot${i<=n?' fill':''}"></div>`).join('');
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────────
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── SCREEN 2: POSITION SELECT ────────────────────────────────────
+function renderPositionGrid() {
+  const grid = document.getElementById('pos-grid');
+  grid.innerHTML = POSITIONS.map(p => `
+    <div class="pos-card card-glow" onclick="selectPosition('${p.id}')" id="poscard-${p.id}">
+      <div class="pos-icon" style="background:${p.color}22; border:1px solid ${p.color}44;">
+        <span style="font-size:1.6rem;">${p.icon}</span>
+      </div>
+      <div class="pos-card-info">
+        <div class="pos-card-name">${p.num} — ${p.name} <span style="font-family:Inter;font-size:.85rem;font-weight:400;color:var(--text2);">${p.en}</span></div>
+        <div class="pos-card-en">${p.desc}</div>
+        <div class="pos-card-tags">
+          ${p.tags.map(t => `<span class="badge badge-gray">${t}</span>`).join('')}
+        </div>
+      </div>
+      <div class="pos-card-arrow">→</div>
+    </div>
+  `).join('');
+}
+
+function selectPosition(id) {
+  state.position = id;
+  localStorage.setItem('bcp_position', id);
+  document.querySelectorAll('.pos-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`poscard-${id}`)?.classList.add('selected');
+  setTimeout(() => {
+    renderHome();
+    goTo('screen-home');
+  }, 200);
+}
+
+// ── SCREEN 3: HOME ───────────────────────────────────────────────
+function renderHome() {
+  const pos = getPosition();
+  if (!pos) return;
+
+  document.getElementById('home-title').textContent = `Hola, ${pos.name}`;
+  document.getElementById('home-pos-badge').innerHTML = `${pos.icon} ${pos.name} — ${pos.en}`;
+  document.getElementById('training-topbar-title').textContent = pos.name + ' — Drills';
+  document.getElementById('stat-sesiones').textContent = state.stats.sessions;
+  document.getElementById('stat-drills').textContent = state.stats.drills;
+  document.getElementById('stat-racha').textContent = state.stats.streak + '🔥';
+
+  // Today's session (first 3 drills of first 2 modules)
+  const todayDrills = pos.modules.flatMap(m => m.drills).slice(0,3);
+  document.getElementById('today-session-name').textContent = 'Sesión del día — ' + pos.name;
+  document.getElementById('today-session-meta').textContent = `${todayDrills.length} ejercicios · ${todayDrills.reduce((s,d) => s + d.time, 0)/60|0} min`;
+  document.getElementById('today-drills-list').innerHTML = todayDrills.map((d,i) => `
+    <div class="today-drill">
+      <div class="today-drill-num">${i+1}</div>
+      <div class="today-drill-info">
+        <div class="today-drill-name">${d.name}</div>
+        <div class="today-drill-meta">${d.time/60|0}:${String(d.time%60).padStart(2,'0')} min · ${diffLabel(d.diff)}</div>
+      </div>
+      ${state.progress[d.id] ? '<div class="today-drill-check">✓</div>' : ''}
+    </div>
+  `).join('');
+
+  // Modules scroll
+  document.getElementById('modules-scroll').innerHTML = pos.modules.map((m,i) => `
+    <div class="module-chip${i===state.activeModule?' active-module':''}" onclick="setActiveModule(${i})">
+      <div class="module-chip-icon">${m.icon}</div>
+      <div class="module-chip-name">${m.name}</div>
+      <div class="module-chip-count">${m.drills.length} drills</div>
+    </div>
+  `).join('');
+
+  // Quick drills (first 2 of active module)
+  const activeMod = pos.modules[state.activeModule] || pos.modules[0];
+  document.getElementById('quick-drills').innerHTML = activeMod.drills.slice(0,2).map(d => `
+    <div class="drill-item card-glow" onclick="openDrill('${d.id}')">
+      <div class="drill-thumb">${d.icon}</div>
+      <div class="drill-info">
+        <div class="drill-name">${d.name}</div>
+        <div class="drill-meta">
+          <div class="diff-dots">${makeDotsHTML(d.diff)}</div>
+          <span class="badge badge-gray">${d.time/60|0}:${String(d.time%60).padStart(2,'0')} min</span>
+          ${state.progress[d.id] ? '<span class="badge badge-green">✓ Completado</span>' : ''}
+        </div>
+      </div>
+      <div class="drill-arrow">›</div>
+    </div>
+  `).join('');
+}
+
+function setActiveModule(i) {
+  state.activeModule = i;
+  renderHome();
+}
+
+function startTodaySession() {
+  const pos = getPosition();
+  const firstDrill = pos?.modules?.[0]?.drills?.[0];
+  if (firstDrill) openDrill(firstDrill.id);
+}
+
+// ── SCREEN 4: TRAINING LIST ──────────────────────────────────────
+function renderTraining(moduleIdx = 0) {
+  const pos = getPosition();
+  if (!pos) return;
+  state.activeModule = moduleIdx;
+
+  // Module filter tabs
+  document.getElementById('module-filter-tabs').innerHTML = pos.modules.map((m,i) => `
+    <div class="badge ${i===moduleIdx ? 'badge-orange' : 'badge-gray'}" style="cursor:pointer;padding:.4rem .9rem;font-size:.78rem;"
+      onclick="renderTraining(${i})">${m.icon} ${m.name}</div>
+  `).join('');
+
+  // Drills grid
+  const mod = pos.modules[moduleIdx];
+  document.getElementById('drills-grid').innerHTML = mod.drills.map(d => `
+    <div class="drill-item card-glow" onclick="openDrill('${d.id}')">
+      <div class="drill-thumb">${d.icon}</div>
+      <div class="drill-info">
+        <div class="drill-name">${d.name}</div>
+        <div class="drill-meta">
+          <div class="diff-dots">${makeDotsHTML(d.diff)}</div>
+          ${diffBadge(d.diff)}
+          <span class="badge badge-gray">⏱ ${d.time/60|0}:${String(d.time%60).padStart(2,'0')}</span>
+          ${state.progress[d.id] ? '<span class="badge badge-green">✓</span>' : ''}
+        </div>
+        <div class="body-sm clr2" style="margin-top:.4rem;">${d.desc}</div>
+      </div>
+      <div class="drill-arrow">›</div>
+    </div>
+  `).join('');
+}
+
+// ── SCREEN 5: DRILL DETAIL ───────────────────────────────────────
+function openDrill(drillId) {
+  const pos = getPosition();
+  let drill = null;
+  pos?.modules.forEach(m => m.drills.forEach(d => { if(d.id===drillId) drill=d; }));
+  if (!drill) return;
+
+  state.currentDrill = drill;
+  resetTimer(drill.time);
+
+  document.getElementById('drill-detail-icon').textContent = drill.icon;
+  document.getElementById('drill-detail-name').textContent = drill.name;
+  document.getElementById('drill-fav-btn').textContent = state.progress[drill.id+'_fav'] ? '♥' : '♡';
+
+  document.getElementById('drill-detail-badges').innerHTML = `
+    ${diffBadge(drill.diff)}
+    <span class="badge badge-gray">⏱ ${drill.time/60|0}:${String(drill.time%60).padStart(2,'0')} min</span>
+    ${drill.tags?.map(t=>`<span class="badge badge-gray">${t}</span>`).join('') || ''}
+    ${state.progress[drill.id] ? '<span class="badge badge-green">✓ Completado</span>' : ''}
+  `;
+
+  document.getElementById('drill-steps').innerHTML = drill.steps.map((s,i) => `
+    <div class="step-item">
+      <div class="step-num">${i+1}</div>
+      <div>
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:.25rem;">${s.t}</div>
+        <div class="step-text">${s.d}</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('drill-tips').innerHTML = drill.tips.map(t => `
+    <div class="tip-row"><span class="tip-icon">›</span><span>${t}</span></div>
+  `).join('');
+
+  goTo('screen-drill');
+}
+
+function toggleFav() {
+  if (!state.currentDrill) return;
+  const key = state.currentDrill.id + '_fav';
+  state.progress[key] = !state.progress[key];
+  document.getElementById('drill-fav-btn').textContent = state.progress[key] ? '♥' : '♡';
+  saveProgress();
+}
+
+function markDrillDone() {
+  if (!state.currentDrill) return;
+  state.progress[state.currentDrill.id] = true;
+  state.stats.drills++;
+  saveProgress();
+  stopTimer();
+
+  const btn = document.querySelector('#screen-drill .btn-primary');
+  btn.textContent = '✓ ¡Completado!';
+  btn.style.background = 'var(--green)';
+  setTimeout(() => {
+    btn.textContent = '✓ Marcar como completado';
+    btn.style.background = '';
+    goTo('screen-training');
+    renderTraining(state.activeModule);
+  }, 1500);
+}
+
+// ── TIMER ────────────────────────────────────────────────────────
+function resetTimer(seconds) {
+  stopTimer();
+  const t = state.timer;
+  t.total = seconds || (state.currentDrill?.time ?? 120);
+  t.remaining = t.total;
+  updateTimerDisplay();
+}
+function stopTimer() {
+  const t = state.timer;
+  t.running = false;
+  clearInterval(t.interval);
+  document.getElementById('timer-play-btn').textContent = '▶';
+}
+function toggleTimer() {
+  const t = state.timer;
+  if (t.running) {
+    stopTimer();
+  } else {
+    t.running = true;
+    document.getElementById('timer-play-btn').textContent = '⏸';
+    t.interval = setInterval(() => {
+      t.remaining--;
+      updateTimerDisplay();
+      if (t.remaining <= 0) { stopTimer(); t.remaining = 0; updateTimerDisplay(); }
+    }, 1000);
+  }
+}
+function adjustTimer(delta) {
+  const t = state.timer;
+  t.remaining = Math.max(0, Math.min(t.total + 300, t.remaining + delta));
+  updateTimerDisplay();
+}
+function updateTimerDisplay() {
+  const t = state.timer;
+  const m = Math.floor(t.remaining/60);
+  const s = t.remaining % 60;
+  document.getElementById('timer-display').textContent = `${m}:${String(s).padStart(2,'0')}`;
+  const pct = t.total > 0 ? t.remaining / t.total : 1;
+  const circ = 2 * Math.PI * 58;
+  document.getElementById('timer-circle').style.strokeDashoffset = circ * (1 - pct);
+  const fill = document.getElementById('timer-circle');
+  fill.style.stroke = t.remaining < 10 ? 'var(--red)' : 'var(--orange)';
+}
+
+// ── SCREEN 6: WEEKLY PLAN ────────────────────────────────────────
+const DAYS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const PLAN_TEMPLATES = {
+  base:     [null, ['manejo','pickroll'], ['pase','defensa'], null, ['finalizacion','manejo'], ['pase','pickroll'], null],
+  escolta:  [null, ['tiro','movimiento'], ['tiro'], null, ['movimiento','tiro'], ['tiro'], null],
+  alero:    [null, ['polivalencia','tiro3'], ['polivalencia'], null, ['tiro3','polivalencia'], ['polivalencia'], null],
+  alapivot: [null, ['postebajo','rebote'], ['postebajo'], null, ['rebote','postebajo'], ['postebajo'], null],
+  pivot:    [null, ['movimientos-poste','rebote-elite'], ['defensa-interior'], null, ['rebote-elite','movimientos-poste'], ['defensa-interior'], null],
+};
+
+function renderPlan() {
+  const pos = getPosition();
+  if (!pos) return;
+  const today = new Date().getDay();
+  const planDays = PLAN_TEMPLATES[pos.id] || [];
+
+  document.getElementById('day-tabs').innerHTML = DAYS.map((d,i) => `
+    <div class="day-tab${i===today?' today':''}${i===state.activePlanDay?' active':''}" onclick="selectPlanDay(${i})">
+      <div class="day-name">${d}</div>
+      <div class="day-num">${i+1+15}</div>
+    </div>
+  `).join('');
+
+  renderPlanDay(pos, planDays);
+}
+
+function selectPlanDay(i) {
+  state.activePlanDay = i;
+  renderPlan();
+}
+
+function renderPlanDay(pos, planDays) {
+  const dayModuleIds = planDays[state.activePlanDay];
+  const el = document.getElementById('day-plan-content');
+
+  if (!dayModuleIds) {
+    el.innerHTML = `
+      <div style="text-align:center;padding:3rem 1.5rem;">
+        <div style="font-size:3rem;margin-bottom:1rem;">😴</div>
+        <div class="title-md">Día de descanso</div>
+        <p class="body-md clr2" style="margin-top:.5rem;">La recuperación es parte del entrenamiento. Estiramiento y foam rolling.</p>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = dayModuleIds.map(modId => {
+    const mod = pos.modules.find(m => m.id === modId);
+    if (!mod) return '';
+    const totalMin = mod.drills.reduce((s,d) => s+d.time,0)/60|0;
+    return `
+      <div class="plan-block">
+        <div class="plan-block-header">
+          <span class="plan-block-icon">${mod.icon}</span>
+          <span class="plan-block-title">${mod.name}</span>
+          <span class="plan-block-time">⏱ ~${totalMin} min</span>
+        </div>
+        <div class="plan-block-drills">
+          ${mod.drills.map(d => `
+            <div class="plan-drill-row" onclick="openDrill('${d.id}')">
+              <div class="plan-drill-dot${state.progress[d.id]?' '+'style="background:var(--green)"':''}"></div>
+              <span class="plan-drill-name">${d.name}</span>
+              <span class="plan-drill-dur">${d.time/60|0}:${String(d.time%60).padStart(2,'0')}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── SCREEN 7: PROGRESS ───────────────────────────────────────────
+function renderProgress() {
+  const pos = getPosition();
+  if (!pos) return;
+
+  // Chart bars
+  const weekData = [3,5,0,7,4,8,state.stats.drills % 10 || 6];
+  const maxVal = Math.max(...weekData, 1);
+  document.getElementById('chart-bars').innerHTML = DAYS.map((d,i) => {
+    const h = Math.max(4, (weekData[i]/maxVal)*100)|0;
+    const isToday = i === new Date().getDay();
+    return `
+      <div class="chart-col">
+        <div class="chart-bar${weekData[i]>0?' fill':''}${isToday?' today-bar':''}" style="height:${h}%"></div>
+        <div class="chart-day">${d}</div>
+      </div>`;
+  }).join('');
+
+  // Category progress
+  document.getElementById('cat-progress').innerHTML = pos.modules.map(m => {
+    const done = m.drills.filter(d => state.progress[d.id]).length;
+    const pct = m.drills.length ? (done/m.drills.length*100)|0 : 0;
+    return `
+      <div class="cat-prog-row">
+        <div class="cat-prog-header">
+          <span class="cat-prog-name">${m.icon} ${m.name}</span>
+          <span class="cat-prog-pct">${pct}%</span>
+        </div>
+        <div class="prog-bar"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+        <div class="label clr2" style="margin-top:.2rem;">${done} / ${m.drills.length} drills completados</div>
+      </div>`;
+  }).join('');
+
+  // Achievements
+  const totalDone = Object.values(state.progress).filter(v=>v===true).length;
+  const achievements = [
+    { icon:'🏀', name:'Primera Canasta', desc:'Completa tu primer drill', locked: totalDone < 1 },
+    { icon:'🔥', name:'En Racha', desc:'3 días consecutivos', locked: state.stats.streak < 3 },
+    { icon:'💪', name:'Trabajador', desc:'10 drills completados', locked: totalDone < 10 },
+    { icon:'⭐', name:'Estrella', desc:'Completa un módulo entero', locked: !pos.modules.some(m=>m.drills.every(d=>state.progress[d.id])) },
+    { icon:'🏆', name:'Campeón', desc:'50 drills completados', locked: totalDone < 50 },
+    { icon:'🎓', name:'Técnico', desc:'Completa todos los módulos', locked: totalDone < pos.modules.flatMap(m=>m.drills).length },
+  ];
+  document.getElementById('achievements-grid').innerHTML = achievements.map(a => `
+    <div class="achievement-card${a.locked?' locked':''}">
+      <div class="achievement-icon">${a.icon}</div>
+      <div class="achievement-name">${a.name}</div>
+      <div class="achievement-desc">${a.desc}</div>
+    </div>
+  `).join('');
+}
+
+// ── INTERCEPT NAV TO RENDER ──────────────────────────────────────
+const _goTo = goTo;
+window.goTo = function(screenId) {
+  _goTo(screenId);
+  if (screenId === 'screen-training') renderTraining(state.activeModule);
+  if (screenId === 'screen-plan')     renderPlan();
+  if (screenId === 'screen-progress') renderProgress();
+};
+
+// ── INIT ─────────────────────────────────────────────────────────
+(function init() {
+  renderPositionGrid();
+
+  // Restore saved position
+  const saved = localStorage.getItem('bcp_position');
+  if (saved && POSITIONS.find(p=>p.id===saved)) {
+    state.position = saved;
+    renderHome();
+    goTo('screen-home');
+  }
+
+  // PWA install prompt
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
