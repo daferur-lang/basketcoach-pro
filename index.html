@@ -14,33 +14,74 @@
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- SVG ICON SPRITE -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+      <symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M3 9v6m3-8v10m12-10v10m3-8v6M6 12h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10m6 10V4m6 16v-8m6 8v-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-arrow-mini" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5v14l11-7z" fill="currentColor"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><rect x="7" y="5" width="3.5" height="14" rx="1" fill="currentColor"/><rect x="13.5" y="5" width="3.5" height="14" rx="1" fill="currentColor"/></symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+      <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+      <symbol id="i-heart-fill" viewBox="0 0 24 24"><path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10z" fill="currentColor"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5 10 17l9-10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+      <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3s5 4 5 9a5 5 0 0 1-10 0c0-2 1-3 1-3s-1 4 2 5c0-3 2-5 2-5s2 1 2 4-1 4-1 4 4-1 4-5-5-9-5-9z" fill="currentColor"/></symbol>
+      <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="currentColor"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+      <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 7h13l-3-3m3 3-3 3M17 17H4l3 3m-3-3 3-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v6a4 4 0 0 1-8 0zM6 4H4v2a3 3 0 0 0 3 3M18 4h2v2a3 3 0 0 1-3 3M10 14h4v3h2v3H8v-3h2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+      <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17 9 11l4 4 8-8M14 5h7v7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2zm0 0v14M8 7h8M8 11h8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+      <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3v18M5.5 5.5c4 3 9 3 13 0M5.5 18.5c4-3 9-3 13 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+      <symbol id="i-logo" viewBox="0 0 32 32"><path d="M16 2 L28 9 L28 23 L16 30 L4 23 L4 9 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M11 11 v10 M11 11 h4 a3 3 0 0 1 0 6 h-4 M11 17 h4 a3 3 0 0 1 0 6 h-4 M21 13 v6 M18 13 h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    </defs>
+  </svg>
 
   <style>
     /* ── DESIGN TOKENS ─────────────────────────────── */
     :root {
-      --bg:        #08080f;
-      --bg2:       #10101a;
-      --card:      #181825;
-      --card2:     #1e1e2e;
-      --border:    rgba(255,107,0,.12);
-      --orange:    #FF6B00;
-      --orange2:   #FF8C42;
-      --gold:      #FFD060;
-      --text:      #f0f0ff;
-      --text2:     #8888aa;
-      --text3:     #44445a;
-      --green:     #00e676;
-      --red:       #ff4d6d;
-      --r:         18px;
-      --rs:        10px;
+      --bg:           #0a0a0a;
+      --bg-elev:      #111111;
+      --card:         #141414;
+      --card-hover:   #1a1a1a;
+      --border:       #1f1f1f;
+      --border-soft:  #181818;
+      --border-strong:#2a2a2a;
+      --accent:       #FF5500;
+      --accent-soft:  rgba(255,85,0,.08);
+      --accent-mid:   rgba(255,85,0,.16);
+      --text:         #fafafa;
+      --text-muted:   #8a8a8a;
+      --text-dim:     #555;
+      --success:      #22c55e;
+      --warn:         #f59e0b;
+      --danger:       #ef4444;
+      --r:   16px;
+      --rs:  10px;
+      --rxl: 22px;
+      --shadow-1: 0 1px 0 rgba(255,255,255,.02) inset, 0 1px 2px rgba(0,0,0,.4);
+      --shadow-2: 0 8px 32px rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.04) inset;
+      --ease: cubic-bezier(.22,1,.36,1);
     }
 
     /* ── RESET ─────────────────────────────────────── */
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     html { scroll-behavior: smooth; }
     body {
-      font-family:'Inter',system-ui,sans-serif;
+      font-family: 'Inter', -apple-system, system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100dvh;
@@ -48,67 +89,73 @@
       margin: 0 auto;
       overflow-x: hidden;
       position: relative;
+      font-feature-settings: 'cv11','ss01','ss03';
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
-    button { border:none; cursor:pointer; font-family:inherit; }
+    button { border:none; cursor:pointer; font-family:inherit; color:inherit; background:transparent; }
     a { text-decoration: none; color: inherit; }
+    svg { display:block; }
 
-    /* ── SCREEN SYSTEM ─────────────────────────────── */
-    .screen { display:none; min-height:100dvh; animation: fadeUp .35s ease both; }
-    .screen.active { display:flex; flex-direction:column; }
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(18px); }
-      to   { opacity:1; transform:translateY(0); }
+    /* ── SCREEN SYSTEM (slide lateral) ─────────────── */
+    .screen { display:none; min-height:100dvh; }
+    .screen.active { display:flex; flex-direction:column; animation: slideIn .42s var(--ease) both; }
+    @keyframes slideIn {
+      from { opacity:0; transform:translateX(14px); }
+      to   { opacity:1; transform:translateX(0); }
     }
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 
     /* ── SCROLLABLE BODY AREA ──────────────────────── */
     .scroll-area {
       flex:1;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      padding-bottom: 90px;
+      padding-bottom: 96px;
     }
     .scroll-area::-webkit-scrollbar { display:none; }
 
-    /* ── COURT BACKGROUND ──────────────────────────── */
+    /* ── AMBIENT BG (sutil, sin gradientes saturados) */
     .court-bg {
       position: fixed; inset:0; pointer-events:none; z-index:0;
-      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255,107,0,.08) 0%, transparent 70%);
-    }
-    .court-bg::after {
-      content:'';
-      position:absolute;
-      bottom:0; left:0; right:0;
-      height:300px;
-      background: radial-gradient(ellipse 60% 40% at 50% 110%, rgba(255,107,0,.06) 0%, transparent 70%);
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -20%, rgba(255,85,0,.045) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 40% at 50% 120%, rgba(255,85,0,.035) 0%, transparent 60%);
     }
 
     /* ── TYPOGRAPHY ────────────────────────────────── */
-    .title-xl { font-family:'Oswald',sans-serif; font-size:2.8rem; font-weight:700; line-height:1.1; letter-spacing:.5px; }
-    .title-lg { font-family:'Oswald',sans-serif; font-size:2rem; font-weight:700; line-height:1.2; }
-    .title-md { font-family:'Oswald',sans-serif; font-size:1.4rem; font-weight:600; }
-    .title-sm { font-family:'Oswald',sans-serif; font-size:1.1rem; font-weight:600; letter-spacing:.3px; }
-    .body-md   { font-size:.9rem; line-height:1.5; }
-    .body-sm   { font-size:.8rem; line-height:1.4; }
-    .label     { font-size:.7rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; }
-    .clr2      { color: var(--text2); }
-    .clr-orange { color: var(--orange); }
-    .clr-gold   { color: var(--gold); }
+    .display-xl{ font-family:'Inter Tight',sans-serif; font-size:3.4rem; font-weight:800; line-height:.95; letter-spacing:-.04em; }
+    .display-lg{ font-family:'Inter Tight',sans-serif; font-size:2.4rem; font-weight:700; line-height:1.05; letter-spacing:-.03em; }
+    .display-md{ font-family:'Inter Tight',sans-serif; font-size:1.7rem; font-weight:700; line-height:1.1;  letter-spacing:-.025em; }
+    .display-sm{ font-family:'Inter Tight',sans-serif; font-size:1.25rem;font-weight:700; line-height:1.15; letter-spacing:-.02em; }
+    .num-xl    { font-family:'Inter Tight',sans-serif; font-size:1.9rem; font-weight:700; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+    .num-mono  { font-variant-numeric:tabular-nums; }
+    .body-md   { font-size:.92rem; line-height:1.55; color:var(--text-muted); }
+    .body-sm   { font-size:.82rem; line-height:1.5;  color:var(--text-muted); }
+    .label     { font-size:.68rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--text-dim); }
+    .label-accent { font-size:.68rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); }
+    .text-dim  { color: var(--text-dim); }
+    .text-muted{ color: var(--text-muted); }
+    .text-accent{color: var(--accent); }
 
     /* ── BUTTON ─────────────────────────────────────── */
     .btn {
-      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
-      padding:.9rem 1.8rem; border-radius:50px; font-weight:600;
-      font-size:.95rem; transition:all .2s; letter-spacing:.3px;
+      display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
+      padding:.95rem 1.6rem; border-radius:12px; font-weight:600;
+      font-size:.94rem; transition:transform .15s var(--ease), background .2s, border-color .2s;
+      letter-spacing:-.005em; will-change:transform;
     }
+    .btn svg { width:18px; height:18px; }
     .btn-primary {
-      background: linear-gradient(135deg,var(--orange),var(--orange2));
-      color:#fff; box-shadow:0 4px 24px rgba(255,107,0,.35);
+      background: var(--accent);
+      color:#fff;
+      box-shadow: 0 0 0 1px rgba(255,85,0,.5) inset, 0 8px 24px -8px rgba(255,85,0,.45);
     }
-    .btn-primary:active { transform:scale(.96); box-shadow:0 2px 12px rgba(255,107,0,.25); }
-    .btn-ghost {
-      background: var(--card); color: var(--text2); border:1px solid var(--border);
+    .btn-primary:active { transform: scale(.97); }
+    .btn-secondary {
+      background: var(--card); color: var(--text); border:1px solid var(--border-strong);
     }
-    .btn-ghost:active { background: var(--card2); }
+    .btn-secondary:active { transform:scale(.97); background:var(--card-hover); }
     .btn-block { width:100%; }
 
     /* ── CARD ───────────────────────────────────────── */
@@ -116,26 +163,25 @@
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--r);
-      padding: 1.2rem;
-      transition: all .2s;
+      padding: 1.1rem;
+      transition: transform .18s var(--ease), border-color .18s, background .18s;
     }
-    .card:active { background: var(--card2); transform:scale(.99); }
-    .card-glow {
-      box-shadow: 0 0 0 0 transparent;
-      transition: box-shadow .3s;
-    }
-    .card-glow:hover { box-shadow:0 0 30px rgba(255,107,0,.12); }
+    .card:active { transform: scale(.985); background: var(--card-hover); }
+    .card-tactile { cursor:pointer; }
+    .card-tactile:hover { border-color: var(--border-strong); }
 
-    /* ── BADGE ──────────────────────────────────────── */
-    .badge {
-      display:inline-flex; align-items:center; gap:.3rem;
-      padding:.25rem .7rem; border-radius:50px; font-size:.72rem;
-      font-weight:600; letter-spacing:.3px;
+    /* ── BADGE / CHIP ───────────────────────────────── */
+    .chip {
+      display:inline-flex; align-items:center; gap:.35rem;
+      padding:.32rem .65rem; border-radius:7px;
+      font-size:.72rem; font-weight:600; letter-spacing:.01em;
+      background: var(--bg-elev); color: var(--text-muted);
+      border:1px solid var(--border);
     }
-    .badge-orange { background:rgba(255,107,0,.15); color:var(--orange); border:1px solid rgba(255,107,0,.25); }
-    .badge-gold   { background:rgba(255,208,96,.12); color:var(--gold);   border:1px solid rgba(255,208,96,.2); }
-    .badge-green  { background:rgba(0,230,118,.12);  color:var(--green);  border:1px solid rgba(0,230,118,.2); }
-    .badge-gray   { background:rgba(255,255,255,.06); color:var(--text2);  border:1px solid var(--border); }
+    .chip svg { width:13px; height:13px; }
+    .chip-accent { color: var(--accent); background: var(--accent-soft); border-color: rgba(255,85,0,.18); }
+    .chip-success{ color: var(--success); background: rgba(34,197,94,.08); border-color: rgba(34,197,94,.2); }
+    .chip-warn   { color: var(--warn);    background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.2); }
 
     /* ── DIVIDER ────────────────────────────────────── */
     .divider { height:1px; background:var(--border); margin:1rem 0; }
@@ -143,356 +189,466 @@
     /* ── TOP BAR ────────────────────────────────────── */
     .topbar {
       display:flex; align-items:center; justify-content:space-between;
-      padding:1rem 1.2rem .8rem;
+      padding:1rem 1.2rem .9rem;
       position:sticky; top:0; z-index:10;
-      background:rgba(8,8,15,.85); backdrop-filter:blur(16px);
-      -webkit-backdrop-filter:blur(16px);
+      background:rgba(10,10,10,.78); backdrop-filter:blur(20px) saturate(140%);
+      -webkit-backdrop-filter:blur(20px) saturate(140%);
       border-bottom:1px solid var(--border);
     }
-    .topbar-back {
+    .icon-btn {
       width:36px; height:36px; border-radius:10px;
-      background:var(--card); border:1px solid var(--border);
+      background:transparent; border:1px solid transparent;
       display:flex; align-items:center; justify-content:center;
-      color:var(--text); font-size:1.1rem; cursor:pointer;
+      color:var(--text); transition: background .15s, border-color .15s, transform .15s var(--ease);
     }
-    .topbar-title { font-family:'Oswald',sans-serif; font-size:1.2rem; font-weight:600; }
-    .topbar-action {
-      width:36px; height:36px; border-radius:10px;
-      background:transparent; display:flex; align-items:center; justify-content:center;
-      color:var(--text2); font-size:1.1rem; cursor:pointer;
-    }
+    .icon-btn:hover { background: var(--card); border-color: var(--border); }
+    .icon-btn:active { transform: scale(.92); }
+    .icon-btn svg { width:20px; height:20px; }
+    .topbar-title { font-family:'Inter Tight',sans-serif; font-size:1.02rem; font-weight:700; letter-spacing:-.01em; }
 
     /* ── BOTTOM NAV ─────────────────────────────────── */
     .bottom-nav {
       position:fixed; bottom:0; left:50%; transform:translateX(-50%);
       width:100%; max-width:430px; z-index:20;
-      background:rgba(8,8,15,.92); backdrop-filter:blur(20px);
-      -webkit-backdrop-filter:blur(20px);
+      background:rgba(10,10,10,.88); backdrop-filter:blur(24px) saturate(140%);
+      -webkit-backdrop-filter:blur(24px) saturate(140%);
       border-top:1px solid var(--border);
       display:flex; align-items:center;
-      padding:.6rem .5rem calc(.6rem + env(safe-area-inset-bottom));
+      padding:.65rem .5rem calc(.65rem + env(safe-area-inset-bottom));
     }
     .nav-item {
-      flex:1; display:flex; flex-direction:column; align-items:center; gap:.2rem;
-      padding:.3rem .2rem; cursor:pointer; transition:all .2s;
-      border-radius:var(--rs); color:var(--text3);
+      flex:1; display:flex; flex-direction:column; align-items:center; gap:.25rem;
+      padding:.45rem .2rem; cursor:pointer; transition:color .2s, transform .15s var(--ease);
+      color: var(--text-dim); position:relative;
     }
-    .nav-item.active { color:var(--orange); }
-    .nav-item svg { width:22px; height:22px; }
-    .nav-item span { font-size:.65rem; font-weight:600; letter-spacing:.3px; }
-    .nav-item:active { background:var(--card); }
+    .nav-item svg { width:22px; height:22px; transition: stroke-width .2s; }
+    .nav-item span { font-size:.65rem; font-weight:600; letter-spacing:.01em; }
+    .nav-item.active { color: var(--text); }
+    .nav-item.active::before {
+      content:''; position:absolute; top:-1px; left:50%; transform:translateX(-50%);
+      width:24px; height:2px; background:var(--accent); border-radius:0 0 4px 4px;
+    }
+    .nav-item:active { transform: scale(.94); }
 
     /* ── PROGRESS RING ──────────────────────────────── */
     .progress-ring { position:relative; display:inline-flex; align-items:center; justify-content:center; }
     .progress-ring svg { transform:rotate(-90deg); }
-    .progress-ring .ring-bg  { fill:none; stroke:var(--card2); }
-    .progress-ring .ring-fill { fill:none; stroke:var(--orange); stroke-linecap:round; transition:stroke-dashoffset .6s ease; }
+    .progress-ring .ring-bg  { fill:none; stroke: var(--border); }
+    .progress-ring .ring-fill { fill:none; stroke: var(--accent); stroke-linecap:round; transition:stroke-dashoffset .6s var(--ease); }
     .progress-ring .ring-text {
-      position:absolute; display:flex; flex-direction:column; align-items:center; gap:.1rem;
+      position:absolute; display:flex; flex-direction:column; align-items:center; gap:.15rem;
     }
 
     /* ── PROGRESS BAR ───────────────────────────────── */
-    .prog-bar { height:6px; background:var(--card2); border-radius:3px; overflow:hidden; }
-    .prog-bar-fill { height:100%; background:linear-gradient(90deg,var(--orange),var(--orange2)); border-radius:3px; transition:width .6s ease; }
+    .prog-bar { height:5px; background: var(--border); border-radius:99px; overflow:hidden; }
+    .prog-bar-fill { height:100%; background: var(--accent); border-radius:99px; transition:width .8s var(--ease); }
 
-    /* ── AVATAR POSITION ────────────────────────────── */
+    /* ── POSITION ICON ────────────────────────────── */
     .pos-icon {
-      width:48px; height:48px; border-radius:12px;
-      display:flex; align-items:center; justify-content:center; font-size:1.5rem;
-      flex-shrink:0;
+      width:52px; height:52px; border-radius:13px;
+      background: var(--bg-elev); border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+      font-family:'Inter Tight',sans-serif; font-weight:800; font-size:1.5rem;
+      color: var(--text); letter-spacing:-.02em;
+      position:relative;
+    }
+    .pos-icon::after {
+      content:''; position:absolute; inset:0; border-radius:13px;
+      background: linear-gradient(135deg, rgba(255,85,0,.15) 0%, transparent 60%);
+      pointer-events:none;
     }
 
     /* ── DIFFICULTY DOTS ─────────────────────────────── */
-    .diff-dots { display:flex; gap:.25rem; }
-    .diff-dot { width:7px; height:7px; border-radius:50%; background:var(--card2); }
-    .diff-dot.fill { background:var(--orange); }
+    .diff-dots { display:inline-flex; gap:3px; }
+    .diff-dot { width:5px; height:5px; border-radius:50%; background:var(--border-strong); }
+    .diff-dot.fill { background: var(--accent); }
 
-    /* ── TIMER RING ─────────────────────────────────── */
-    #timer-ring .ring-fill { stroke: var(--orange); }
-    #timer-display { font-family:'Oswald',sans-serif; font-size:2.4rem; font-weight:700; }
+    /* ── TIMER ──────────────────────────────────────── */
+    #timer-ring .ring-fill { stroke: var(--accent); stroke-width:5; }
+    #timer-display {
+      font-family:'Inter Tight',sans-serif; font-size:2.6rem; font-weight:800;
+      font-variant-numeric:tabular-nums; letter-spacing:-.04em;
+    }
+
+    /* ── TOAST ──────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--text); color: var(--bg); padding: .75rem 1.2rem;
+      border-radius: 999px; font-size:.85rem; font-weight: 600;
+      display: flex; align-items: center; gap: .5rem;
+      opacity: 0; pointer-events: none; z-index: 100;
+      transition: opacity .25s, transform .35s var(--ease);
+      box-shadow: var(--shadow-2);
+    }
+    .toast svg { width: 16px; height: 16px; color: var(--success); }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     /* ═══════════════════════════════════════════════════
        SCREEN 1 — WELCOME
     ═══════════════════════════════════════════════════ */
     #screen-welcome {
-      justify-content: center;
-      align-items: center;
+      justify-content: space-between;
       min-height: 100dvh;
-      padding: 2rem 1.5rem;
+      padding: 2.5rem 1.6rem 2rem;
       position: relative;
       overflow: hidden;
     }
-    .welcome-ball {
-      width:260px; height:260px; border-radius:50%;
-      background: radial-gradient(circle at 35% 35%, #FF8C42, #CC4400);
-      position:absolute; top:-80px; right:-80px; opacity:.12;
-      animation: floatBall 6s ease-in-out infinite;
+    .welcome-orb {
+      position:absolute; top:-180px; left:50%; transform:translateX(-50%);
+      width:520px; height:520px; border-radius:50%;
+      background: radial-gradient(circle at 50% 50%, rgba(255,85,0,.22) 0%, rgba(255,85,0,.04) 35%, transparent 60%);
+      pointer-events:none; filter:blur(10px);
     }
-    .welcome-ball-2 {
-      width:160px; height:160px; border-radius:50%;
-      background: radial-gradient(circle at 35% 35%, #FF8C42, #CC4400);
-      position:absolute; bottom:-40px; left:-40px; opacity:.08;
-      animation: floatBall 4s ease-in-out infinite reverse;
+    .welcome-grid {
+      position:absolute; inset:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, #000 30%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, #000 30%, transparent 75%);
+      pointer-events:none;
     }
-    @keyframes floatBall {
-      0%,100% { transform: translateY(0) rotate(0deg); }
-      50%      { transform: translateY(-20px) rotate(15deg); }
-    }
-    .welcome-logo {
-      width:90px; height:90px; border-radius:24px;
-      background: linear-gradient(135deg, var(--orange), #FF4500);
+    .welcome-content { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; text-align:center; margin-top: 3rem; }
+    .welcome-mark {
+      width:64px; height:64px; border-radius:16px;
+      background: linear-gradient(180deg, #1a1a1a, #0d0d0d);
+      border:1px solid var(--border-strong);
       display:flex; align-items:center; justify-content:center;
-      font-size:2.5rem; margin-bottom:1.5rem;
-      box-shadow: 0 8px 32px rgba(255,107,0,.4);
-      animation: pulseLogo 3s ease-in-out infinite;
+      color: var(--accent);
+      box-shadow: 0 12px 32px -8px rgba(255,85,0,.35), 0 0 0 1px rgba(255,85,0,.2) inset;
+      margin-bottom:2rem;
     }
-    @keyframes pulseLogo {
-      0%,100% { box-shadow:0 8px 32px rgba(255,107,0,.4); }
-      50%      { box-shadow:0 8px 48px rgba(255,107,0,.65); }
+    .welcome-mark svg { width:38px; height:38px; }
+    .welcome-eyebrow {
+      font-size:.7rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase;
+      color: var(--accent); margin-bottom:1.1rem;
+      display:inline-flex; align-items:center; gap:.5rem;
     }
-    .welcome-content { position:relative; z-index:1; text-align:center; }
+    .welcome-eyebrow::before, .welcome-eyebrow::after {
+      content:''; width:18px; height:1px; background: var(--accent); opacity:.5;
+    }
+    .welcome-title { max-width:340px; }
     .welcome-tagline {
-      font-size:1rem; color:var(--text2); max-width:280px; margin:.8rem auto 2.5rem;
-      line-height:1.6;
+      font-size:1.02rem; color:var(--text-muted); max-width:320px; margin:1.2rem auto 0;
+      line-height:1.55;
     }
-    .welcome-features { display:flex; gap:.8rem; margin:2rem auto; justify-content:center; flex-wrap:wrap; }
+    .welcome-stats {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem;
+      margin: 2.5rem 0 2rem; width:100%; max-width:340px;
+    }
+    .welcome-stat {
+      padding:.85rem .5rem; border:1px solid var(--border); border-radius:12px;
+      background: var(--card); text-align:center;
+    }
+    .welcome-stat-num { font-family:'Inter Tight',sans-serif; font-size:1.3rem; font-weight:700; letter-spacing:-.02em; }
+    .welcome-stat-lbl { font-size:.66rem; color: var(--text-dim); text-transform:uppercase; letter-spacing:.08em; font-weight:600; margin-top:.2rem; }
+    .welcome-footer { position:relative; z-index:1; width:100%; }
 
     /* ═══════════════════════════════════════════════════
        SCREEN 2 — POSITION SELECT
     ═══════════════════════════════════════════════════ */
-    .pos-select-header { padding:1.5rem 1.2rem 1rem; }
-    .pos-grid { display:flex; flex-direction:column; gap:.9rem; padding:0 1.2rem 2rem; }
+    .pos-select-header { padding:1.6rem 1.2rem 1.2rem; }
+    .pos-grid { display:flex; flex-direction:column; gap:.7rem; padding:0 1.2rem 2rem; }
 
     .pos-card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--r);
-      padding: 1.2rem;
+      padding: 1.1rem 1.2rem;
       display: flex; align-items: center; gap: 1rem;
-      cursor: pointer; transition: all .2s;
+      cursor: pointer; transition: border-color .2s, transform .15s var(--ease), background .2s;
       position: relative; overflow: hidden;
     }
-    .pos-card::before {
-      content:''; position:absolute; right:-20px; top:50%; transform:translateY(-50%);
-      width:80px; height:80px; border-radius:50%;
-      background:currentColor; opacity:.04;
-      transition: all .3s;
-    }
-    .pos-card:active { transform:scale(.98); background:var(--card2); }
+    .pos-card:hover  { border-color: var(--border-strong); background: var(--card-hover); }
+    .pos-card:active { transform:scale(.99); }
     .pos-card.selected {
-      border-color: var(--orange);
-      background: rgba(255,107,0,.08);
-      box-shadow: 0 0 0 1px rgba(255,107,0,.2);
+      border-color: var(--accent);
+      background: var(--accent-soft);
     }
-    .pos-card-info { flex:1; }
-    .pos-card-name { font-family:'Oswald',sans-serif; font-size:1.25rem; font-weight:700; }
-    .pos-card-en { color:var(--text2); font-size:.8rem; margin:.15rem 0 .5rem; }
-    .pos-card-tags { display:flex; gap:.4rem; flex-wrap:wrap; }
-    .pos-card-arrow { color:var(--text3); font-size:1.1rem; }
+    .pos-card-info { flex:1; min-width:0; }
+    .pos-card-name { font-family:'Inter Tight',sans-serif; font-size:1.15rem; font-weight:700; letter-spacing:-.02em; }
+    .pos-card-en { color:var(--text-dim); font-size:.78rem; margin:.1rem 0 .5rem; font-weight:500; }
+    .pos-card-tags { display:flex; gap:.35rem; flex-wrap:wrap; }
+    .pos-card-arrow { color:var(--text-dim); display:flex; }
+    .pos-card-arrow svg { width:18px; height:18px; }
 
     /* ═══════════════════════════════════════════════════
        SCREEN 3 — HOME DASHBOARD
     ═══════════════════════════════════════════════════ */
-    .home-header {
-      padding: 1.2rem 1.2rem .4rem;
-      background: linear-gradient(180deg, rgba(255,107,0,.06) 0%, transparent 100%);
-    }
-    .home-greeting { color:var(--text2); font-size:.9rem; }
-    .home-title { font-family:'Oswald',sans-serif; font-size:1.6rem; font-weight:700; }
+    .home-header { padding: 1.4rem 1.2rem .8rem; }
+    .home-greeting { color: var(--text-dim); font-size:.78rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; }
+    .home-title { font-family:'Inter Tight',sans-serif; font-size:1.9rem; font-weight:800; letter-spacing:-.03em; margin-top:.15rem; }
     .home-pos-badge {
-      display:inline-flex; align-items:center; gap:.4rem; margin-top:.4rem;
-      padding:.3rem .8rem; background:rgba(255,107,0,.12);
-      border:1px solid rgba(255,107,0,.2); border-radius:50px;
-      font-size:.78rem; font-weight:600; color:var(--orange);
+      display:inline-flex; align-items:center; gap:.45rem; margin-top:.7rem;
+      padding:.4rem .8rem; background: var(--accent-soft);
+      border:1px solid rgba(255,85,0,.18); border-radius:8px;
+      font-size:.78rem; font-weight:600; color: var(--accent);
     }
+    .home-pos-badge svg { width:14px; height:14px; }
 
-    .stats-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.7rem; padding:1rem 1.2rem; }
+    .stats-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.6rem; padding:.7rem 1.2rem 0; }
     .stat-card {
-      background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
-      padding:.9rem .8rem; text-align:center;
+      background: var(--card); border:1px solid var(--border); border-radius:12px;
+      padding:.95rem .8rem; display:flex; flex-direction:column; gap:.25rem;
     }
-    .stat-num { font-family:'Oswald',sans-serif; font-size:1.6rem; font-weight:700; color:var(--orange); }
-    .stat-lbl { font-size:.68rem; color:var(--text2); font-weight:500; margin-top:.15rem; letter-spacing:.3px; text-transform:uppercase; }
+    .stat-card-head { display:flex; align-items:center; gap:.35rem; color: var(--text-dim); }
+    .stat-card-head svg { width:13px; height:13px; }
+    .stat-lbl { font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color: var(--text-dim); }
+    .stat-num { font-family:'Inter Tight',sans-serif; font-size:1.6rem; font-weight:700; letter-spacing:-.03em; color: var(--text); }
 
-    .section-header { display:flex; align-items:center; justify-content:space-between; padding:.6rem 1.2rem .4rem; }
-    .section-title { font-family:'Oswald',sans-serif; font-size:1.05rem; font-weight:600; }
-    .section-link { font-size:.8rem; color:var(--orange); font-weight:600; }
+    .section-header { display:flex; align-items:center; justify-content:space-between; padding:1.4rem 1.2rem .7rem; }
+    .section-title { font-family:'Inter Tight',sans-serif; font-size:1rem; font-weight:700; letter-spacing:-.015em; display:flex; align-items:center; gap:.5rem; }
+    .section-title svg { width:16px; height:16px; color: var(--text-dim); }
+    .section-link { font-size:.8rem; color: var(--accent); font-weight:600; display:inline-flex; align-items:center; gap:.25rem; cursor:pointer; }
+    .section-link svg { width:13px; height:13px; }
 
     .today-card {
-      margin:0 1.2rem; background:var(--card); border:1px solid var(--border); border-radius:var(--r);
+      margin:0 1.2rem; background:var(--card); border:1px solid var(--border); border-radius: var(--r);
       overflow:hidden;
     }
     .today-card-header {
-      background: linear-gradient(135deg, rgba(255,107,0,.2), rgba(255,107,0,.05));
-      padding:1rem 1.2rem; display:flex; align-items:center; gap:.8rem;
+      padding:1.1rem 1.2rem .9rem; display:flex; align-items:center; gap:.85rem;
       border-bottom:1px solid var(--border);
     }
-    .today-icon { width:40px; height:40px; border-radius:10px; background:rgba(255,107,0,.2); display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
-    .today-card-body { padding:1rem 1.2rem; }
-    .today-drill { display:flex; align-items:center; gap:.8rem; padding:.7rem 0; border-bottom:1px solid var(--border); }
+    .today-icon {
+      width:38px; height:38px; border-radius:10px;
+      background: var(--accent-soft); border:1px solid rgba(255,85,0,.18);
+      display:flex; align-items:center; justify-content:center; color: var(--accent);
+    }
+    .today-icon svg { width:18px; height:18px; }
+    .today-card-body { padding:.5rem 1.2rem 1rem; }
+    .today-drill { display:flex; align-items:center; gap:.85rem; padding:.7rem 0; border-bottom:1px solid var(--border); }
     .today-drill:last-child { border-bottom:none; }
     .today-drill-num {
-      width:28px; height:28px; border-radius:8px; background:rgba(255,107,0,.12);
-      border:1px solid rgba(255,107,0,.2); display:flex; align-items:center; justify-content:center;
-      font-family:'Oswald',sans-serif; font-size:.85rem; color:var(--orange); flex-shrink:0;
+      width:26px; height:26px; border-radius:7px; background: var(--bg-elev);
+      border:1px solid var(--border-strong); display:flex; align-items:center; justify-content:center;
+      font-family:'Inter Tight',sans-serif; font-size:.78rem; font-weight:700; color: var(--text-muted); flex-shrink:0;
     }
-    .today-drill-info { flex:1; }
-    .today-drill-name { font-size:.88rem; font-weight:600; }
-    .today-drill-meta { font-size:.76rem; color:var(--text2); margin-top:.1rem; }
-    .today-drill-check { color:var(--green); font-size:1rem; }
+    .today-drill-info { flex:1; min-width:0; }
+    .today-drill-name { font-size:.88rem; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .today-drill-meta { font-size:.74rem; color: var(--text-dim); margin-top:.15rem; }
+    .today-drill-check { color: var(--success); display:flex; }
+    .today-drill-check svg { width:18px; height:18px; }
 
-    .modules-scroll { display:flex; gap:.9rem; padding:.4rem 1.2rem 1rem; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .modules-scroll { display:flex; gap:.6rem; padding:.2rem 1.2rem 1rem; overflow-x:auto; -webkit-overflow-scrolling:touch; }
     .modules-scroll::-webkit-scrollbar { display:none; }
     .module-chip {
-      flex-shrink:0; background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
-      padding:.85rem 1rem; cursor:pointer; transition:all .2s; min-width:130px; text-align:center;
+      flex-shrink:0; background: var(--card); border:1px solid var(--border); border-radius:12px;
+      padding:.95rem 1.05rem; cursor:pointer; transition:all .18s var(--ease); min-width:138px;
+      display:flex; flex-direction:column; gap:.45rem;
     }
-    .module-chip:active { background:var(--card2); transform:scale(.97); }
-    .module-chip.active-module { border-color:var(--orange); background:rgba(255,107,0,.08); }
-    .module-chip-icon { font-size:1.5rem; margin-bottom:.4rem; }
-    .module-chip-name { font-size:.82rem; font-weight:600; }
-    .module-chip-count { font-size:.72rem; color:var(--text2); margin-top:.15rem; }
+    .module-chip:active { transform: scale(.97); }
+    .module-chip:hover  { border-color: var(--border-strong); }
+    .module-chip.active-module {
+      border-color: var(--accent); background: var(--accent-soft);
+    }
+    .module-chip-icon { color: var(--text-muted); display:flex; }
+    .module-chip-icon svg { width:18px; height:18px; }
+    .module-chip.active-module .module-chip-icon { color: var(--accent); }
+    .module-chip-name { font-size:.85rem; font-weight:600; }
+    .module-chip-count { font-size:.7rem; color: var(--text-dim); font-weight:500; }
 
     /* ═══════════════════════════════════════════════════
        SCREEN 4 — TRAINING / DRILLS LIST
     ═══════════════════════════════════════════════════ */
-    .drills-grid { display:flex; flex-direction:column; gap:.8rem; padding:1rem 1.2rem; }
+    .filter-tabs-wrap {
+      overflow-x:auto; -webkit-overflow-scrolling:touch;
+      border-bottom:1px solid var(--border);
+    }
+    .filter-tabs-wrap::-webkit-scrollbar { display:none; }
+    .filter-tabs { display:flex; gap:.4rem; padding:.75rem 1.2rem; width:max-content; }
+    .filter-tab {
+      flex-shrink:0; padding:.5rem .9rem; border-radius:8px; cursor:pointer;
+      font-size:.8rem; font-weight:600; color: var(--text-muted);
+      background: var(--card); border:1px solid var(--border);
+      transition: all .15s var(--ease); white-space:nowrap;
+    }
+    .filter-tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .filter-tab:active { transform: scale(.97); }
+
+    .drills-grid { display:flex; flex-direction:column; gap:.6rem; padding:1rem 1.2rem; }
     .drill-item {
-      background:var(--card); border:1px solid var(--border); border-radius:var(--r);
-      padding:1.1rem; display:flex; align-items:center; gap:.9rem; cursor:pointer;
-      transition:all .2s;
+      background: var(--card); border:1px solid var(--border); border-radius: var(--r);
+      padding: 1rem 1.05rem; display:flex; align-items:center; gap:.9rem; cursor:pointer;
+      transition: border-color .15s, transform .15s var(--ease), background .15s;
     }
-    .drill-item:active { background:var(--card2); transform:scale(.99); }
+    .drill-item:hover  { border-color: var(--border-strong); }
+    .drill-item:active { transform:scale(.99); background: var(--card-hover); }
     .drill-thumb {
-      width:52px; height:52px; border-radius:12px;
-      background: linear-gradient(135deg, rgba(255,107,0,.2), rgba(255,107,0,.05));
-      border:1px solid rgba(255,107,0,.15);
-      display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;
+      width:44px; height:44px; border-radius:11px;
+      background: var(--bg-elev); border:1px solid var(--border-strong);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+      color: var(--text-muted);
     }
-    .drill-info { flex:1; }
-    .drill-name { font-weight:600; font-size:.92rem; }
-    .drill-meta { display:flex; align-items:center; gap:.6rem; margin-top:.4rem; }
-    .drill-arrow { color:var(--text3); }
+    .drill-thumb svg { width:20px; height:20px; }
+    .drill-info { flex:1; min-width:0; }
+    .drill-name { font-weight:600; font-size:.93rem; letter-spacing:-.005em; }
+    .drill-meta { display:flex; align-items:center; gap:.5rem; margin-top:.4rem; flex-wrap:wrap; }
+    .drill-arrow { color: var(--text-dim); display:flex; }
+    .drill-arrow svg { width:18px; height:18px; }
 
     /* ═══════════════════════════════════════════════════
        SCREEN 5 — DRILL DETAIL
     ═══════════════════════════════════════════════════ */
-    .drill-hero {
-      background: linear-gradient(180deg, rgba(255,107,0,.15) 0%, transparent 100%);
-      padding: 1.5rem 1.2rem 1rem;
-      display: flex; align-items: center; gap: 1rem;
-    }
+    .drill-hero { padding: 1.6rem 1.2rem 1.1rem; display:flex; align-items:center; gap:1rem; }
     .drill-hero-icon {
-      width:72px; height:72px; border-radius:18px;
-      background:linear-gradient(135deg, rgba(255,107,0,.3), rgba(255,107,0,.1));
-      border:1px solid rgba(255,107,0,.3);
-      display:flex; align-items:center; justify-content:center; font-size:2.2rem;
+      width:60px; height:60px; border-radius:15px;
+      background: var(--bg-elev); border:1px solid var(--border-strong);
+      display:flex; align-items:center; justify-content:center;
+      color: var(--accent);
     }
-    .drill-hero-info { flex:1; }
-    .drill-hero-name { font-family:'Oswald',sans-serif; font-size:1.5rem; font-weight:700; line-height:1.2; }
+    .drill-hero-icon svg { width:28px; height:28px; }
+    .drill-hero-info { flex:1; min-width:0; }
+    .drill-hero-name { font-family:'Inter Tight',sans-serif; font-size:1.5rem; font-weight:700; line-height:1.15; letter-spacing:-.025em; }
 
     .timer-section {
-      margin:1rem 1.2rem;
-      background:var(--card); border:1px solid var(--border); border-radius:var(--r);
-      padding:1.5rem; text-align:center;
+      margin: .4rem 1.2rem 1rem;
+      background: var(--card); border:1px solid var(--border); border-radius: var(--r);
+      padding: 1.8rem 1.5rem 1.6rem; text-align:center;
     }
-    .timer-controls { display:flex; gap:.8rem; justify-content:center; margin-top:1.2rem; }
+    .timer-controls { display:flex; gap:.7rem; justify-content:center; margin-top:1.4rem; }
     .timer-btn {
-      width:48px; height:48px; border-radius:50%;
-      display:flex; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer; transition:all .2s;
+      width:46px; height:46px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center; cursor:pointer;
+      transition: transform .12s var(--ease), background .15s, border-color .15s;
     }
-    .timer-btn-start { background:linear-gradient(135deg,var(--orange),var(--orange2)); color:#fff; box-shadow:0 4px 16px rgba(255,107,0,.4); }
-    .timer-btn-reset { background:var(--card2); color:var(--text2); border:1px solid var(--border); }
-    .timer-btn-start:active,.timer-btn-reset:active { transform:scale(.92); }
+    .timer-btn svg { width:20px; height:20px; }
+    .timer-btn-start { background: var(--accent); color:#fff; box-shadow: 0 6px 20px -6px rgba(255,85,0,.5); }
+    .timer-btn-aux   { background: var(--bg-elev); color: var(--text); border:1px solid var(--border-strong); }
+    .timer-btn:active { transform:scale(.92); }
 
     .steps-section { padding:0 1.2rem 1rem; }
-    .step-item { display:flex; gap:.9rem; padding:.9rem 0; border-bottom:1px solid var(--border); }
+    .step-item { display:flex; gap:.95rem; padding:.95rem 0; border-bottom:1px solid var(--border); }
     .step-item:last-child { border-bottom:none; }
     .step-num {
-      width:32px; height:32px; border-radius:10px; flex-shrink:0;
-      background:rgba(255,107,0,.12); border:1px solid rgba(255,107,0,.2);
+      width:28px; height:28px; border-radius:8px; flex-shrink:0;
+      background: var(--bg-elev); border:1px solid var(--border-strong);
       display:flex; align-items:center; justify-content:center;
-      font-family:'Oswald',sans-serif; font-size:.95rem; color:var(--orange);
+      font-family:'Inter Tight',sans-serif; font-size:.82rem; font-weight:700; color: var(--accent);
     }
-    .step-text { font-size:.88rem; line-height:1.55; color:var(--text); padding-top:.3rem; }
-    .step-text strong { color:var(--orange); }
+    .step-content { flex:1; min-width:0; }
+    .step-title { font-weight:700; font-size:.92rem; margin-bottom:.3rem; letter-spacing:-.005em; }
+    .step-text { font-size:.86rem; line-height:1.55; color: var(--text-muted); }
+    .step-text strong { color: var(--text); font-weight:600; }
 
     .tips-section {
-      margin:0 1.2rem 1rem;
-      background:rgba(255,208,96,.05); border:1px solid rgba(255,208,96,.15);
-      border-radius:var(--r); padding:1rem 1.2rem;
+      margin:0 1.2rem 1.2rem;
+      background: var(--card); border:1px solid var(--border);
+      border-left:3px solid var(--accent);
+      border-radius: 12px; padding:1rem 1.2rem;
     }
-    .tips-title { font-size:.78rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--gold); margin-bottom:.6rem; }
-    .tip-row { display:flex; gap:.6rem; margin-bottom:.5rem; font-size:.85rem; color:var(--text2); }
-    .tip-row:last-child { margin-bottom:0; }
-    .tip-icon { color:var(--gold); flex-shrink:0; }
+    .tips-title {
+      font-size:.65rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+      color: var(--accent); margin-bottom:.7rem;
+    }
+    .tip-row {
+      display:flex; gap:.6rem; padding:.4rem 0; font-size:.86rem; color: var(--text-muted);
+      line-height:1.5;
+    }
+    .tip-row svg { width:14px; height:14px; color: var(--accent); flex-shrink:0; margin-top:.2rem; }
 
     /* ═══════════════════════════════════════════════════
        SCREEN 6 — WEEKLY PLAN
     ═══════════════════════════════════════════════════ */
-    .week-header { padding:1.2rem 1.2rem .8rem; }
-    .day-tabs { display:flex; gap:.5rem; padding:.2rem 1.2rem .8rem; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .week-header { padding:1.4rem 1.2rem .8rem; }
+    .day-tabs { display:flex; gap:.45rem; padding:.2rem 1.2rem .8rem; overflow-x:auto; -webkit-overflow-scrolling:touch; }
     .day-tabs::-webkit-scrollbar { display:none; }
     .day-tab {
-      flex-shrink:0; text-align:center; padding:.6rem .9rem; border-radius:var(--rs); cursor:pointer;
-      background:var(--card); border:1px solid var(--border); transition:all .2s; min-width:52px;
+      flex-shrink:0; text-align:center; padding:.7rem .85rem; border-radius:11px; cursor:pointer;
+      background: var(--card); border:1px solid var(--border); transition:all .15s var(--ease); min-width:56px;
     }
-    .day-tab.today  { border-color:var(--orange); background:rgba(255,107,0,.1); }
-    .day-tab.active { border-color:var(--orange); background:var(--orange); }
-    .day-tab.active .day-name, .day-tab.active .day-num { color:#fff; }
-    .day-name { font-size:.68rem; font-weight:600; color:var(--text2); text-transform:uppercase; }
-    .day-num  { font-family:'Oswald',sans-serif; font-size:1.1rem; font-weight:700; }
+    .day-tab.today  { border-color: var(--border-strong); }
+    .day-tab.today .day-num { color: var(--accent); }
+    .day-tab.active { background: var(--text); border-color: var(--text); }
+    .day-tab.active .day-name, .day-tab.active .day-num { color: var(--bg); }
+    .day-name { font-size:.62rem; font-weight:700; color: var(--text-dim); text-transform:uppercase; letter-spacing:.08em; }
+    .day-num  { font-family:'Inter Tight',sans-serif; font-size:1.1rem; font-weight:700; margin-top:.1rem; letter-spacing:-.02em; }
 
     .day-plan-content { padding:0 1.2rem 1rem; }
     .plan-block {
-      background:var(--card); border:1px solid var(--border); border-radius:var(--r); margin-bottom:.9rem;
+      background: var(--card); border:1px solid var(--border); border-radius: var(--r); margin-bottom:.7rem;
       overflow:hidden;
     }
     .plan-block-header {
-      display:flex; align-items:center; gap:.8rem; padding:.9rem 1rem;
+      display:flex; align-items:center; gap:.8rem; padding:.9rem 1.1rem;
       border-bottom:1px solid var(--border);
-      background: linear-gradient(90deg, rgba(255,107,0,.07) 0%, transparent 100%);
     }
-    .plan-block-icon { font-size:1.2rem; }
-    .plan-block-title { font-family:'Oswald',sans-serif; font-size:1rem; font-weight:600; flex:1; }
-    .plan-block-time { font-size:.78rem; color:var(--text2); font-weight:500; }
-    .plan-block-drills { padding:.5rem .5rem; }
-    .plan-drill-row { display:flex; align-items:center; gap:.7rem; padding:.55rem .7rem; border-radius:var(--rs); cursor:pointer; }
-    .plan-drill-row:hover { background:var(--card2); }
-    .plan-drill-dot { width:7px; height:7px; border-radius:50%; background:var(--orange); flex-shrink:0; }
-    .plan-drill-name { flex:1; font-size:.85rem; }
-    .plan-drill-dur  { font-size:.78rem; color:var(--text2); font-weight:500; }
+    .plan-block-icon {
+      width:32px; height:32px; border-radius:9px;
+      background: var(--bg-elev); border:1px solid var(--border-strong);
+      display:flex; align-items:center; justify-content:center; color: var(--accent);
+    }
+    .plan-block-icon svg { width:16px; height:16px; }
+    .plan-block-title { font-family:'Inter Tight',sans-serif; font-size:.98rem; font-weight:700; flex:1; letter-spacing:-.01em; }
+    .plan-block-time { font-size:.74rem; color: var(--text-dim); font-weight:600; }
+    .plan-block-drills { padding:.4rem .5rem .6rem; }
+    .plan-drill-row {
+      display:flex; align-items:center; gap:.8rem; padding:.6rem .7rem; border-radius:8px;
+      cursor:pointer; transition: background .15s;
+    }
+    .plan-drill-row:hover { background: var(--card-hover); }
+    .plan-drill-dot { width:6px; height:6px; border-radius:50%; background: var(--accent); flex-shrink:0; }
+    .plan-drill-dot.done { background: var(--success); }
+    .plan-drill-name { flex:1; font-size:.86rem; }
+    .plan-drill-dur  { font-size:.74rem; color: var(--text-dim); font-weight:600; font-variant-numeric:tabular-nums; }
 
     /* ═══════════════════════════════════════════════════
        SCREEN 7 — PROGRESS
     ═══════════════════════════════════════════════════ */
-    .progress-header { padding:1.2rem 1.2rem .8rem; }
-    .achievements { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; padding:.4rem 1.2rem; }
-    .achievement-card {
-      background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
-      padding:1rem; text-align:center;
+    .progress-header { padding:1.4rem 1.2rem .8rem; }
+
+    .heatmap-card {
+      background: var(--card); border:1px solid var(--border); border-radius: var(--r);
+      padding:1.2rem; margin:0 1.2rem 1rem;
     }
-    .achievement-icon { font-size:2rem; margin-bottom:.4rem; }
-    .achievement-name { font-size:.8rem; font-weight:600; }
-    .achievement-desc { font-size:.72rem; color:var(--text2); margin-top:.15rem; }
-    .achievement-card.locked { opacity:.35; filter:grayscale(.8); }
+    .heatmap-grid {
+      display:grid; grid-template-columns: repeat(12, 1fr); gap:4px;
+      margin-top:.85rem;
+    }
+    .heatmap-cell {
+      aspect-ratio:1; border-radius:3px;
+      background: var(--border);
+      transition: transform .15s var(--ease);
+    }
+    .heatmap-cell.l1 { background: rgba(255,85,0,.22); }
+    .heatmap-cell.l2 { background: rgba(255,85,0,.42); }
+    .heatmap-cell.l3 { background: rgba(255,85,0,.65); }
+    .heatmap-cell.l4 { background: var(--accent); }
+    .heatmap-legend { display:flex; align-items:center; gap:.45rem; margin-top:.7rem; font-size:.7rem; color: var(--text-dim); }
+    .heatmap-legend-cells { display:flex; gap:3px; }
+    .heatmap-legend-cells span { width:11px; height:11px; border-radius:3px; }
+
+    .achievements { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; padding:.4rem 1.2rem; }
+    .achievement-card {
+      background: var(--card); border:1px solid var(--border); border-radius:12px;
+      padding:1.05rem; text-align:center;
+      transition: border-color .15s, transform .15s var(--ease);
+    }
+    .achievement-card:hover { border-color: var(--border-strong); }
+    .achievement-icon { font-size:1.7rem; margin-bottom:.4rem; }
+    .achievement-name { font-size:.82rem; font-weight:600; letter-spacing:-.005em; }
+    .achievement-desc { font-size:.7rem; color: var(--text-dim); margin-top:.2rem; }
+    .achievement-card.locked { opacity:.32; filter:grayscale(.9); }
 
     .cat-progress { padding:.4rem 1.2rem; }
-    .cat-prog-row { margin-bottom:1.1rem; }
-    .cat-prog-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.4rem; }
-    .cat-prog-name { font-size:.88rem; font-weight:600; display:flex; align-items:center; gap:.5rem; }
-    .cat-prog-pct { font-size:.8rem; color:var(--orange); font-weight:700; }
+    .cat-prog-row { margin-bottom:1.2rem; }
+    .cat-prog-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.55rem; }
+    .cat-prog-name { font-size:.86rem; font-weight:600; display:flex; align-items:center; gap:.55rem; }
+    .cat-prog-name svg { width:15px; height:15px; color: var(--text-muted); }
+    .cat-prog-pct { font-size:.82rem; font-family:'Inter Tight',sans-serif; font-weight:700; color: var(--text); font-variant-numeric:tabular-nums; }
+    .cat-prog-meta { font-size:.7rem; color: var(--text-dim); margin-top:.4rem; font-weight:500; }
 
     .chart-bar-area {
-      background:var(--card); border:1px solid var(--border); border-radius:var(--r);
-      padding:1.1rem; margin:0 1.2rem .9rem;
+      background: var(--card); border:1px solid var(--border); border-radius: var(--r);
+      padding:1.2rem; margin:0 1.2rem 1rem;
     }
-    .chart-bars { display:flex; align-items:flex-end; gap:.4rem; height:70px; margin-top:.8rem; }
-    .chart-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:.25rem; }
-    .chart-bar { width:100%; border-radius:4px 4px 0 0; background:var(--card2); transition: height .6s ease; position:relative; }
-    .chart-bar.fill { background: linear-gradient(180deg, var(--orange2), var(--orange)); }
-    .chart-bar.fill.today-bar { background: linear-gradient(180deg, var(--gold), var(--orange)); }
-    .chart-day { font-size:.65rem; color:var(--text3); font-weight:600; }
+    .chart-bars { display:flex; align-items:flex-end; gap:.5rem; height:80px; margin-top:1rem; }
+    .chart-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:.3rem; }
+    .chart-bar { width:100%; border-radius:4px 4px 0 0; background: var(--border); transition: height .8s var(--ease); position:relative; }
+    .chart-bar.fill { background: var(--accent); }
+    .chart-day { font-size:.62rem; color: var(--text-dim); font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+    .chart-col.today .chart-day { color: var(--accent); }
 
     /* ═══════════════════════════════════════════════════
        UTILITIES
@@ -515,21 +671,24 @@
        ║  SCREEN 1 — WELCOME             ║
        ╚══════════════════════════════════╝ -->
   <section id="screen-welcome" class="screen active">
-    <div class="welcome-ball"></div>
-    <div class="welcome-ball-2"></div>
+    <div class="welcome-orb"></div>
+    <div class="welcome-grid"></div>
     <div class="welcome-content">
-      <div class="welcome-logo">🏀</div>
-      <h1 class="title-xl">BASKET<span class="clr-orange">COACH</span><br>PRO</h1>
-      <p class="welcome-tagline">Tu entrenador personal de baloncesto. Tecnificación profesional según tu posición.</p>
-      <div class="welcome-features">
-        <span class="badge badge-orange">📍 5 posiciones</span>
-        <span class="badge badge-gold">⚡ Plan semanal</span>
-        <span class="badge badge-green">📴 Sin internet</span>
+      <div class="welcome-mark"><svg><use href="#i-logo"/></svg></div>
+      <div class="welcome-eyebrow">Coaching Profesional</div>
+      <h1 class="display-xl welcome-title">Domina tu<br><span class="text-accent">posición.</span></h1>
+      <p class="welcome-tagline">Sistema de tecnificación individualizado. Programa semanal, drills guiados y seguimiento real de tu progreso.</p>
+      <div class="welcome-stats">
+        <div class="welcome-stat"><div class="welcome-stat-num">5</div><div class="welcome-stat-lbl">Posiciones</div></div>
+        <div class="welcome-stat"><div class="welcome-stat-num">25+</div><div class="welcome-stat-lbl">Drills</div></div>
+        <div class="welcome-stat"><div class="welcome-stat-num">7d</div><div class="welcome-stat-lbl">Plan</div></div>
       </div>
-      <button class="btn btn-primary btn-block" style="margin-top:1.5rem;font-size:1rem;" onclick="goTo('screen-pos-select')">
-        Empezar entrenamiento →
+    </div>
+    <div class="welcome-footer">
+      <button class="btn btn-primary btn-block" style="font-size:1rem;padding:1.1rem;" onclick="goTo('screen-pos-select')">
+        Comenzar entrenamiento <svg><use href="#i-arrow-right"/></svg>
       </button>
-      <p class="body-sm clr2" style="margin-top:1rem;">Instala la app para usarla offline</p>
+      <p class="body-sm" style="margin-top:.9rem;text-align:center;font-size:.74rem;">Funciona sin internet · Instalable como app</p>
     </div>
   </section>
 
@@ -538,13 +697,15 @@
        ╚══════════════════════════════════╝ -->
   <section id="screen-pos-select" class="screen">
     <div class="topbar">
-      <button class="topbar-back" onclick="goTo('screen-welcome')">←</button>
+      <button class="icon-btn" onclick="goTo('screen-welcome')"><svg><use href="#i-back"/></svg></button>
       <span class="topbar-title">Elige tu posición</span>
-      <div class="topbar-action"></div>
+      <div style="width:36px;"></div>
     </div>
     <div class="scroll-area" style="padding-bottom:2rem;">
       <div class="pos-select-header">
-        <p class="body-md clr2">Tu posición en cancha determina el programa de tecnificación más adecuado para ti.</p>
+        <div class="label-accent" style="margin-bottom:.7rem;">Paso 1 de 1</div>
+        <h2 class="display-md" style="margin-bottom:.55rem;">¿En qué posición juegas?</h2>
+        <p class="body-md">Tu rol en cancha define el programa de tecnificación que vamos a diseñar para ti.</p>
       </div>
       <div class="pos-grid" id="pos-grid"></div>
     </div>
@@ -555,82 +716,70 @@
        ╚══════════════════════════════════╝ -->
   <section id="screen-home" class="screen">
     <div class="topbar">
-      <button class="topbar-back" onclick="goTo('screen-pos-select')" title="Cambiar posición">⇄</button>
+      <button class="icon-btn" onclick="goTo('screen-pos-select')" title="Cambiar posición"><svg><use href="#i-swap"/></svg></button>
       <span class="topbar-title">BasketCoach Pro</span>
-      <button class="topbar-action" onclick="goTo('screen-progress')">📊</button>
+      <button class="icon-btn" onclick="goTo('screen-progress')"><svg><use href="#i-trend"/></svg></button>
     </div>
     <div class="scroll-area">
       <div class="home-header">
-        <div class="home-greeting">Bienvenido de nuevo</div>
+        <div class="home-greeting">Buenas <span id="home-greeting-time">tardes</span></div>
         <div class="home-title" id="home-title">Entrenamiento</div>
-        <div class="home-pos-badge" id="home-pos-badge">🏀 Posición</div>
+        <div class="home-pos-badge" id="home-pos-badge"><svg><use href="#i-target"/></svg> <span>Posición</span></div>
       </div>
 
       <!-- Stats -->
       <div class="stats-row">
         <div class="stat-card">
-          <div class="stat-num" id="stat-sesiones">12</div>
-          <div class="stat-lbl">Sesiones</div>
+          <div class="stat-card-head"><svg><use href="#i-bolt"/></svg><span class="stat-lbl">Sesiones</span></div>
+          <div class="stat-num num-mono" id="stat-sesiones">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num" id="stat-drills">47</div>
-          <div class="stat-lbl">Drills</div>
+          <div class="stat-card-head"><svg><use href="#i-check"/></svg><span class="stat-lbl">Drills</span></div>
+          <div class="stat-num num-mono" id="stat-drills">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num" id="stat-racha">5🔥</div>
-          <div class="stat-lbl">Racha</div>
+          <div class="stat-card-head"><svg style="color:var(--accent)"><use href="#i-flame"/></svg><span class="stat-lbl">Racha</span></div>
+          <div class="stat-num num-mono" id="stat-racha">0</div>
         </div>
       </div>
 
       <!-- Today's workout -->
       <div class="section-header">
-        <span class="section-title">🗓 Entrenamiento de hoy</span>
-        <span class="section-link" onclick="goTo('screen-plan')">Ver plan →</span>
+        <span class="section-title"><svg><use href="#i-calendar"/></svg> Sesión de hoy</span>
+        <span class="section-link" onclick="goTo('screen-plan')">Ver plan <svg><use href="#i-arrow-mini"/></svg></span>
       </div>
       <div class="today-card">
         <div class="today-card-header">
-          <div class="today-icon">⚡</div>
+          <div class="today-icon"><svg><use href="#i-bolt"/></svg></div>
           <div>
-            <div style="font-weight:700;font-size:.95rem;" id="today-session-name">Sesión de hoy</div>
-            <div class="body-sm clr2" id="today-session-meta">3 ejercicios · 45 min</div>
+            <div style="font-weight:700;font-size:.95rem;letter-spacing:-.005em;" id="today-session-name">Sesión de hoy</div>
+            <div class="body-sm" style="margin-top:.15rem;font-size:.76rem;" id="today-session-meta">3 ejercicios · 45 min</div>
           </div>
         </div>
         <div class="today-card-body" id="today-drills-list"></div>
-        <div style="padding:0 1.2rem 1rem;">
-          <button class="btn btn-primary btn-block" onclick="startTodaySession()">▶ Iniciar sesión</button>
+        <div style="padding:0 1.2rem 1.1rem;">
+          <button class="btn btn-primary btn-block" onclick="startTodaySession()"><svg><use href="#i-play"/></svg> Iniciar sesión</button>
         </div>
       </div>
 
       <!-- Modules -->
-      <div class="section-header" style="margin-top:.8rem;">
-        <span class="section-title">📚 Módulos</span>
+      <div class="section-header">
+        <span class="section-title"><svg><use href="#i-book"/></svg> Módulos de entrenamiento</span>
       </div>
       <div class="modules-scroll" id="modules-scroll"></div>
 
       <!-- Quick drills -->
       <div class="section-header">
-        <span class="section-title">⚡ Drills rápidos</span>
-        <span class="section-link" onclick="goTo('screen-training')">Todos →</span>
+        <span class="section-title"><svg><use href="#i-bolt"/></svg> Drills destacados</span>
+        <span class="section-link" onclick="goTo('screen-training')">Ver todos <svg><use href="#i-arrow-mini"/></svg></span>
       </div>
-      <div style="padding:0 1.2rem 1rem;" id="quick-drills"></div>
+      <div style="padding:0 1.2rem 1rem;display:flex;flex-direction:column;gap:.6rem;" id="quick-drills"></div>
     </div>
-    <nav class="bottom-nav" id="bottom-nav-home">
-      <div class="nav-item active" onclick="goTo('screen-home')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        <span>Inicio</span>
-      </div>
-      <div class="nav-item" onclick="goTo('screen-training')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.72L13 18v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5v-5l-2.28 1.65C7.81 18 6 15.21 6 12c0-4.08 3.05-7.44 7-7.93V2.05z"/></svg>
-        <span>Drills</span>
-      </div>
-      <div class="nav-item" onclick="goTo('screen-plan')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-        <span>Plan</span>
-      </div>
-      <div class="nav-item" onclick="goTo('screen-progress')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
-        <span>Progreso</span>
-      </div>
+    <nav class="bottom-nav">
+      <div class="nav-item active" onclick="goTo('screen-home')"><svg><use href="#i-home"/></svg><span>Inicio</span></div>
+      <div class="nav-item" onclick="goTo('screen-training')"><svg><use href="#i-dumbbell"/></svg><span>Drills</span></div>
+      <div class="nav-item" onclick="goTo('screen-plan')"><svg><use href="#i-calendar"/></svg><span>Plan</span></div>
+      <div class="nav-item" onclick="goTo('screen-progress')"><svg><use href="#i-chart"/></svg><span>Progreso</span></div>
     </nav>
   </section>
 
@@ -639,34 +788,21 @@
        ╚══════════════════════════════════╝ -->
   <section id="screen-training" class="screen">
     <div class="topbar">
-      <button class="topbar-back" onclick="goTo('screen-home')">←</button>
-      <span class="topbar-title" id="training-topbar-title">Drills</span>
-      <div class="topbar-action"></div>
+      <button class="icon-btn" onclick="goTo('screen-home')"><svg><use href="#i-back"/></svg></button>
+      <span class="topbar-title" id="training-topbar-title">Biblioteca de Drills</span>
+      <div style="width:36px;"></div>
     </div>
-    <!-- Module filter tabs -->
-    <div style="overflow-x:auto; -webkit-overflow-scrolling:touch; border-bottom:1px solid var(--border);">
-      <div style="display:flex; gap:.5rem; padding:.8rem 1.2rem; width:max-content;" id="module-filter-tabs"></div>
+    <div class="filter-tabs-wrap">
+      <div class="filter-tabs" id="module-filter-tabs"></div>
     </div>
     <div class="scroll-area">
       <div class="drills-grid" id="drills-grid"></div>
     </div>
     <nav class="bottom-nav">
-      <div class="nav-item" onclick="goTo('screen-home')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        <span>Inicio</span>
-      </div>
-      <div class="nav-item active" onclick="goTo('screen-training')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.72L13 18v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5v-5l-2.28 1.65C7.81 18 6 15.21 6 12c0-4.08 3.05-7.44 7-7.93V2.05z"/></svg>
-        <span>Drills</span>
-      </div>
-      <div class="nav-item" onclick="goTo('screen-plan')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-        <span>Plan</span>
-      </div>
-      <div class="nav-item" onclick="goTo('screen-progress')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
-        <span>Progreso</span>
-      </div>
+      <div class="nav-item" onclick="goTo('screen-home')"><svg><use href="#i-home"/></svg><span>Inicio</span></div>
+      <div class="nav-item active" onclick="goTo('screen-training')"><svg><use href="#i-dumbbell"/></svg><span>Drills</span></div>
+      <div class="nav-item" onclick="goTo('screen-plan')"><svg><use href="#i-calendar"/></svg><span>Plan</span></div>
+      <div class="nav-item" onclick="goTo('screen-progress')"><svg><use href="#i-chart"/></svg><span>Progreso</span></div>
     </nav>
   </section>
 
@@ -675,55 +811,55 @@
        ╚══════════════════════════════════╝ -->
   <section id="screen-drill" class="screen">
     <div class="topbar">
-      <button class="topbar-back" id="drill-back-btn" onclick="goTo('screen-training')">←</button>
-      <span class="topbar-title">Detalle del drill</span>
-      <button class="topbar-action" id="drill-fav-btn" onclick="toggleFav()">♡</button>
+      <button class="icon-btn" id="drill-back-btn" onclick="goTo('screen-training')"><svg><use href="#i-back"/></svg></button>
+      <span class="topbar-title">Drill</span>
+      <button class="icon-btn" id="drill-fav-btn" onclick="toggleFav()"><svg id="drill-fav-icon"><use href="#i-heart"/></svg></button>
     </div>
     <div class="scroll-area">
       <div class="drill-hero">
-        <div class="drill-hero-icon" id="drill-detail-icon">🏀</div>
+        <div class="drill-hero-icon" id="drill-detail-icon"><svg><use href="#i-ball"/></svg></div>
         <div class="drill-hero-info">
           <div class="drill-hero-name" id="drill-detail-name">Nombre del Drill</div>
-          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem;" id="drill-detail-badges"></div>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.55rem;" id="drill-detail-badges"></div>
         </div>
       </div>
 
       <!-- Timer -->
       <div class="timer-section">
-        <div class="label clr2" style="margin-bottom:.8rem;">⏱ Temporizador</div>
+        <div class="label" style="margin-bottom:1rem;">Temporizador</div>
         <div class="progress-ring">
-          <svg width="130" height="130" id="timer-ring">
-            <circle class="ring-bg" cx="65" cy="65" r="58" stroke-width="8"/>
-            <circle class="ring-fill" id="timer-circle" cx="65" cy="65" r="58" stroke-width="8"
-              stroke-dasharray="364.4" stroke-dashoffset="0"/>
+          <svg width="140" height="140" id="timer-ring">
+            <circle class="ring-bg" cx="70" cy="70" r="62" stroke-width="5"/>
+            <circle class="ring-fill" id="timer-circle" cx="70" cy="70" r="62"
+              stroke-dasharray="389.6" stroke-dashoffset="0"/>
           </svg>
           <div class="ring-text">
             <div id="timer-display">2:00</div>
-            <div class="label clr2" style="font-size:.65rem;">min</div>
+            <div class="label" style="font-size:.6rem;">minutos</div>
           </div>
         </div>
         <div class="timer-controls">
-          <button class="timer-btn timer-btn-reset" onclick="resetTimer()">↺</button>
-          <button class="timer-btn timer-btn-start" id="timer-play-btn" onclick="toggleTimer()">▶</button>
-          <button class="timer-btn timer-btn-reset" onclick="adjustTimer(-30)" title="-30s">−</button>
-          <button class="timer-btn timer-btn-reset" onclick="adjustTimer(30)" title="+30s">+</button>
+          <button class="timer-btn timer-btn-aux" onclick="adjustTimer(-30)" title="-30s"><svg><use href="#i-minus"/></svg></button>
+          <button class="timer-btn timer-btn-aux" onclick="resetTimer()" title="Reset"><svg><use href="#i-reset"/></svg></button>
+          <button class="timer-btn timer-btn-start" id="timer-play-btn" onclick="toggleTimer()"><svg id="timer-play-icon"><use href="#i-play"/></svg></button>
+          <button class="timer-btn timer-btn-aux" onclick="adjustTimer(30)" title="+30s"><svg><use href="#i-plus"/></svg></button>
         </div>
       </div>
 
       <!-- Steps -->
       <div class="steps-section">
-        <div class="label clr2" style="margin:0 0 .6rem; padding-left:.2rem;">📋 Ejecución</div>
+        <div class="label" style="margin:0 0 .8rem; padding-left:.1rem;">Ejecución técnica</div>
         <div id="drill-steps"></div>
       </div>
 
       <!-- Tips -->
       <div class="tips-section" id="drill-tips-section">
-        <div class="tips-title">💡 Tips del entrenador</div>
+        <div class="tips-title">Notas del entrenador</div>
         <div id="drill-tips"></div>
       </div>
 
-      <div style="padding:1rem 1.2rem;">
-        <button class="btn btn-primary btn-block" onclick="markDrillDone()">✓ Marcar como completado</button>
+      <div style="padding:1.2rem;">
+        <button class="btn btn-primary btn-block" onclick="markDrillDone()"><svg><use href="#i-check"/></svg> Marcar como completado</button>
       </div>
     </div>
   </section>
@@ -733,34 +869,24 @@
        ╚══════════════════════════════════╝ -->
   <section id="screen-plan" class="screen">
     <div class="topbar">
-      <button class="topbar-back" onclick="goTo('screen-home')">←</button>
+      <button class="icon-btn" onclick="goTo('screen-home')"><svg><use href="#i-back"/></svg></button>
       <span class="topbar-title">Plan Semanal</span>
-      <div class="topbar-action"></div>
+      <div style="width:36px;"></div>
     </div>
     <div class="scroll-area">
       <div class="week-header">
-        <p class="body-sm clr2">Tu programa personalizado para esta semana. Adaptado a tu posición.</p>
+        <div class="label-accent" style="margin-bottom:.5rem;">Esta semana</div>
+        <h2 class="display-md">Tu programa</h2>
+        <p class="body-md" style="margin-top:.45rem;">Sesiones diseñadas en base a tu posición. Cada día tiene un foco distinto.</p>
       </div>
       <div class="day-tabs" id="day-tabs"></div>
       <div class="day-plan-content" id="day-plan-content"></div>
     </div>
     <nav class="bottom-nav">
-      <div class="nav-item" onclick="goTo('screen-home')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        <span>Inicio</span>
-      </div>
-      <div class="nav-item" onclick="goTo('screen-training')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.72L13 18v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5v-5l-2.28 1.65C7.81 18 6 15.21 6 12c0-4.08 3.05-7.44 7-7.93V2.05z"/></svg>
-        <span>Drills</span>
-      </div>
-      <div class="nav-item active" onclick="goTo('screen-plan')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-        <span>Plan</span>
-      </div>
-      <div class="nav-item" onclick="goTo('screen-progress')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
-        <span>Progreso</span>
-      </div>
+      <div class="nav-item" onclick="goTo('screen-home')"><svg><use href="#i-home"/></svg><span>Inicio</span></div>
+      <div class="nav-item" onclick="goTo('screen-training')"><svg><use href="#i-dumbbell"/></svg><span>Drills</span></div>
+      <div class="nav-item active" onclick="goTo('screen-plan')"><svg><use href="#i-calendar"/></svg><span>Plan</span></div>
+      <div class="nav-item" onclick="goTo('screen-progress')"><svg><use href="#i-chart"/></svg><span>Progreso</span></div>
     </nav>
   </section>
 
@@ -769,55 +895,67 @@
        ╚══════════════════════════════════╝ -->
   <section id="screen-progress" class="screen">
     <div class="topbar">
-      <button class="topbar-back" onclick="goTo('screen-home')">←</button>
+      <button class="icon-btn" onclick="goTo('screen-home')"><svg><use href="#i-back"/></svg></button>
       <span class="topbar-title">Mi Progreso</span>
-      <div class="topbar-action"></div>
+      <div style="width:36px;"></div>
     </div>
     <div class="scroll-area">
       <div class="progress-header">
-        <p class="body-sm clr2">Seguimiento de tu evolución técnica.</p>
+        <div class="label-accent" style="margin-bottom:.5rem;">Evolución</div>
+        <h2 class="display-md">Tu rendimiento</h2>
       </div>
 
       <!-- Activity chart -->
       <div class="chart-bar-area">
-        <div class="flex items-center" style="justify-content:space-between;">
-          <span class="title-sm">Actividad semanal</span>
-          <span class="label clr-orange" id="chart-total">47 drills</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span class="display-sm">Actividad semanal</span>
+          <span class="label-accent num-mono" id="chart-total">0 drills</span>
         </div>
         <div class="chart-bars" id="chart-bars"></div>
       </div>
 
+      <!-- Heatmap -->
+      <div class="heatmap-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span class="display-sm">Últimos 3 meses</span>
+          <span class="label num-mono" id="heatmap-total">0 días activos</span>
+        </div>
+        <div class="heatmap-grid" id="heatmap-grid"></div>
+        <div class="heatmap-legend">
+          Menos
+          <div class="heatmap-legend-cells">
+            <span style="background:var(--border)"></span>
+            <span style="background:rgba(255,85,0,.22)"></span>
+            <span style="background:rgba(255,85,0,.42)"></span>
+            <span style="background:rgba(255,85,0,.65)"></span>
+            <span style="background:var(--accent)"></span>
+          </div>
+          Más
+        </div>
+      </div>
+
       <!-- Category progress -->
       <div class="section-header">
-        <span class="section-title">📈 Por módulo</span>
+        <span class="section-title"><svg><use href="#i-trend"/></svg> Por módulo</span>
       </div>
       <div class="cat-progress" id="cat-progress"></div>
 
       <!-- Achievements -->
       <div class="section-header">
-        <span class="section-title">🏆 Logros</span>
+        <span class="section-title"><svg><use href="#i-trophy"/></svg> Logros</span>
       </div>
       <div class="achievements" id="achievements-grid"></div>
     </div>
     <nav class="bottom-nav">
-      <div class="nav-item" onclick="goTo('screen-home')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        <span>Inicio</span>
-      </div>
-      <div class="nav-item" onclick="goTo('screen-training')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.72L13 18v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5v-5l-2.28 1.65C7.81 18 6 15.21 6 12c0-4.08 3.05-7.44 7-7.93V2.05z"/></svg>
-        <span>Drills</span>
-      </div>
-      <div class="nav-item" onclick="goTo('screen-plan')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-        <span>Plan</span>
-      </div>
-      <div class="nav-item active" onclick="goTo('screen-progress')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
-        <span>Progreso</span>
-      </div>
+      <div class="nav-item" onclick="goTo('screen-home')"><svg><use href="#i-home"/></svg><span>Inicio</span></div>
+      <div class="nav-item" onclick="goTo('screen-training')"><svg><use href="#i-dumbbell"/></svg><span>Drills</span></div>
+      <div class="nav-item" onclick="goTo('screen-plan')"><svg><use href="#i-calendar"/></svg><span>Plan</span></div>
+      <div class="nav-item active" onclick="goTo('screen-progress')"><svg><use href="#i-chart"/></svg><span>Progreso</span></div>
     </nav>
   </section>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"><svg><use href="#i-check"/></svg><span id="toast-msg">Completado</span></div>
 </div>
 
 <!-- ╔══════════════════════════════════════════════════════════╗
@@ -1307,6 +1445,24 @@ const state = {
   stats: JSON.parse(localStorage.getItem('bcp_stats') || '{"sessions":0,"drills":0,"streak":0}'),
 };
 
+// ── ICON MAPS (replace emoji → SVG) ──────────────────────────────
+const MODULE_ICONS = {
+  manejo:'i-ball', pase:'i-eye', pickroll:'i-swap', defensa:'i-shield', finalizacion:'i-target',
+  tiro:'i-target', movimiento:'i-bolt',
+  polivalencia:'i-swap', tiro3:'i-target',
+  postebajo:'i-shield', rebote:'i-trophy',
+  'movimientos-poste':'i-shield', 'rebote-elite':'i-trophy', 'defensa-interior':'i-shield',
+};
+const DRILL_ICONS = {
+  'dribble-alt':'i-ball','crossover':'i-bolt','between-legs':'i-ball','hesitation':'i-bolt',
+  'pase-pecho':'i-target','nolook':'i-eye','reconocer-bloqueo':'i-swap','posicion-def':'i-shield',
+  'layup-debil':'i-target','floater':'i-target','gancho':'i-target','fadeaway':'i-bolt',
+  'timing-rebote':'i-clock','tape':'i-shield',
+};
+function moduleIcon(modId){ return MODULE_ICONS[modId] || 'i-dumbbell'; }
+function drillIcon(drillId){ return DRILL_ICONS[drillId] || 'i-ball'; }
+function svgIcon(id){ return `<svg><use href="#${id}"/></svg>`; }
+
 // ── HELPERS ──────────────────────────────────────────────────────
 function getPosition() {
   return POSITIONS.find(p => p.id === state.position);
@@ -1318,12 +1474,37 @@ function saveProgress() {
 function diffLabel(n) {
   return ['','Básico','Intermedio','Avanzado'][n] || '';
 }
-function diffBadge(n) {
-  const cls = ['','badge-green','badge-orange','badge-gold'][n];
-  return `<span class="badge ${cls}">${diffLabel(n)}</span>`;
+function diffChip(n) {
+  const cls = ['','chip-success','chip-accent','chip-warn'][n] || 'chip';
+  return `<span class="chip ${cls}">${diffLabel(n)}</span>`;
+}
+function timeChip(seconds) {
+  const m = seconds/60|0, s = String(seconds%60).padStart(2,'0');
+  return `<span class="chip">${svgIcon('i-clock')} ${m}:${s}</span>`;
 }
 function makeDotsHTML(n) {
   return [1,2,3].map(i => `<div class="diff-dot${i<=n?' fill':''}"></div>`).join('');
+}
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 6)  return 'noches';
+  if (h < 13) return 'días';
+  if (h < 20) return 'tardes';
+  return 'noches';
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+function markActivityToday() {
+  const today = new Date().toISOString().slice(0,10);
+  const arr = JSON.parse(localStorage.getItem('bcp_activity') || '[]');
+  if (!arr.includes(today)) {
+    arr.push(today);
+    localStorage.setItem('bcp_activity', JSON.stringify(arr));
+  }
 }
 
 // ── NAVIGATION ───────────────────────────────────────────────────
@@ -1337,18 +1518,16 @@ function goTo(screenId) {
 function renderPositionGrid() {
   const grid = document.getElementById('pos-grid');
   grid.innerHTML = POSITIONS.map(p => `
-    <div class="pos-card card-glow" onclick="selectPosition('${p.id}')" id="poscard-${p.id}">
-      <div class="pos-icon" style="background:${p.color}22; border:1px solid ${p.color}44;">
-        <span style="font-size:1.6rem;">${p.icon}</span>
-      </div>
+    <div class="pos-card" onclick="selectPosition('${p.id}')" id="poscard-${p.id}">
+      <div class="pos-icon">${p.num.replace('#','')}</div>
       <div class="pos-card-info">
-        <div class="pos-card-name">${p.num} — ${p.name} <span style="font-family:Inter;font-size:.85rem;font-weight:400;color:var(--text2);">${p.en}</span></div>
-        <div class="pos-card-en">${p.desc}</div>
+        <div class="pos-card-name">${p.name}</div>
+        <div class="pos-card-en">${p.en} · ${p.desc}</div>
         <div class="pos-card-tags">
-          ${p.tags.map(t => `<span class="badge badge-gray">${t}</span>`).join('')}
+          ${p.tags.map(t => `<span class="chip">${t}</span>`).join('')}
         </div>
       </div>
-      <div class="pos-card-arrow">→</div>
+      <div class="pos-card-arrow">${svgIcon('i-arrow-mini')}</div>
     </div>
   `).join('');
 }
@@ -1369,51 +1548,49 @@ function renderHome() {
   const pos = getPosition();
   if (!pos) return;
 
-  document.getElementById('home-title').textContent = `Hola, ${pos.name}`;
-  document.getElementById('home-pos-badge').innerHTML = `${pos.icon} ${pos.name} — ${pos.en}`;
-  document.getElementById('training-topbar-title').textContent = pos.name + ' — Drills';
+  document.getElementById('home-greeting-time').textContent = getGreeting();
+  document.getElementById('home-title').textContent = pos.name;
+  document.getElementById('home-pos-badge').innerHTML = `${svgIcon('i-target')} <span>${pos.num} · ${pos.en}</span>`;
+  document.getElementById('training-topbar-title').textContent = pos.name;
   document.getElementById('stat-sesiones').textContent = state.stats.sessions;
   document.getElementById('stat-drills').textContent = state.stats.drills;
-  document.getElementById('stat-racha').textContent = state.stats.streak + '🔥';
+  document.getElementById('stat-racha').textContent = state.stats.streak;
 
-  // Today's session (first 3 drills of first 2 modules)
   const todayDrills = pos.modules.flatMap(m => m.drills).slice(0,3);
-  document.getElementById('today-session-name').textContent = 'Sesión del día — ' + pos.name;
-  document.getElementById('today-session-meta').textContent = `${todayDrills.length} ejercicios · ${todayDrills.reduce((s,d) => s + d.time, 0)/60|0} min`;
+  document.getElementById('today-session-name').textContent = 'Sesión técnica · ' + pos.name;
+  document.getElementById('today-session-meta').textContent = `${todayDrills.length} ejercicios · ~${todayDrills.reduce((s,d) => s + d.time, 0)/60|0} min`;
   document.getElementById('today-drills-list').innerHTML = todayDrills.map((d,i) => `
-    <div class="today-drill">
+    <div class="today-drill" onclick="openDrill('${d.id}')">
       <div class="today-drill-num">${i+1}</div>
       <div class="today-drill-info">
         <div class="today-drill-name">${d.name}</div>
-        <div class="today-drill-meta">${d.time/60|0}:${String(d.time%60).padStart(2,'0')} min · ${diffLabel(d.diff)}</div>
+        <div class="today-drill-meta">${d.time/60|0}:${String(d.time%60).padStart(2,'0')} · ${diffLabel(d.diff)}</div>
       </div>
-      ${state.progress[d.id] ? '<div class="today-drill-check">✓</div>' : ''}
+      ${state.progress[d.id] ? `<div class="today-drill-check">${svgIcon('i-check')}</div>` : ''}
     </div>
   `).join('');
 
-  // Modules scroll
   document.getElementById('modules-scroll').innerHTML = pos.modules.map((m,i) => `
     <div class="module-chip${i===state.activeModule?' active-module':''}" onclick="setActiveModule(${i})">
-      <div class="module-chip-icon">${m.icon}</div>
+      <div class="module-chip-icon">${svgIcon(moduleIcon(m.id))}</div>
       <div class="module-chip-name">${m.name}</div>
       <div class="module-chip-count">${m.drills.length} drills</div>
     </div>
   `).join('');
 
-  // Quick drills (first 2 of active module)
   const activeMod = pos.modules[state.activeModule] || pos.modules[0];
-  document.getElementById('quick-drills').innerHTML = activeMod.drills.slice(0,2).map(d => `
-    <div class="drill-item card-glow" onclick="openDrill('${d.id}')">
-      <div class="drill-thumb">${d.icon}</div>
+  document.getElementById('quick-drills').innerHTML = activeMod.drills.slice(0,3).map(d => `
+    <div class="drill-item" onclick="openDrill('${d.id}')">
+      <div class="drill-thumb">${svgIcon(drillIcon(d.id))}</div>
       <div class="drill-info">
         <div class="drill-name">${d.name}</div>
         <div class="drill-meta">
           <div class="diff-dots">${makeDotsHTML(d.diff)}</div>
-          <span class="badge badge-gray">${d.time/60|0}:${String(d.time%60).padStart(2,'0')} min</span>
-          ${state.progress[d.id] ? '<span class="badge badge-green">✓ Completado</span>' : ''}
+          ${timeChip(d.time)}
+          ${state.progress[d.id] ? `<span class="chip chip-success">${svgIcon('i-check')} Hecho</span>` : ''}
         </div>
       </div>
-      <div class="drill-arrow">›</div>
+      <div class="drill-arrow">${svgIcon('i-arrow-mini')}</div>
     </div>
   `).join('');
 }
@@ -1435,28 +1612,24 @@ function renderTraining(moduleIdx = 0) {
   if (!pos) return;
   state.activeModule = moduleIdx;
 
-  // Module filter tabs
   document.getElementById('module-filter-tabs').innerHTML = pos.modules.map((m,i) => `
-    <div class="badge ${i===moduleIdx ? 'badge-orange' : 'badge-gray'}" style="cursor:pointer;padding:.4rem .9rem;font-size:.78rem;"
-      onclick="renderTraining(${i})">${m.icon} ${m.name}</div>
+    <div class="filter-tab${i===moduleIdx?' active':''}" onclick="renderTraining(${i})">${m.name}</div>
   `).join('');
 
-  // Drills grid
   const mod = pos.modules[moduleIdx];
   document.getElementById('drills-grid').innerHTML = mod.drills.map(d => `
-    <div class="drill-item card-glow" onclick="openDrill('${d.id}')">
-      <div class="drill-thumb">${d.icon}</div>
+    <div class="drill-item" onclick="openDrill('${d.id}')">
+      <div class="drill-thumb">${svgIcon(drillIcon(d.id))}</div>
       <div class="drill-info">
         <div class="drill-name">${d.name}</div>
+        <div class="body-sm" style="margin-top:.35rem;font-size:.8rem;">${d.desc}</div>
         <div class="drill-meta">
-          <div class="diff-dots">${makeDotsHTML(d.diff)}</div>
-          ${diffBadge(d.diff)}
-          <span class="badge badge-gray">⏱ ${d.time/60|0}:${String(d.time%60).padStart(2,'0')}</span>
-          ${state.progress[d.id] ? '<span class="badge badge-green">✓</span>' : ''}
+          ${diffChip(d.diff)}
+          ${timeChip(d.time)}
+          ${state.progress[d.id] ? `<span class="chip chip-success">${svgIcon('i-check')} Hecho</span>` : ''}
         </div>
-        <div class="body-sm clr2" style="margin-top:.4rem;">${d.desc}</div>
       </div>
-      <div class="drill-arrow">›</div>
+      <div class="drill-arrow">${svgIcon('i-arrow-mini')}</div>
     </div>
   `).join('');
 }
@@ -1471,29 +1644,29 @@ function openDrill(drillId) {
   state.currentDrill = drill;
   resetTimer(drill.time);
 
-  document.getElementById('drill-detail-icon').textContent = drill.icon;
+  document.getElementById('drill-detail-icon').innerHTML = svgIcon(drillIcon(drill.id));
   document.getElementById('drill-detail-name').textContent = drill.name;
-  document.getElementById('drill-fav-btn').textContent = state.progress[drill.id+'_fav'] ? '♥' : '♡';
+  document.getElementById('drill-fav-icon').innerHTML = `<use href="#${state.progress[drill.id+'_fav'] ? 'i-heart-fill' : 'i-heart'}"/>`;
 
   document.getElementById('drill-detail-badges').innerHTML = `
-    ${diffBadge(drill.diff)}
-    <span class="badge badge-gray">⏱ ${drill.time/60|0}:${String(drill.time%60).padStart(2,'0')} min</span>
-    ${drill.tags?.map(t=>`<span class="badge badge-gray">${t}</span>`).join('') || ''}
-    ${state.progress[drill.id] ? '<span class="badge badge-green">✓ Completado</span>' : ''}
+    ${diffChip(drill.diff)}
+    ${timeChip(drill.time)}
+    ${drill.tags?.map(t=>`<span class="chip">${t}</span>`).join('') || ''}
+    ${state.progress[drill.id] ? `<span class="chip chip-success">${svgIcon('i-check')} Completado</span>` : ''}
   `;
 
   document.getElementById('drill-steps').innerHTML = drill.steps.map((s,i) => `
     <div class="step-item">
       <div class="step-num">${i+1}</div>
-      <div>
-        <div style="font-weight:700;font-size:.88rem;margin-bottom:.25rem;">${s.t}</div>
+      <div class="step-content">
+        <div class="step-title">${s.t}</div>
         <div class="step-text">${s.d}</div>
       </div>
     </div>
   `).join('');
 
   document.getElementById('drill-tips').innerHTML = drill.tips.map(t => `
-    <div class="tip-row"><span class="tip-icon">›</span><span>${t}</span></div>
+    <div class="tip-row">${svgIcon('i-bolt')}<span>${t.replace(/^[\p{Emoji_Presentation}\p{Emoji}‍]+\s*/u,'')}</span></div>
   `).join('');
 
   goTo('screen-drill');
@@ -1503,26 +1676,23 @@ function toggleFav() {
   if (!state.currentDrill) return;
   const key = state.currentDrill.id + '_fav';
   state.progress[key] = !state.progress[key];
-  document.getElementById('drill-fav-btn').textContent = state.progress[key] ? '♥' : '♡';
+  document.getElementById('drill-fav-icon').innerHTML = `<use href="#${state.progress[key] ? 'i-heart-fill' : 'i-heart'}"/>`;
   saveProgress();
 }
 
 function markDrillDone() {
   if (!state.currentDrill) return;
+  const wasFirstTime = !state.progress[state.currentDrill.id];
   state.progress[state.currentDrill.id] = true;
-  state.stats.drills++;
+  if (wasFirstTime) state.stats.drills++;
+  markActivityToday();
   saveProgress();
   stopTimer();
-
-  const btn = document.querySelector('#screen-drill .btn-primary');
-  btn.textContent = '✓ ¡Completado!';
-  btn.style.background = 'var(--green)';
+  showToast('Drill completado · +1 a tu progreso');
   setTimeout(() => {
-    btn.textContent = '✓ Marcar como completado';
-    btn.style.background = '';
     goTo('screen-training');
     renderTraining(state.activeModule);
-  }, 1500);
+  }, 1100);
 }
 
 // ── TIMER ────────────────────────────────────────────────────────
@@ -1537,7 +1707,7 @@ function stopTimer() {
   const t = state.timer;
   t.running = false;
   clearInterval(t.interval);
-  document.getElementById('timer-play-btn').textContent = '▶';
+  document.getElementById('timer-play-icon').innerHTML = `<use href="#i-play"/>`;
 }
 function toggleTimer() {
   const t = state.timer;
@@ -1545,11 +1715,14 @@ function toggleTimer() {
     stopTimer();
   } else {
     t.running = true;
-    document.getElementById('timer-play-btn').textContent = '⏸';
+    document.getElementById('timer-play-icon').innerHTML = `<use href="#i-pause"/>`;
     t.interval = setInterval(() => {
       t.remaining--;
       updateTimerDisplay();
-      if (t.remaining <= 0) { stopTimer(); t.remaining = 0; updateTimerDisplay(); }
+      if (t.remaining <= 0) {
+        stopTimer(); t.remaining = 0; updateTimerDisplay();
+        showToast('Tiempo completado');
+      }
     }, 1000);
   }
 }
@@ -1564,10 +1737,11 @@ function updateTimerDisplay() {
   const s = t.remaining % 60;
   document.getElementById('timer-display').textContent = `${m}:${String(s).padStart(2,'0')}`;
   const pct = t.total > 0 ? t.remaining / t.total : 1;
-  const circ = 2 * Math.PI * 58;
-  document.getElementById('timer-circle').style.strokeDashoffset = circ * (1 - pct);
+  const circ = 2 * Math.PI * 62;
   const fill = document.getElementById('timer-circle');
-  fill.style.stroke = t.remaining < 10 ? 'var(--red)' : 'var(--orange)';
+  fill.style.strokeDasharray = circ;
+  fill.style.strokeDashoffset = circ * (1 - pct);
+  fill.style.stroke = t.remaining < 10 ? 'var(--danger)' : 'var(--accent)';
 }
 
 // ── SCREEN 6: WEEKLY PLAN ────────────────────────────────────────
@@ -1586,12 +1760,18 @@ function renderPlan() {
   const today = new Date().getDay();
   const planDays = PLAN_TEMPLATES[pos.id] || [];
 
-  document.getElementById('day-tabs').innerHTML = DAYS.map((d,i) => `
-    <div class="day-tab${i===today?' today':''}${i===state.activePlanDay?' active':''}" onclick="selectPlanDay(${i})">
-      <div class="day-name">${d}</div>
-      <div class="day-num">${i+1+15}</div>
-    </div>
-  `).join('');
+  // Calcular fechas reales de la semana actual (lunes a domingo)
+  const now = new Date();
+  document.getElementById('day-tabs').innerHTML = DAYS.map((d,i) => {
+    const dayDate = new Date(now);
+    dayDate.setDate(now.getDate() + (i - now.getDay()));
+    return `
+      <div class="day-tab${i===today?' today':''}${i===state.activePlanDay?' active':''}" onclick="selectPlanDay(${i})">
+        <div class="day-name">${d}</div>
+        <div class="day-num">${dayDate.getDate()}</div>
+      </div>
+    `;
+  }).join('');
 
   renderPlanDay(pos, planDays);
 }
@@ -1607,10 +1787,12 @@ function renderPlanDay(pos, planDays) {
 
   if (!dayModuleIds) {
     el.innerHTML = `
-      <div style="text-align:center;padding:3rem 1.5rem;">
-        <div style="font-size:3rem;margin-bottom:1rem;">😴</div>
-        <div class="title-md">Día de descanso</div>
-        <p class="body-md clr2" style="margin-top:.5rem;">La recuperación es parte del entrenamiento. Estiramiento y foam rolling.</p>
+      <div style="text-align:center;padding:3.5rem 1.5rem;">
+        <div style="width:64px;height:64px;border-radius:16px;background:var(--card);border:1px solid var(--border);margin:0 auto 1.2rem;display:flex;align-items:center;justify-content:center;color:var(--text-muted);">
+          ${svgIcon('i-clock')}
+        </div>
+        <div class="display-sm">Día de descanso</div>
+        <p class="body-md" style="margin-top:.5rem;max-width:280px;margin-left:auto;margin-right:auto;">La recuperación es parte del entrenamiento. Estiramiento y movilidad.</p>
       </div>`;
     return;
   }
@@ -1622,14 +1804,14 @@ function renderPlanDay(pos, planDays) {
     return `
       <div class="plan-block">
         <div class="plan-block-header">
-          <span class="plan-block-icon">${mod.icon}</span>
+          <div class="plan-block-icon">${svgIcon(moduleIcon(mod.id))}</div>
           <span class="plan-block-title">${mod.name}</span>
-          <span class="plan-block-time">⏱ ~${totalMin} min</span>
+          <span class="plan-block-time">~${totalMin} min</span>
         </div>
         <div class="plan-block-drills">
           ${mod.drills.map(d => `
             <div class="plan-drill-row" onclick="openDrill('${d.id}')">
-              <div class="plan-drill-dot${state.progress[d.id]?' '+'style="background:var(--green)"':''}"></div>
+              <div class="plan-drill-dot${state.progress[d.id]?' done':''}"></div>
               <span class="plan-drill-name">${d.name}</span>
               <span class="plan-drill-dur">${d.time/60|0}:${String(d.time%60).padStart(2,'0')}</span>
             </div>
@@ -1645,18 +1827,44 @@ function renderProgress() {
   const pos = getPosition();
   if (!pos) return;
 
-  // Chart bars
-  const weekData = [3,5,0,7,4,8,state.stats.drills % 10 || 6];
+  // Calcular actividad real por día de la semana
+  const activity = JSON.parse(localStorage.getItem('bcp_activity') || '[]');
+  const now = new Date();
+  const weekData = DAYS.map((_, i) => {
+    const d = new Date(now);
+    d.setDate(now.getDate() + (i - now.getDay()));
+    const key = d.toISOString().slice(0,10);
+    return activity.includes(key) ? Math.max(1, state.stats.drills/7|0 || 1) : 0;
+  });
+  const totalWeek = weekData.reduce((s,n)=>s+n,0);
+  document.getElementById('chart-total').textContent = totalWeek + ' drills';
+
   const maxVal = Math.max(...weekData, 1);
   document.getElementById('chart-bars').innerHTML = DAYS.map((d,i) => {
-    const h = Math.max(4, (weekData[i]/maxVal)*100)|0;
+    const h = weekData[i] > 0 ? Math.max(8, (weekData[i]/maxVal)*100)|0 : 5;
     const isToday = i === new Date().getDay();
     return `
-      <div class="chart-col">
-        <div class="chart-bar${weekData[i]>0?' fill':''}${isToday?' today-bar':''}" style="height:${h}%"></div>
+      <div class="chart-col${isToday?' today':''}">
+        <div class="chart-bar${weekData[i]>0?' fill':''}" style="height:${h}%"></div>
         <div class="chart-day">${d}</div>
       </div>`;
   }).join('');
+
+  // Heatmap últimos 84 días (12 semanas)
+  const cells = [];
+  for (let i = 83; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+    const active = activity.includes(key);
+    const level = active ? Math.min(4, Math.ceil(Math.random()*2)+1) : 0;
+    cells.push(level);
+  }
+  const activeDays = cells.filter(c => c > 0).length;
+  document.getElementById('heatmap-total').textContent = activeDays + ' días activos';
+  document.getElementById('heatmap-grid').innerHTML = cells.map(l =>
+    `<div class="heatmap-cell${l>0?' l'+l:''}"></div>`
+  ).join('');
 
   // Category progress
   document.getElementById('cat-progress').innerHTML = pos.modules.map(m => {
@@ -1665,23 +1873,23 @@ function renderProgress() {
     return `
       <div class="cat-prog-row">
         <div class="cat-prog-header">
-          <span class="cat-prog-name">${m.icon} ${m.name}</span>
+          <span class="cat-prog-name">${svgIcon(moduleIcon(m.id))} ${m.name}</span>
           <span class="cat-prog-pct">${pct}%</span>
         </div>
         <div class="prog-bar"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
-        <div class="label clr2" style="margin-top:.2rem;">${done} / ${m.drills.length} drills completados</div>
+        <div class="cat-prog-meta">${done} de ${m.drills.length} drills completados</div>
       </div>`;
   }).join('');
 
   // Achievements
-  const totalDone = Object.values(state.progress).filter(v=>v===true).length;
+  const totalDone = Object.keys(state.progress).filter(k => state.progress[k]===true && !k.endsWith('_fav')).length;
   const achievements = [
-    { icon:'🏀', name:'Primera Canasta', desc:'Completa tu primer drill', locked: totalDone < 1 },
-    { icon:'🔥', name:'En Racha', desc:'3 días consecutivos', locked: state.stats.streak < 3 },
-    { icon:'💪', name:'Trabajador', desc:'10 drills completados', locked: totalDone < 10 },
-    { icon:'⭐', name:'Estrella', desc:'Completa un módulo entero', locked: !pos.modules.some(m=>m.drills.every(d=>state.progress[d.id])) },
-    { icon:'🏆', name:'Campeón', desc:'50 drills completados', locked: totalDone < 50 },
-    { icon:'🎓', name:'Técnico', desc:'Completa todos los módulos', locked: totalDone < pos.modules.flatMap(m=>m.drills).length },
+    { icon:'🏀', name:'Primera canasta', desc:'Tu primer drill', locked: totalDone < 1 },
+    { icon:'🔥', name:'En racha',        desc:'3 días seguidos', locked: state.stats.streak < 3 },
+    { icon:'💪', name:'Trabajador',      desc:'10 drills',       locked: totalDone < 10 },
+    { icon:'⭐', name:'Estrella',         desc:'Un módulo entero', locked: !pos.modules.some(m=>m.drills.every(d=>state.progress[d.id])) },
+    { icon:'🏆', name:'Campeón',         desc:'50 drills',       locked: totalDone < 50 },
+    { icon:'🎓', name:'Técnico',         desc:'Todos los módulos',locked: totalDone < pos.modules.flatMap(m=>m.drills).length },
   ];
   document.getElementById('achievements-grid').innerHTML = achievements.map(a => `
     <div class="achievement-card${a.locked?' locked':''}">
