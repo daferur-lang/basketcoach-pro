@@ -17,6 +17,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- Three.js via importmap (lazy load: solo se descarga la primera vez que se abre un drill) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
   <!-- SVG ICON SPRITE -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
@@ -434,6 +444,8 @@
     @media (prefers-reduced-motion: reduce) {
       .drill-animation * { animation: none !important; }
     }
+
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
     /* ── TOAST ──────────────────────────────────────── */
     .toast {
@@ -2643,16 +2655,64 @@ const ANIM = {
   },
 };
 
+// Cache del módulo 3D (lazy)
+let _viewer3dModule = null;
+let _3dInitFailed = false;
+
+async function load3DModule() {
+  if (_viewer3dModule || _3dInitFailed) return _viewer3dModule;
+  try {
+    _viewer3dModule = await import('./js/viewer3d.js');
+    return _viewer3dModule;
+  } catch (e) {
+    console.warn('3D viewer failed to load, fallback to 2D canvas:', e);
+    _3dInitFailed = true;
+    return null;
+  }
+}
+
 function renderDrillAnimation(drill) {
   const container = document.getElementById('drill-animation');
-  // Limpia y crea canvas
-  container.innerHTML = `<span class="drill-animation-label">Demostración</span><canvas width="640" height="360"></canvas>`;
-  const canvas = container.querySelector('canvas');
+  container.innerHTML = `
+    <span class="drill-animation-label">Demostración 3D</span>
+    <canvas id="drill3d-canvas" style="width:100%;height:100%;display:block;"></canvas>
+    <div id="drill3d-loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.8rem;">
+      <span style="display:inline-flex;align-items:center;gap:.5rem;">
+        <span style="width:14px;height:14px;border:2px solid var(--border-strong);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;"></span>
+        Cargando 3D…
+      </span>
+    </div>
+  `;
+  const canvas = document.getElementById('drill3d-canvas');
+  // Set internal resolution
+  canvas.width = canvas.clientWidth * 2;
+  canvas.height = canvas.clientHeight * 2;
+
+  load3DModule().then(mod => {
+    const loadingEl = document.getElementById('drill3d-loading');
+    if (!mod) {
+      // Fallback a canvas 2D si Three.js no carga
+      if (loadingEl) loadingEl.remove();
+      renderDrillAnimation2DFallback(drill, canvas);
+      return;
+    }
+    mod.mount3DViewer(canvas, drill.id).then(() => {
+      if (loadingEl) loadingEl.remove();
+      const lbl = container.querySelector('.drill-animation-label');
+      if (lbl) lbl.textContent = 'Demostración 3D';
+    }).catch(err => {
+      console.warn('3D mount failed:', err);
+      if (loadingEl) loadingEl.remove();
+      renderDrillAnimation2DFallback(drill, canvas);
+    });
+  });
+}
+
+function renderDrillAnimation2DFallback(drill, canvas) {
   const animFn = ANIM[drill.id];
   if (animFn) {
     startAnim(canvas, animFn);
   } else {
-    // fallback: jugador estático con balón
     startAnim(canvas, (ctx, w, h, t) => {
       drawCourtSide(ctx, w, h);
       drawPlayer(ctx, w/2, h*0.82, {
@@ -3124,8 +3184,11 @@ function renderProgress() {
 // ── INTERCEPT NAV TO RENDER ──────────────────────────────────────
 const _goTo = goTo;
 window.goTo = function(screenId) {
-  // Si salimos del drill, paramos la animación canvas para liberar CPU/batería
-  if (screenId !== 'screen-drill') stopAnim();
+  // Si salimos del drill, paramos animaciones (canvas 2D + 3D) para liberar CPU/batería
+  if (screenId !== 'screen-drill') {
+    stopAnim();
+    if (_viewer3dModule) _viewer3dModule.stop3DViewer();
+  }
   _goTo(screenId);
   if (screenId === 'screen-training') renderTraining(state.activeModule);
   if (screenId === 'screen-plan')     renderPlan();
