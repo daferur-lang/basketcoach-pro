@@ -309,7 +309,8 @@
         repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(255,255,255,.015) 19px, rgba(255,255,255,.015) 20px);
       pointer-events: none;
     }
-    .drill-animation svg { width:100%; height:100%; display:block; position:relative; z-index:1; }
+    .drill-animation svg,
+    .drill-animation canvas { width:100%; height:100%; display:block; position:relative; z-index:1; }
     .drill-animation-label {
       position: absolute; top: .7rem; left: .9rem; z-index: 2;
       font-size: .64rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
@@ -1917,10 +1918,756 @@ function toggleSound() {
   showToast(audio.enabled ? 'Sonido activado' : 'Sonido desactivado');
 }
 
-// ── DRILL ANIMATIONS LIBRARY ─────────────────────────────────────
-// Cada animación devuelve SVG inline. Viewport: 320x180 (16:9)
+// ═══════════════════════════════════════════════════════════════
+// ══ CANVAS ANIMATION ENGINE ════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+const TAU = Math.PI * 2;
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+let _animRAF = null;
+
+// ─── Stick figure jugador articulado ──────────────────────────
+function drawPlayer(ctx, x, y, opts = {}) {
+  const {
+    scale = 1, color = '#fafafa',
+    legPhase = 0, armLeft = 0, armRight = 0,
+    torsoLean = 0, jump = 0,
+  } = opts;
+  const s = scale;
+  ctx.save();
+  ctx.translate(x, y - jump);
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 3 * s;
+  ctx.lineCap = 'round';
+  // piernas
+  const legSpread = Math.sin(legPhase) * 8 * s;
+  ctx.beginPath();
+  ctx.moveTo(0, -10 * s); ctx.lineTo(-legSpread, 18 * s); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(0, -10 * s); ctx.lineTo(legSpread, 18 * s); ctx.stroke();
+  // torso
+  ctx.save();
+  ctx.rotate(torsoLean);
+  ctx.lineWidth = 4 * s;
+  ctx.beginPath();
+  ctx.moveTo(0, -10 * s); ctx.lineTo(0, -30 * s); ctx.stroke();
+  // brazos
+  ctx.lineWidth = 3 * s;
+  ctx.beginPath();
+  ctx.moveTo(0, -26 * s);
+  ctx.lineTo(Math.cos(armLeft - Math.PI/2) * 14 * s, -26 * s + Math.sin(armLeft - Math.PI/2) * 14 * s);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(0, -26 * s);
+  ctx.lineTo(Math.cos(armRight - Math.PI/2) * 14 * s, -26 * s + Math.sin(armRight - Math.PI/2) * 14 * s);
+  ctx.stroke();
+  // cabeza
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(0, -36 * s, 6 * s, 0, TAU);
+  ctx.fill();
+  ctx.restore();
+  ctx.restore();
+}
+
+// ─── Balón con gradiente y líneas ─────────────────────────────
+function drawBall(ctx, x, y, r = 8) {
+  // sombra blur
+  ctx.save();
+  ctx.fillStyle = 'rgba(255,85,0,.28)';
+  ctx.filter = 'blur(4px)';
+  ctx.beginPath();
+  ctx.arc(x, y, r * 1.4, 0, TAU);
+  ctx.fill();
+  ctx.restore();
+  // gradient
+  const g = ctx.createRadialGradient(x - r/3, y - r/3, 0, x, y, r);
+  g.addColorStop(0, '#FF8C42');
+  g.addColorStop(1, '#CC4400');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, TAU);
+  ctx.fill();
+  // líneas del balón
+  ctx.strokeStyle = '#7A2A00';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.arc(x, y, r - 0.5, -Math.PI/3, Math.PI/3); ctx.stroke();
+  ctx.beginPath(); ctx.arc(x, y, r - 0.5, Math.PI*2/3, Math.PI*4/3); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - r, y); ctx.lineTo(x + r, y); ctx.stroke();
+}
+
+// ─── Cancha lateral y aérea + aro ─────────────────────────────
+function drawCourtSide(ctx, w, h) {
+  ctx.strokeStyle = 'rgba(255,255,255,.15)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, h*0.82); ctx.lineTo(w, h*0.82); ctx.stroke();
+  ctx.setLineDash([3, 6]);
+  ctx.beginPath(); ctx.moveTo(0, h*0.88); ctx.lineTo(w, h*0.88); ctx.stroke();
+  ctx.setLineDash([]);
+}
+function drawCourtTop(ctx, w, h) {
+  ctx.strokeStyle = 'rgba(255,255,255,.18)';
+  ctx.lineWidth = 1.2;
+  ctx.strokeRect(20, 20, w-40, h-40);
+  ctx.beginPath(); ctx.moveTo(w/2, 20); ctx.lineTo(w/2, h-20); ctx.stroke();
+  ctx.beginPath(); ctx.arc(w/2, h/2, 36, 0, TAU); ctx.stroke();
+  ctx.strokeRect(20, h/2 - 50, 80, 100);
+  ctx.strokeRect(w-100, h/2 - 50, 80, 100);
+  ctx.fillStyle = 'rgba(255,255,255,.25)';
+  ctx.beginPath(); ctx.arc(40, h/2, 4, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.arc(w-40, h/2, 4, 0, TAU); ctx.fill();
+}
+function drawHoop(ctx, x, y) {
+  ctx.strokeStyle = 'rgba(255,255,255,.6)';
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(x + 18, y - 35); ctx.lineTo(x + 18, y + 5); ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x + 18, y - 8); ctx.lineTo(x - 5, y - 8); ctx.stroke();
+  ctx.strokeStyle = '#FF5500';
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(x - 14, y - 8); ctx.lineTo(x - 4, y - 8); ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,85,0,.5)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 2]);
+  ctx.beginPath();
+  ctx.moveTo(x - 13, y - 8); ctx.lineTo(x - 10, y + 3);
+  ctx.moveTo(x - 9, y - 8);  ctx.lineTo(x - 8, y + 3);
+  ctx.moveTo(x - 5, y - 8);  ctx.lineTo(x - 6, y + 3);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+function drawLabel(ctx, text, w, h) {
+  ctx.fillStyle = 'rgba(255,255,255,.4)';
+  ctx.font = '600 10px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText(text, w/2, h - 10);
+}
+
+// ─── Animation loop helper ────────────────────────────────────
+function startAnim(canvas, drawFn) {
+  if (_animRAF) cancelAnimationFrame(_animRAF);
+  const ctx = canvas.getContext('2d');
+  let start = null;
+  function frame(now) {
+    if (!start) start = now;
+    const t = (now - start) / 1000;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawFn(ctx, canvas.width, canvas.height, t);
+    _animRAF = requestAnimationFrame(frame);
+  }
+  _animRAF = requestAnimationFrame(frame);
+}
+function stopAnim() {
+  if (_animRAF) { cancelAnimationFrame(_animRAF); _animRAF = null; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ══ 14 DRILL ANIMATIONS (CANVAS) ═══════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 const ANIM = {
-  // ----- COURT BASE COMPONENTS -----
+  // MANEJO ──────────────────────────────────────────────────
+  'dribble-alt': (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const cx = w/2, baseY = h*0.82;
+    const period = 0.7, maxH = 70;
+    const pL = (t % period) / period;
+    const pR = ((t + period/2) % period) / period;
+    const yL = baseY - 25 - maxH * 4 * pL * (1 - pL);
+    const yR = baseY - 25 - maxH * 4 * pR * (1 - pR);
+    drawPlayer(ctx, cx, baseY, {
+      scale: 2,
+      legPhase: Math.sin(t * 4) * 0.3,
+      armLeft: Math.PI/4 + Math.sin(t * TAU/period + Math.PI) * 0.4,
+      armRight: -Math.PI/4 + Math.sin(t * TAU/period) * 0.4,
+    });
+    drawBall(ctx, cx - 45, yL, 11);
+    drawBall(ctx, cx + 45, yR, 11);
+    drawLabel(ctx, 'DRIBBLE ALTERNADO', w, h);
+  },
+
+  'crossover': (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const cx = w/2, baseY = h*0.82;
+    const period = 1.6;
+    const p = (t % period) / period;
+    const x = cx + Math.sin(p * TAU) * 65;
+    const sub = (p * 2) % 1;
+    const y = baseY - 25 - 55 * 4 * sub * (1 - sub);
+    // estela
+    for (let i = 1; i <= 6; i++) {
+      const pp = p - i * 0.025;
+      const sx = cx + Math.sin(pp * TAU) * 65;
+      const ss = (pp * 2) % 1;
+      const sy = baseY - 25 - 55 * 4 * ss * (1 - ss);
+      ctx.fillStyle = `rgba(255,85,0,${0.14 - i * 0.02})`;
+      ctx.beginPath(); ctx.arc(sx, sy, 9, 0, TAU); ctx.fill();
+    }
+    drawPlayer(ctx, cx, baseY, {
+      scale: 2,
+      legPhase: Math.sin(t * 5) * 0.4,
+      armLeft: Math.PI/4 + Math.sin(p * TAU) * 0.3,
+      armRight: -Math.PI/4 - Math.sin(p * TAU) * 0.3,
+      torsoLean: Math.sin(p * TAU) * 0.12,
+    });
+    drawBall(ctx, x, y, 11);
+    drawLabel(ctx, 'CROSSOVER FRONTAL', w, h);
+  },
+
+  'between-legs': (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const cx = w/2, baseY = h*0.82;
+    const period = 1.8;
+    const p = (t % period) / period;
+    // figura 8 entre las piernas
+    let bx, by;
+    if (p < 0.5) {
+      const sp = p * 2;
+      bx = lerp(cx - 28, cx + 28, sp);
+      by = baseY - 30 - Math.sin(sp * Math.PI) * 18;
+    } else {
+      const sp = (p - 0.5) * 2;
+      bx = lerp(cx + 28, cx - 28, sp);
+      by = baseY - 5 + Math.sin(sp * Math.PI) * -15;
+    }
+    drawPlayer(ctx, cx, baseY, {
+      scale: 2.2,
+      legPhase: 0.4,
+      armLeft: p < 0.5 ? -Math.PI/3 : Math.PI/3,
+      armRight: p < 0.5 ? -Math.PI/4 : Math.PI/4,
+    });
+    drawBall(ctx, bx, by, 10);
+    drawLabel(ctx, 'ENTRE PIERNAS · FIGURA EN 8', w, h);
+  },
+
+  'hesitation': (ctx, w, h, t) => {
+    drawCourtTop(ctx, w, h);
+    drawHoop(ctx, w - 50, h/2);
+    const period = 3.2;
+    const p = (t % period) / period;
+    let px;
+    if (p < 0.35) {
+      px = lerp(60, w/2 - 30, p / 0.35);
+    } else if (p < 0.55) {
+      // PAUSA (hesitation)
+      px = w/2 - 30;
+    } else if (p < 0.95) {
+      // EXPLOSIÓN
+      const sp = (p - 0.55) / 0.4;
+      px = lerp(w/2 - 30, w - 80, sp * sp); // aceleración cuadrática
+    } else {
+      px = 60;
+    }
+    // marca de la pausa
+    if (p >= 0.35 && p < 0.55) {
+      ctx.strokeStyle = 'rgba(255,85,0,.4)';
+      ctx.setLineDash([2,3]);
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(px, h/2, 20, 0, TAU); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#FF5500';
+      ctx.font = '700 9px Inter Tight';
+      ctx.textAlign = 'center';
+      ctx.fillText('PAUSA', px, h/2 - 28);
+    }
+    // trayectoria
+    ctx.strokeStyle = 'rgba(255,85,0,.25)';
+    ctx.setLineDash([3,4]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(60, h/2); ctx.lineTo(w - 80, h/2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#fafafa';
+    ctx.beginPath(); ctx.arc(px, h/2, 10, 0, TAU); ctx.fill();
+    drawBall(ctx, px + 14, h/2 + 6, 6);
+    drawLabel(ctx, 'AVANCE · PAUSA · EXPLOSIÓN', w, h);
+  },
+
+  // PASE ────────────────────────────────────────────────────
+  'pase-pecho': (ctx, w, h, t) => {
+    drawCourtTop(ctx, w, h);
+    const period = 1.8;
+    const p = (t % period) / period;
+    // dos jugadores
+    ctx.fillStyle = '#fafafa';
+    ctx.beginPath(); ctx.arc(80, h/2, 11, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(w - 80, h/2, 11, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.font = '700 11px Inter Tight';
+    ctx.textAlign = 'center';
+    ctx.fillText('1', 80, h/2 + 4);
+    ctx.fillText('2', w - 80, h/2 + 4);
+    // línea de pase
+    ctx.strokeStyle = 'rgba(255,85,0,.35)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(95, h/2); ctx.lineTo(w - 95, h/2);
+    ctx.stroke();
+    // flecha
+    ctx.beginPath();
+    ctx.moveTo(w - 100, h/2 - 5); ctx.lineTo(w - 95, h/2); ctx.lineTo(w - 100, h/2 + 5);
+    ctx.stroke();
+    // balón viajando
+    if (p < 0.5) {
+      const bp = p / 0.5;
+      const bx = lerp(95, w - 95, bp);
+      // estela
+      for (let i = 1; i < 6; i++) {
+        const tx = lerp(95, w - 95, bp - i * 0.04);
+        if (tx < 95) continue;
+        ctx.fillStyle = `rgba(255,85,0,${0.2 - i*0.03})`;
+        ctx.beginPath(); ctx.arc(tx, h/2, 9, 0, TAU); ctx.fill();
+      }
+      drawBall(ctx, bx, h/2, 9);
+    } else {
+      drawBall(ctx, w - 95, h/2, 9);
+    }
+    drawLabel(ctx, 'PASE DE PECHO · LÍNEA RECTA', w, h);
+  },
+
+  'nolook': (ctx, w, h, t) => {
+    drawCourtTop(ctx, w, h);
+    const period = 2.6;
+    const p = (t % period) / period;
+    // pasador
+    ctx.fillStyle = '#fafafa';
+    ctx.beginPath(); ctx.arc(80, h/2 - 10, 11, 0, TAU); ctx.fill();
+    // dirección de mirada (falsa)
+    ctx.strokeStyle = 'rgba(255,255,255,.4)';
+    ctx.setLineDash([2,2]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(80, h/2 - 10); ctx.lineTo(40, h/2 - 50);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(255,255,255,.6)';
+    ctx.font = '700 8px Inter';
+    ctx.textAlign = 'left';
+    ctx.fillText('MIRADA', 25, h/2 - 55);
+    // receptor (abajo derecha)
+    ctx.fillStyle = '#fafafa';
+    ctx.beginPath(); ctx.arc(w - 80, h/2 + 20, 11, 0, TAU); ctx.fill();
+    // pase curvo al otro lado
+    if (p < 0.6) {
+      const bp = p / 0.6;
+      // curva: empieza en pasador, va arqueado hacia receptor opuesto
+      const bx = lerp(95, w - 90, bp);
+      const by = lerp(h/2 - 10, h/2 + 20, bp) + Math.sin(bp * Math.PI) * 15;
+      for (let i = 1; i < 6; i++) {
+        const pp = bp - i * 0.05;
+        if (pp < 0) continue;
+        const tx = lerp(95, w - 90, pp);
+        const ty = lerp(h/2 - 10, h/2 + 20, pp) + Math.sin(pp * Math.PI) * 15;
+        ctx.fillStyle = `rgba(255,85,0,${0.2 - i*0.03})`;
+        ctx.beginPath(); ctx.arc(tx, ty, 8, 0, TAU); ctx.fill();
+      }
+      drawBall(ctx, bx, by, 9);
+    }
+    drawLabel(ctx, 'NO-LOOK · MIRA UN LADO, PASA AL OTRO', w, h);
+  },
+
+  // PICK & ROLL ────────────────────────────────────────────
+  'reconocer-bloqueo': (ctx, w, h, t) => {
+    drawCourtTop(ctx, w, h);
+    const period = 3.5;
+    const p = (t % period) / period;
+    // base
+    let baseX, baseY = h/2 + 30;
+    if (p < 0.4) {
+      baseX = lerp(80, 200, p / 0.4);
+    } else if (p < 0.85) {
+      baseX = lerp(200, w - 80, (p - 0.4) / 0.45);
+      baseY = lerp(h/2 + 30, h/2, (p - 0.4) / 0.45);
+    } else { baseX = 80; }
+    // defensor
+    let defX = baseX - 15, defY = baseY;
+    if (p > 0.4 && p < 0.85) {
+      const sp = (p - 0.4) / 0.45;
+      defX = lerp(195, 215, sp);
+      defY = lerp(h/2 + 30, h/2 + 20, sp);
+    }
+    // trayectoria
+    ctx.strokeStyle = 'rgba(255,85,0,.3)';
+    ctx.setLineDash([4,4]);
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(80, h/2 + 30);
+    ctx.quadraticCurveTo(200, h/2 + 30, w - 80, h/2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // bloqueador
+    ctx.fillStyle = 'rgba(255,85,0,.7)';
+    ctx.strokeStyle = '#FF5500';
+    ctx.lineWidth = 2;
+    ctx.fillRect(225, h/2 - 14, 12, 28);
+    ctx.strokeRect(225, h/2 - 14, 12, 28);
+    ctx.fillStyle = '#fff';
+    ctx.font = '700 8px Inter Tight'; ctx.textAlign = 'center';
+    ctx.fillText('B', 231, h/2 + 3);
+    // defensor
+    ctx.fillStyle = '#555';
+    ctx.beginPath(); ctx.arc(defX, defY, 9, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.fillText('D', defX, defY + 3);
+    // base con balón
+    ctx.fillStyle = '#fafafa';
+    ctx.beginPath(); ctx.arc(baseX, baseY, 11, 0, TAU); ctx.fill();
+    drawBall(ctx, baseX + 14, baseY + 8, 6);
+    ctx.fillStyle = '#000';
+    ctx.font = '700 10px Inter Tight';
+    ctx.fillText('1', baseX, baseY + 3);
+    drawLabel(ctx, 'PICK & ROLL · USAR EL BLOQUEO', w, h);
+  },
+
+  // DEFENSA ─────────────────────────────────────────────────
+  'posicion-def': (ctx, w, h, t) => {
+    drawCourtTop(ctx, w, h);
+    const period = 2.4;
+    const p = (t % period) / period;
+    const dx = Math.sin(p * TAU) * 60;
+    // flechas de movimiento
+    ctx.strokeStyle = 'rgba(255,85,0,.25)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath();
+    ctx.moveTo(w/2 - 70, h/2 + 50); ctx.lineTo(w/2 + 70, h/2 + 50);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // flechas extremos
+    ctx.fillStyle = 'rgba(255,85,0,.4)';
+    ctx.beginPath();
+    ctx.moveTo(w/2 - 75, h/2 + 50); ctx.lineTo(w/2 - 65, h/2 + 45); ctx.lineTo(w/2 - 65, h/2 + 55); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(w/2 + 75, h/2 + 50); ctx.lineTo(w/2 + 65, h/2 + 45); ctx.lineTo(w/2 + 65, h/2 + 55); ctx.fill();
+
+    drawPlayer(ctx, w/2 + dx, h/2 + 30, {
+      scale: 1.6,
+      legPhase: 0.6, // piernas abiertas (postura defensiva)
+      armLeft: -Math.PI/3, armRight: Math.PI/3,
+    });
+    drawLabel(ctx, 'DESPLAZAMIENTO LATERAL DEFENSIVO', w, h);
+  },
+
+  // FINALIZACIÓN ────────────────────────────────────────────
+  'layup-debil': (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const baseY = h*0.82;
+    drawHoop(ctx, w - 50, h*0.5);
+    const period = 3.2;
+    const p = (t % period) / period;
+    let px, jumpH = 0, armR = 0, hasBall = true;
+    if (p < 0.5) {
+      px = lerp(60, w - 130, p/0.5);
+    } else if (p < 0.7) {
+      const jp = (p - 0.5)/0.2;
+      px = lerp(w - 130, w - 110, jp);
+      jumpH = Math.sin(jp * Math.PI) * 60;
+      armR = jp * Math.PI/2;
+    } else if (p < 0.88) {
+      px = w - 110;
+      jumpH = Math.sin(((p - 0.5)/0.2) * Math.PI) * 60 * (1 - (p - 0.7)/0.18);
+      armR = Math.PI/2; hasBall = false;
+    } else { px = 60; hasBall = true; }
+    // balón con parábola
+    if (!hasBall && p < 0.88) {
+      const bp = (p - 0.7) / 0.18;
+      const bx = lerp(w - 100, w - 56, bp);
+      const by = lerp(h*0.5 - 50, h*0.5 - 4, bp) - Math.sin(bp * Math.PI) * 35;
+      drawBall(ctx, bx, by, 10);
+      for (let i = 1; i < 7; i++) {
+        const pp = bp - i*0.05; if (pp < 0) break;
+        const tx = lerp(w - 100, w - 56, pp);
+        const ty = lerp(h*0.5 - 50, h*0.5 - 4, pp) - Math.sin(pp * Math.PI) * 35;
+        ctx.fillStyle = `rgba(255,85,0,${0.18 - i*0.025})`;
+        ctx.beginPath(); ctx.arc(tx, ty, 8, 0, TAU); ctx.fill();
+      }
+    }
+    drawPlayer(ctx, px, baseY, {
+      scale: 2,
+      legPhase: p < 0.5 ? t * 8 : 0,
+      armLeft: -Math.PI/4 + armR,
+      armRight: Math.PI/4 + armR * 1.2,
+      jump: jumpH,
+    });
+    if (hasBall && p < 0.7) {
+      const hx = px + Math.cos(Math.PI/4 + armR - Math.PI/2) * 28;
+      const hy = baseY - 45 + Math.sin(Math.PI/4 + armR - Math.PI/2) * 28 - jumpH;
+      drawBall(ctx, hx, hy, 9);
+    }
+    drawLabel(ctx, 'LAYUP · CARRERA + SALTO', w, h);
+  },
+
+  'floater': (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const baseY = h*0.82;
+    drawHoop(ctx, w - 50, h*0.48);
+    const period = 2.8;
+    const p = (t % period) / period;
+    // defensor interior (alto, brazos arriba)
+    const defX = w/2 + 40;
+    drawPlayer(ctx, defX, baseY, {
+      scale: 2.4, color: '#555',
+      armLeft: -Math.PI*0.85, armRight: Math.PI*0.85,
+    });
+    // jugador con balón
+    let px = w/2 - 60, jumpH = 0, hasBall = true;
+    if (p > 0.3 && p < 0.55) {
+      const jp = (p - 0.3) / 0.25;
+      px = w/2 - 60 + jp * 20;
+      jumpH = Math.sin(jp * Math.PI) * 35;
+      if (jp > 0.5) hasBall = false;
+    } else if (p >= 0.55) {
+      hasBall = false;
+    }
+    drawPlayer(ctx, px, baseY, {
+      scale: 2,
+      armLeft: -Math.PI/3, armRight: -Math.PI/3,
+      jump: jumpH,
+    });
+    if (hasBall) {
+      drawBall(ctx, px + 10, baseY - 55 - jumpH, 9);
+    } else if (p < 0.92) {
+      // parábola alta (floater) sobre el defensor
+      const bp = (p - 0.45) / 0.47;
+      const bx = lerp(px + 10, w - 56, bp);
+      // parábola ALTA: pico mucho mayor que normal
+      const by = lerp(baseY - 55, h*0.48 - 4, bp) - Math.sin(bp * Math.PI) * 60;
+      for (let i = 1; i < 8; i++) {
+        const pp = bp - i*0.04; if (pp < 0) break;
+        const tx = lerp(px + 10, w - 56, pp);
+        const ty = lerp(baseY - 55, h*0.48 - 4, pp) - Math.sin(pp * Math.PI) * 60;
+        ctx.fillStyle = `rgba(255,85,0,${0.2 - i*0.025})`;
+        ctx.beginPath(); ctx.arc(tx, ty, 8, 0, TAU); ctx.fill();
+      }
+      drawBall(ctx, bx, by, 9);
+    }
+    drawLabel(ctx, 'FLOATER · PARÁBOLA ALTA SOBRE EL DEFENSOR', w, h);
+  },
+
+  'gancho': (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const baseY = h*0.82;
+    drawHoop(ctx, w - 50, h*0.48);
+    const period = 2.6;
+    const p = (t % period) / period;
+    const px = w/2;
+    // animación del brazo: arco de 0 a 180 grados
+    let armAngle = 0, hasBall = true;
+    if (p < 0.5) {
+      armAngle = -Math.PI/2 - (p / 0.5) * Math.PI; // de abajo a arriba en arco
+    } else if (p < 0.6) {
+      armAngle = -Math.PI/2 - Math.PI;
+      hasBall = false;
+    } else { armAngle = -Math.PI/2; }
+
+    drawPlayer(ctx, px, baseY, {
+      scale: 2.2,
+      armLeft: 0,
+      armRight: armAngle + Math.PI/2,
+      torsoLean: -0.1,
+    });
+    if (hasBall) {
+      const hx = px + Math.cos(armAngle) * 28;
+      const hy = baseY - 52 + Math.sin(armAngle) * 28;
+      drawBall(ctx, hx, hy, 10);
+    } else if (p < 0.92) {
+      // balón viaja al aro
+      const bp = (p - 0.55) / 0.37;
+      const startX = px - 24, startY = baseY - 80;
+      const bx = lerp(startX, w - 56, bp);
+      const by = lerp(startY, h*0.48 - 4, bp) - Math.sin(bp * Math.PI) * 40;
+      for (let i = 1; i < 7; i++) {
+        const pp = bp - i*0.05; if (pp < 0) break;
+        const tx = lerp(startX, w - 56, pp);
+        const ty = lerp(startY, h*0.48 - 4, pp) - Math.sin(pp * Math.PI) * 40;
+        ctx.fillStyle = `rgba(255,85,0,${0.18 - i*0.025})`;
+        ctx.beginPath(); ctx.arc(tx, ty, 8, 0, TAU); ctx.fill();
+      }
+      drawBall(ctx, bx, by, 10);
+    }
+    drawLabel(ctx, 'GANCHO · ARCO ALTO DESDE EL POSTE', w, h);
+  },
+
+  'fadeaway': (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const baseY = h*0.82;
+    drawHoop(ctx, w - 50, h*0.48);
+    const period = 3.5;
+    const p = (t % period) / period;
+    // defensor estático
+    drawPlayer(ctx, w/2 + 40, baseY, {
+      scale: 2.2, color: '#555',
+      armLeft: -Math.PI/4, armRight: Math.PI/4,
+    });
+    // jugador hace fadeaway
+    let px = w/2, jumpH = 0, hasBall = true, lean = 0;
+    if (p > 0.4 && p < 0.7) {
+      const jp = (p - 0.4) / 0.3;
+      px = lerp(w/2, w/2 - 25, jp);
+      jumpH = Math.sin(jp * Math.PI) * 55;
+      lean = -0.2 * jp;
+      if (jp > 0.6) hasBall = false;
+    } else if (p >= 0.7 && p < 0.9) {
+      const lp = (p - 0.7) / 0.2;
+      px = w/2 - 25 + lp * 10;
+      jumpH = Math.sin(((p - 0.4)/0.3) * Math.PI) * 55 * (1 - lp);
+      hasBall = false;
+    }
+    drawPlayer(ctx, px, baseY, {
+      scale: 2,
+      armLeft: -Math.PI/3, armRight: -Math.PI/4,
+      jump: jumpH, torsoLean: lean,
+    });
+    if (hasBall) {
+      drawBall(ctx, px - 5, baseY - 55 - jumpH, 9);
+    } else if (p < 0.9) {
+      const bp = (p - 0.58) / 0.32;
+      if (bp >= 0 && bp <= 1) {
+        const bx = lerp(px - 5, w - 56, bp);
+        const by = lerp(baseY - 55 - jumpH, h*0.48 - 4, bp) - Math.sin(bp * Math.PI) * 25;
+        for (let i = 1; i < 6; i++) {
+          const pp = bp - i*0.05; if (pp < 0) break;
+          const tx = lerp(px - 5, w - 56, pp);
+          const ty = lerp(baseY - 55 - jumpH, h*0.48 - 4, pp) - Math.sin(pp * Math.PI) * 25;
+          ctx.fillStyle = `rgba(255,85,0,${0.18 - i*0.025})`;
+          ctx.beginPath(); ctx.arc(tx, ty, 8, 0, TAU); ctx.fill();
+        }
+        drawBall(ctx, bx, by, 9);
+      }
+    }
+    drawLabel(ctx, 'FADEAWAY · SUSPENSIÓN HACIA ATRÁS', w, h);
+  },
+
+  'timing-rebote': (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const baseY = h*0.82;
+    drawHoop(ctx, 50, h*0.48);
+    const period = 2.8;
+    const p = (t % period) / period;
+    // balón sale del aro y cae
+    let bx, by, ballVisible = true;
+    if (p < 0.4) {
+      // sale del aro hacia arriba
+      const bp = p / 0.4;
+      bx = lerp(60, w/2 - 30, bp);
+      by = lerp(h*0.48, h*0.48 - 50, bp) - Math.sin(bp * Math.PI) * 20;
+    } else if (p < 0.75) {
+      // cae hacia el jugador
+      const bp = (p - 0.4) / 0.35;
+      bx = lerp(w/2 - 30, w/2, bp);
+      by = lerp(h*0.48 - 50, h*0.4, bp);
+    } else if (p < 0.85) {
+      // jugador lo coge
+      ballVisible = false;
+    } else {
+      ballVisible = false;
+    }
+    // jugador salta
+    let jumpH = 0;
+    if (p >= 0.6 && p < 0.8) {
+      const jp = (p - 0.6) / 0.2;
+      jumpH = Math.sin(jp * Math.PI) * 40;
+    }
+    drawPlayer(ctx, w/2, baseY, {
+      scale: 2.3,
+      armLeft: -Math.PI*0.8, armRight: Math.PI*0.8, // brazos arriba
+      jump: jumpH,
+    });
+    if (ballVisible) drawBall(ctx, bx, by, 11);
+    // trayectoria del rebote
+    ctx.strokeStyle = 'rgba(255,85,0,.2)';
+    ctx.setLineDash([3,4]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(60, h*0.48);
+    ctx.quadraticCurveTo(w/2 - 30, h*0.4 - 10, w/2, h*0.4);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    drawLabel(ctx, 'REBOTE · TIMING + 2 MANOS ARRIBA', w, h);
+  },
+
+  'tape': (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const baseY = h*0.82;
+    drawHoop(ctx, w - 50, h*0.48);
+    const period = 2.5;
+    const p = (t % period) / period;
+    // atacante intentando tirar
+    let atkArmAngle = -Math.PI/4;
+    if (p < 0.4) {
+      atkArmAngle = -Math.PI/4 - (p / 0.4) * Math.PI/4;
+    } else { atkArmAngle = -Math.PI/2; }
+    drawPlayer(ctx, w/2 - 30, baseY, {
+      scale: 2,
+      armLeft: 0, armRight: atkArmAngle,
+    });
+    // balón en mano del atacante
+    if (p < 0.6) {
+      const hx = w/2 - 30 + Math.cos(atkArmAngle) * 24;
+      const hy = baseY - 55 + Math.sin(atkArmAngle) * 24;
+      drawBall(ctx, hx, hy, 9);
+    } else {
+      // tras taper, el balón cae
+      const bp = (p - 0.6) / 0.4;
+      const bx = lerp(w/2 - 30, w/2 - 60, bp);
+      const by = lerp(baseY - 70, baseY - 10, bp * bp);
+      drawBall(ctx, bx, by, 9);
+    }
+    // defensor con timing del salto
+    let defJump = 0, defArm = -Math.PI/4;
+    if (p >= 0.3 && p < 0.6) {
+      const jp = (p - 0.3) / 0.3;
+      defJump = Math.sin(jp * Math.PI) * 45;
+      defArm = -Math.PI*0.85; // brazo arriba
+    }
+    drawPlayer(ctx, w/2 + 40, baseY, {
+      scale: 2.2, color: '#fafafa',
+      armLeft: Math.PI/4, armRight: defArm,
+      jump: defJump,
+    });
+    // mano de tapón (efecto destello)
+    if (p >= 0.4 && p < 0.55) {
+      const flashX = w/2 + 40 + Math.cos(defArm - Math.PI/2) * 30;
+      const flashY = baseY - 52 + Math.sin(defArm - Math.PI/2) * 30 - defJump;
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,85,0,.5)';
+      ctx.filter = 'blur(6px)';
+      ctx.beginPath();
+      ctx.arc(flashX, flashY, 12, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+    }
+    drawLabel(ctx, 'TAPER · TIMING VERTICAL', w, h);
+  },
+};
+
+function renderDrillAnimation(drill) {
+  const container = document.getElementById('drill-animation');
+  // Limpia y crea canvas
+  container.innerHTML = `<span class="drill-animation-label">Demostración</span><canvas width="640" height="360"></canvas>`;
+  const canvas = container.querySelector('canvas');
+  const animFn = ANIM[drill.id];
+  if (animFn) {
+    startAnim(canvas, animFn);
+  } else {
+    // fallback: jugador estático con balón
+    startAnim(canvas, (ctx, w, h, t) => {
+      drawCourtSide(ctx, w, h);
+      drawPlayer(ctx, w/2, h*0.82, {
+        scale: 2.2,
+        legPhase: Math.sin(t * 3) * 0.2,
+        armLeft: Math.PI/4, armRight: -Math.PI/4,
+      });
+      drawBall(ctx, w/2 + 30, h*0.82 - 20 + Math.sin(t * 5) * 6, 10);
+      drawLabel(ctx, drill.name.toUpperCase(), w, h);
+    });
+  }
+}
+
+// ── (Bloque SVG antiguo eliminado: ahora todo es canvas) ─────────
+const _DEAD_SVG_LEGACY = {
   courtSide() {
     return `
       <line class="court-line" x1="0" y1="160" x2="320" y2="160"/>
@@ -2154,26 +2901,6 @@ const ANIM = {
     </svg>`,
 };
 
-// Fallback genérico para drills sin animación específica
-ANIM._fallback = (drill) => `
-  <svg viewBox="0 0 320 180">
-    ${ANIM.courtTop()}
-    ${ANIM.hoop(295, 90)}
-    <g style="animation: defenseSlide 3s ease-in-out infinite;">
-      <ellipse class="player" cx="160" cy="100" rx="13" ry="18"/>
-      <circle class="player" cx="160" cy="80" r="8"/>
-      <circle class="ball" cx="170" cy="115" r="5"/>
-    </g>
-    <text x="160" y="170" text-anchor="middle" fill="rgba(255,255,255,.45)" font-size="9" font-family="Inter" font-weight="600" letter-spacing=".1em">${drill.name.toUpperCase()}</text>
-  </svg>`;
-
-function renderDrillAnimation(drill) {
-  const container = document.getElementById('drill-animation');
-  const animFn = ANIM[drill.id];
-  const html = animFn ? animFn() : ANIM._fallback(drill);
-  container.innerHTML = `<span class="drill-animation-label">Demostración</span>${html}`;
-}
-
 // ── TIMER ────────────────────────────────────────────────────────
 function resetTimer(seconds) {
   stopTimer();
@@ -2397,6 +3124,8 @@ function renderProgress() {
 // ── INTERCEPT NAV TO RENDER ──────────────────────────────────────
 const _goTo = goTo;
 window.goTo = function(screenId) {
+  // Si salimos del drill, paramos la animación canvas para liberar CPU/batería
+  if (screenId !== 'screen-drill') stopAnim();
   _goTo(screenId);
   if (screenId === 'screen-training') renderTraining(state.activeModule);
   if (screenId === 'screen-plan')     renderPlan();
