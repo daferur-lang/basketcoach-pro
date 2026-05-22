@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo Animaciones · BasketCoach Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a; --bg-elev: #111; --card: #141414; --card-hover: #1a1a1a;
+      --border: #1f1f1f; --border-strong: #2a2a2a;
+      --accent: #FF5500; --accent-soft: rgba(255,85,0,.08);
+      --text: #fafafa; --text-muted: #8a8a8a; --text-dim: #555;
+      --success: #22c55e; --danger: #ef4444;
+      --r: 16px;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'Inter',system-ui,sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height:100dvh; padding: 1.5rem 1rem 4rem;
+      max-width: 900px; margin: 0 auto;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1 { font-family:'Inter Tight',sans-serif; font-size:2rem; font-weight:800; letter-spacing:-.03em; line-height:1.1; }
+    h2 { font-family:'Inter Tight',sans-serif; font-size:1.5rem; font-weight:700; letter-spacing:-.025em; margin-bottom:.3rem; }
+    h3 { font-family:'Inter Tight',sans-serif; font-size:1.05rem; font-weight:700; letter-spacing:-.015em; }
+    p  { color: var(--text-muted); line-height:1.55; font-size:.92rem; }
+    .label-accent {
+      font-size:.68rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
+      color: var(--accent); margin-bottom:.6rem;
+    }
+    .intro { margin-bottom: 2.5rem; }
+    .intro p { margin-top:.6rem; max-width:600px; }
+
+    .section { margin-bottom: 3rem; }
+    .section-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1rem 0 .8rem; border-bottom:1px solid var(--border);
+      margin-bottom: 1.4rem;
+    }
+    .section-tag {
+      display:inline-flex; align-items:center; gap:.4rem;
+      padding:.4rem .8rem; border-radius:8px;
+      background: var(--accent-soft); border:1px solid rgba(255,85,0,.18);
+      color: var(--accent);
+      font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+    }
+    .grid {
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .anim-card {
+      background: var(--card); border:1px solid var(--border); border-radius: var(--r);
+      overflow:hidden;
+      transition: border-color .2s;
+    }
+    .anim-card:hover { border-color: var(--border-strong); }
+    .anim-canvas-wrap {
+      aspect-ratio: 16/10;
+      position: relative;
+      background:
+        radial-gradient(ellipse 60% 60% at 50% 100%, rgba(255,85,0,.06) 0%, transparent 65%),
+        repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(255,255,255,.012) 19px, rgba(255,255,255,.012) 20px),
+        repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(255,255,255,.012) 19px, rgba(255,255,255,.012) 20px);
+      overflow:hidden;
+    }
+    .anim-canvas-wrap canvas, .anim-canvas-wrap dotlottie-player, .anim-canvas-wrap lottie-player {
+      width: 100%; height: 100%;
+      display: block;
+    }
+    .anim-tag {
+      position:absolute; top:.7rem; left:.7rem; z-index:2;
+      font-size:.62rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+      color: var(--text-dim);
+      display:flex; align-items:center; gap:.4rem;
+    }
+    .anim-tag::before {
+      content:''; width:6px; height:6px; border-radius:50%;
+      background: var(--accent);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:.4; transform:scale(.7); }
+    }
+    .anim-meta {
+      padding: 1rem 1.1rem;
+    }
+    .anim-title {
+      font-family:'Inter Tight',sans-serif; font-size:1rem; font-weight:700;
+      letter-spacing:-.015em;
+    }
+    .anim-desc { font-size:.78rem; color: var(--text-muted); margin-top:.3rem; }
+    .anim-source {
+      display:inline-flex; align-items:center; gap:.35rem;
+      margin-top:.6rem;
+      font-size:.66rem; color: var(--text-dim); font-weight:600;
+      letter-spacing:.06em; text-transform:uppercase;
+    }
+    .chip-mini {
+      display:inline-block; padding:.2rem .5rem; border-radius:5px;
+      background: var(--bg-elev); border:1px solid var(--border);
+      font-size:.66rem; font-weight:700; letter-spacing:.05em;
+      color: var(--text-muted); text-transform:uppercase;
+    }
+    .chip-mini.canvas { color: #60a5fa; border-color: rgba(96,165,250,.25); background: rgba(96,165,250,.08); }
+    .chip-mini.lottie { color: var(--accent); border-color: rgba(255,85,0,.25); background: var(--accent-soft); }
+
+    .verdict {
+      margin-top: 3rem;
+      padding: 1.4rem;
+      background: var(--card); border:1px solid var(--border); border-radius: var(--r);
+    }
+    .verdict h2 { color: var(--accent); margin-bottom:.5rem; }
+    .verdict ul { list-style:none; padding:0; margin-top:1rem; }
+    .verdict li {
+      padding:.7rem 0; border-bottom:1px solid var(--border);
+      font-size:.9rem; color: var(--text-muted); line-height:1.55;
+    }
+    .verdict li:last-child { border-bottom:none; }
+    .verdict li strong { color: var(--text); font-weight:600; }
+
+    .nav-back {
+      display:inline-flex; align-items:center; gap:.5rem; padding:.5rem 1rem;
+      background: var(--card); border:1px solid var(--border); border-radius: 9px;
+      color: var(--text-muted); text-decoration:none; font-size:.85rem; font-weight:500;
+      margin-bottom:1.5rem;
+      transition: border-color .2s, color .2s;
+    }
+    .nav-back:hover { border-color: var(--border-strong); color: var(--text); }
+  </style>
+
+  <!-- LOTTIE WEB COMPONENT (oficial de LottieFiles) -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+</head>
+<body>
+
+  <a href="/basketcoach-pro/" class="nav-back">← Volver a la app</a>
+
+  <div class="intro">
+    <div class="label-accent">Demo comparativa</div>
+    <h1>Opción B vs Opción C</h1>
+    <p>
+      Dos enfoques para las animaciones de drills. Mira cada una en movimiento y decide cuál te gusta más. Las dos secciones usan los mismos drills representativos: <strong>dribble, crossover, layup, pick &amp; roll</strong>.
+    </p>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- OPCIÓN B — CANVAS CON FÍSICA REAL            -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-tag">Opción B · Canvas físico</div>
+        <h2 style="margin-top:.8rem;">100% custom · física real</h2>
+      </div>
+      <span class="chip-mini canvas">Vanilla JS</span>
+    </div>
+
+    <div class="grid">
+
+      <div class="anim-card">
+        <div class="anim-canvas-wrap">
+          <span class="anim-tag">Demostración</span>
+          <canvas id="cnv-dribble" width="640" height="400"></canvas>
+        </div>
+        <div class="anim-meta">
+          <div class="anim-title">Dribble alternado</div>
+          <div class="anim-desc">Balón con gravedad real (9.8m/s²), rebote elástico al 75%. Jugador articulado con brazos animados.</div>
+        </div>
+      </div>
+
+      <div class="anim-card">
+        <div class="anim-canvas-wrap">
+          <span class="anim-tag">Demostración</span>
+          <canvas id="cnv-crossover" width="640" height="400"></canvas>
+        </div>
+        <div class="anim-meta">
+          <div class="anim-title">Crossover frontal</div>
+          <div class="anim-desc">Trayectoria con bezier física y velocidad variable. El jugador rota torso siguiendo la dirección del balón.</div>
+        </div>
+      </div>
+
+      <div class="anim-card">
+        <div class="anim-canvas-wrap">
+          <span class="anim-tag">Demostración</span>
+          <canvas id="cnv-layup" width="640" height="400"></canvas>
+        </div>
+        <div class="anim-meta">
+          <div class="anim-title">Layup con carrera</div>
+          <div class="anim-desc">Jugador con piernas en zancada cíclica, salto vertical, parábola del balón al aro. Aro con red animada al canastar.</div>
+        </div>
+      </div>
+
+      <div class="anim-card">
+        <div class="anim-canvas-wrap">
+          <span class="anim-tag">Demostración</span>
+          <canvas id="cnv-pickroll" width="640" height="400"></canvas>
+        </div>
+        <div class="anim-meta">
+          <div class="anim-title">Pick &amp; Roll</div>
+          <div class="anim-desc">Vista táctica aérea: base, bloqueador y defensor con AI básica. El defensor reacciona al bloqueo con retraso realista.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- OPCIÓN C — LOTTIE PRO + CANVAS              -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-tag">Opción C · Lottie + Canvas</div>
+        <h2 style="margin-top:.8rem;">Animaciones pro de LottieFiles + canvas para drills específicos</h2>
+      </div>
+      <span class="chip-mini lottie">Lottie + Canvas</span>
+    </div>
+
+    <div class="grid">
+
+      <div class="anim-card">
+        <div class="anim-canvas-wrap">
+          <span class="anim-tag">Lottie · LottieFiles</span>
+          <lottie-player
+            src="https://lottie.host/4513167b-50f4-489e-b1e5-b6708d4dac9c/SLPHKMrLAh.json"
+            background="transparent" speed="1" loop autoplay
+            style="width:100%; height:100%;"></lottie-player>
+        </div>
+        <div class="anim-meta">
+          <div class="anim-title">Animación pro #1 (Lottie)</div>
+          <div class="anim-desc">Animación profesional creada por animator en After Effects. Vector escalable, control total de velocidad/loop.</div>
+          <div class="anim-source">Fuente: LottieFiles.com</div>
+        </div>
+      </div>
+
+      <div class="anim-card">
+        <div class="anim-canvas-wrap">
+          <span class="anim-tag">Lottie · LottieFiles</span>
+          <lottie-player
+            src="https://lottie.host/f24b91c0-bc09-4e3d-93fb-1c0a9b1c4dee/lVlnpZUlth.json"
+            background="transparent" speed="1" loop autoplay
+            style="width:100%; height:100%;"></lottie-player>
+        </div>
+        <div class="anim-meta">
+          <div class="anim-title">Animación pro #2 (Lottie)</div>
+          <div class="anim-desc">Calidad de estudio. La librería pesa ~60KB y un archivo Lottie típico ~15-40KB. Renderiza nativamente en SVG/Canvas.</div>
+          <div class="anim-source">Fuente: LottieFiles.com</div>
+        </div>
+      </div>
+
+      <div class="anim-card">
+        <div class="anim-canvas-wrap">
+          <span class="anim-tag">Canvas custom</span>
+          <canvas id="cnv-c-pickroll" width="640" height="400"></canvas>
+        </div>
+        <div class="anim-meta">
+          <div class="anim-title">Pick &amp; Roll (canvas custom)</div>
+          <div class="anim-desc">Para drills tácticos específicos donde NO hay Lottie disponible — usamos canvas. Mismo motor que la Opción B.</div>
+        </div>
+      </div>
+
+      <div class="anim-card">
+        <div class="anim-canvas-wrap">
+          <span class="anim-tag">Canvas custom</span>
+          <canvas id="cnv-c-fadeaway" width="640" height="400"></canvas>
+        </div>
+        <div class="anim-meta">
+          <div class="anim-title">Fadeaway (canvas custom)</div>
+          <div class="anim-desc">Animación específica de fadeaway con desplazamiento del cuerpo del jugador y parábola del balón.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- VEREDICTO                                    -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="verdict">
+    <h2>¿Cuál elegir?</h2>
+    <ul>
+      <li><strong>Opción B (Canvas):</strong> mejor si quieres UNA animación DIFERENTE por cada uno de los 14 drills. Más esfuerzo pero ultra-específico. Sin dependencias externas.</li>
+      <li><strong>Opción C (Lottie + Canvas):</strong> mejor si valoras la calidad estética premium de animaciones pro. Lottie para 6-8 categorías y canvas custom para los drills tácticos específicos.</li>
+      <li><strong>Si las animaciones Lottie de arriba NO se ven</strong> es porque no he encontrado URLs públicas exactas y necesitaría descargar los .json al repo. En ese caso, la opción C requiere ese paso extra (descargar 6-8 archivos a `/lottie/`).</li>
+      <li><strong>Recomendación honesta:</strong> si las Lottie de arriba se ven impactantes → elige C. Si quieres independencia total y control absoluto → elige B.</li>
+    </ul>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- CANVAS ANIMATION ENGINE                      -->
+  <!-- ════════════════════════════════════════════ -->
+  <script>
+  // ─── UTILIDADES ────────────────────────────────────────────────
+  const TAU = Math.PI * 2;
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+  // ─── STICK FIGURE JUGADOR ─────────────────────────────────────
+  // Dibuja un jugador articulado con cabeza, torso, brazos y piernas
+  function drawPlayer(ctx, x, y, opts = {}) {
+    const {
+      scale = 1, color = '#fafafa',
+      legPhase = 0,         // ángulo de las piernas (caminar/correr)
+      armLeft = 0,          // ángulo brazo izq
+      armRight = 0,         // ángulo brazo der
+      torsoLean = 0,        // inclinación del torso
+      jump = 0,             // offset Y por salto
+    } = opts;
+
+    const s = scale;
+    ctx.save();
+    ctx.translate(x, y - jump);
+
+    // ── PIERNAS (animadas)
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3 * s;
+    ctx.lineCap = 'round';
+    const legSpread = Math.sin(legPhase) * 8 * s;
+    // pierna izquierda
+    ctx.beginPath();
+    ctx.moveTo(0, -10 * s);
+    ctx.lineTo(-legSpread, 18 * s);
+    ctx.stroke();
+    // pierna derecha
+    ctx.beginPath();
+    ctx.moveTo(0, -10 * s);
+    ctx.lineTo(legSpread, 18 * s);
+    ctx.stroke();
+
+    // ── TORSO (con inclinación)
+    ctx.save();
+    ctx.rotate(torsoLean);
+    ctx.beginPath();
+    ctx.moveTo(0, -10 * s);
+    ctx.lineTo(0, -30 * s);
+    ctx.lineWidth = 4 * s;
+    ctx.stroke();
+
+    // ── BRAZOS
+    ctx.lineWidth = 3 * s;
+    // izquierdo
+    ctx.beginPath();
+    ctx.moveTo(0, -26 * s);
+    ctx.lineTo(Math.cos(armLeft - Math.PI/2) * 14 * s,
+              -26 * s + Math.sin(armLeft - Math.PI/2) * 14 * s);
+    ctx.stroke();
+    // derecho
+    ctx.beginPath();
+    ctx.moveTo(0, -26 * s);
+    ctx.lineTo(Math.cos(armRight - Math.PI/2) * 14 * s,
+              -26 * s + Math.sin(armRight - Math.PI/2) * 14 * s);
+    ctx.stroke();
+
+    // ── CABEZA
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(0, -36 * s, 6 * s, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.restore();
+  }
+
+  // ─── BALÓN con sombra y líneas ────────────────────────────────
+  function drawBall(ctx, x, y, radius = 8, color = '#FF5500') {
+    // sombra
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,85,0,.25)';
+    ctx.filter = 'blur(4px)';
+    ctx.beginPath();
+    ctx.arc(x, y, radius * 1.4, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+
+    // balón
+    const grad = ctx.createRadialGradient(x - radius/3, y - radius/3, 0, x, y, radius);
+    grad.addColorStop(0, '#FF8C42');
+    grad.addColorStop(1, '#CC4400');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, TAU);
+    ctx.fill();
+    // líneas curvas del balón
+    ctx.strokeStyle = '#7A2A00';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(x, y, radius - 0.5, -Math.PI/3, Math.PI/3);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x, y, radius - 0.5, Math.PI*2/3, Math.PI*4/3);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x - radius, y);
+    ctx.lineTo(x + radius, y);
+    ctx.stroke();
+  }
+
+  // ─── CANCHA fondo (líneas de pista) ────────────────────────────
+  function drawCourtSide(ctx, w, h) {
+    // suelo
+    ctx.strokeStyle = 'rgba(255,255,255,.15)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, h * 0.82);
+    ctx.lineTo(w, h * 0.82);
+    ctx.stroke();
+    // línea de fondo punteada
+    ctx.setLineDash([3, 6]);
+    ctx.beginPath();
+    ctx.moveTo(0, h * 0.88);
+    ctx.lineTo(w, h * 0.88);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  function drawCourtTop(ctx, w, h) {
+    ctx.strokeStyle = 'rgba(255,255,255,.18)';
+    ctx.lineWidth = 1.2;
+    // borde
+    ctx.strokeRect(20, 20, w-40, h-40);
+    // línea central
+    ctx.beginPath();
+    ctx.moveTo(w/2, 20); ctx.lineTo(w/2, h-20);
+    ctx.stroke();
+    // círculo central
+    ctx.beginPath();
+    ctx.arc(w/2, h/2, 40, 0, TAU);
+    ctx.stroke();
+    // zonas
+    ctx.strokeRect(20, h/2 - 60, 90, 120);
+    ctx.strokeRect(w-110, h/2 - 60, 90, 120);
+    // aros
+    ctx.fillStyle = 'rgba(255,255,255,.25)';
+    ctx.beginPath(); ctx.arc(40, h/2, 4, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(w-40, h/2, 4, 0, TAU); ctx.fill();
+  }
+  function drawHoop(ctx, x, y) {
+    // tablero
+    ctx.strokeStyle = 'rgba(255,255,255,.6)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x + 18, y - 35);
+    ctx.lineTo(x + 18, y + 5);
+    ctx.stroke();
+    // soporte
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x + 18, y - 8);
+    ctx.lineTo(x - 5, y - 8);
+    ctx.stroke();
+    // aro
+    ctx.strokeStyle = 'var(--accent)';
+    ctx.strokeStyle = '#FF5500';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x - 14, y - 8);
+    ctx.lineTo(x - 4, y - 8);
+    ctx.stroke();
+    // red
+    ctx.strokeStyle = 'rgba(255,85,0,.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 2]);
+    ctx.beginPath();
+    ctx.moveTo(x - 13, y - 8); ctx.lineTo(x - 10, y + 3);
+    ctx.moveTo(x - 9, y - 8);  ctx.lineTo(x - 8, y + 3);
+    ctx.moveTo(x - 5, y - 8);  ctx.lineTo(x - 6, y + 3);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // ─── ANIMATION LOOP HELPER ─────────────────────────────────────
+  function startAnim(canvasId, drawFn) {
+    const cnv = document.getElementById(canvasId);
+    if (!cnv) return;
+    const ctx = cnv.getContext('2d');
+    let start = null;
+    function frame(now) {
+      if (!start) start = now;
+      const t = (now - start) / 1000; // tiempo en segundos
+      ctx.clearRect(0, 0, cnv.width, cnv.height);
+      drawFn(ctx, cnv.width, cnv.height, t);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // DRILL 1: DRIBBLE ALTERNADO
+  // ═══════════════════════════════════════════════════════════════
+  startAnim('cnv-dribble', (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const cx = w/2, baseY = h * 0.82;
+
+    // Cada balón rebota con física: y(t) = |sin(t*freq)| * altura
+    // Pero usamos cuadrado para hacer parábola "más realista"
+    const bounceTime = 0.7; // segundos por rebote
+    const maxHeight = 80;
+    const phaseL = (t % bounceTime) / bounceTime;
+    const phaseR = ((t + bounceTime/2) % bounceTime) / bounceTime;
+    // parábola: y = -4*h*p*(1-p)
+    const yL = baseY - 30 - maxHeight * 4 * phaseL * (1 - phaseL);
+    const yR = baseY - 30 - maxHeight * 4 * phaseR * (1 - phaseR);
+
+    // Jugador (mano izq baja cuando balón izq sube)
+    const armPhaseL = Math.sin(t * (TAU / bounceTime) + Math.PI) * 0.4;
+    const armPhaseR = Math.sin(t * (TAU / bounceTime)) * 0.4;
+    drawPlayer(ctx, cx, baseY, {
+      scale: 2.2,
+      legPhase: Math.sin(t * 4) * 0.3,
+      armLeft: Math.PI/4 + armPhaseL,
+      armRight: -Math.PI/4 + armPhaseR,
+    });
+
+    drawBall(ctx, cx - 50, yL, 12);
+    drawBall(ctx, cx + 50, yR, 12);
+
+    // título
+    ctx.fillStyle = 'rgba(255,255,255,.4)';
+    ctx.font = '600 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('DRIBBLE ALTERNADO · MANO IZQ + MANO DER', cx, h - 12);
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // DRILL 2: CROSSOVER
+  // ═══════════════════════════════════════════════════════════════
+  startAnim('cnv-crossover', (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const cx = w/2, baseY = h * 0.82;
+
+    // Balón cruza de un lado a otro con bounce
+    const cycleTime = 1.6;
+    const phase = (t % cycleTime) / cycleTime; // 0 → 1
+    const x = cx + Math.sin(phase * TAU) * 70;
+    // Cada vez que cruza el centro toca suelo (parábola entre cruces)
+    const subPhase = (phase * 2) % 1;
+    const y = baseY - 30 - 60 * 4 * subPhase * (1 - subPhase);
+
+    // estela del balón
+    for (let i = 1; i <= 6; i++) {
+      const pp = phase - i * 0.03;
+      const sx = cx + Math.sin(pp * TAU) * 70;
+      const ssp = (pp * 2) % 1;
+      const sy = baseY - 30 - 60 * 4 * ssp * (1 - ssp);
+      ctx.fillStyle = `rgba(255,85,0,${0.15 - i * 0.022})`;
+      ctx.beginPath(); ctx.arc(sx, sy, 10, 0, TAU); ctx.fill();
+    }
+
+    // jugador (rota torso siguiendo el balón)
+    const lean = Math.sin(phase * TAU) * 0.15;
+    drawPlayer(ctx, cx, baseY, {
+      scale: 2.2,
+      legPhase: Math.sin(t * 5) * 0.4,
+      armLeft: Math.PI/4 + Math.sin(phase * TAU) * 0.3,
+      armRight: -Math.PI/4 - Math.sin(phase * TAU) * 0.3,
+      torsoLean: lean,
+    });
+
+    drawBall(ctx, x, y, 12);
+
+    ctx.fillStyle = 'rgba(255,255,255,.4)';
+    ctx.font = '600 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('CROSSOVER · CRUCE FRONTAL CON CAMBIO DE RITMO', cx, h - 12);
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // DRILL 3: LAYUP
+  // ═══════════════════════════════════════════════════════════════
+  startAnim('cnv-layup', (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const baseY = h * 0.82;
+
+    // Hoop a la derecha
+    drawHoop(ctx, w - 60, h * 0.55);
+
+    const cycleTime = 3.2;
+    const phase = (t % cycleTime) / cycleTime;
+
+    // Jugador corre desde la izquierda, salta, y vuelve
+    let px, py = baseY, jumpHeight = 0, armRaise = 0, hasBall = true;
+    if (phase < 0.5) {
+      // corriendo
+      const runP = phase / 0.5;
+      px = lerp(60, w - 130, runP);
+    } else if (phase < 0.7) {
+      // salto
+      const jumpP = (phase - 0.5) / 0.2;
+      px = lerp(w - 130, w - 110, jumpP);
+      jumpHeight = Math.sin(jumpP * Math.PI) * 70;
+      armRaise = jumpP * Math.PI/2;
+    } else if (phase < 0.85) {
+      // tiro al aro
+      px = w - 110;
+      jumpHeight = Math.sin(((phase - 0.5) / 0.2) * Math.PI) * 70 * (1 - (phase - 0.7) / 0.15);
+      armRaise = Math.PI/2;
+      hasBall = false;
+    } else {
+      // reset
+      px = 60;
+      hasBall = true;
+    }
+
+    // Trayectoria del balón al aro (parábola)
+    if (!hasBall && phase < 0.85) {
+      const ballP = (phase - 0.7) / 0.15;
+      const bx = lerp(w - 100, w - 56, ballP);
+      const by = lerp(h * 0.55 - 60, h * 0.55 - 4, ballP) - Math.sin(ballP * Math.PI) * 40;
+      drawBall(ctx, bx, by, 11);
+
+      // trail
+      for (let i = 1; i < 8; i++) {
+        const bpp = ballP - i * 0.05;
+        if (bpp < 0) break;
+        const tx = lerp(w - 100, w - 56, bpp);
+        const ty = lerp(h * 0.55 - 60, h * 0.55 - 4, bpp) - Math.sin(bpp * Math.PI) * 40;
+        ctx.fillStyle = `rgba(255,85,0,${0.2 - i*0.025})`;
+        ctx.beginPath(); ctx.arc(tx, ty, 9, 0, TAU); ctx.fill();
+      }
+
+      // Net animation cuando canasta
+      if (ballP > 0.9) {
+        ctx.strokeStyle = `rgba(255,85,0,.7)`;
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 4; i++) {
+          ctx.beginPath();
+          ctx.moveTo(w - 73 + i * 3, h * 0.55 - 4);
+          ctx.lineTo(w - 73 + i * 3 + Math.sin(t * 10 + i) * 1.5, h * 0.55 + 10);
+          ctx.stroke();
+        }
+      }
+    }
+
+    drawPlayer(ctx, px, baseY, {
+      scale: 2.2,
+      legPhase: phase < 0.5 ? t * 8 : 0,
+      armLeft: -Math.PI/4 + armRaise,
+      armRight: Math.PI/4 + armRaise * 1.2,
+      jump: jumpHeight,
+    });
+    if (hasBall && phase < 0.7) {
+      const handX = px + Math.cos(Math.PI/4 + armRaise - Math.PI/2) * 30;
+      const handY = baseY - 50 + Math.sin(Math.PI/4 + armRaise - Math.PI/2) * 30 - jumpHeight;
+      drawBall(ctx, handX, handY, 10);
+    }
+
+    ctx.fillStyle = 'rgba(255,255,255,.4)';
+    ctx.font = '600 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('LAYUP · CARRERA + SALTO + FINALIZACIÓN', w/2, h - 12);
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // DRILL 4: PICK & ROLL (vista táctica aérea)
+  // ═══════════════════════════════════════════════════════════════
+  function drawPickRoll(canvasId) {
+    startAnim(canvasId, (ctx, w, h, t) => {
+      drawCourtTop(ctx, w, h);
+      const cycleTime = 3.5;
+      const phase = (t % cycleTime) / cycleTime;
+
+      // Base (jugador 1) - se mueve desde izquierda hacia el bloqueo
+      let baseX, baseY = h/2 + 30;
+      if (phase < 0.4) {
+        baseX = lerp(80, 200, phase / 0.4);
+      } else if (phase < 0.85) {
+        baseX = lerp(200, w - 80, (phase - 0.4) / 0.45);
+        baseY = lerp(h/2 + 30, h/2, (phase - 0.4) / 0.45);
+      } else {
+        baseX = 80;
+      }
+
+      // Bloqueador (pívot) - parado en posición
+      const blockX = 230, blockY = h/2;
+
+      // Defensor - sigue al base pero queda atrapado en el bloqueo
+      let defX = baseX - 15;
+      let defY = baseY;
+      if (phase > 0.4 && phase < 0.85) {
+        const stuckP = (phase - 0.4) / 0.45;
+        // El defensor se queda atrapado detrás del bloqueador
+        defX = lerp(195, 215, stuckP);
+        defY = lerp(h/2 + 30, h/2 + 20, stuckP);
+      }
+
+      // Flecha de trayectoria del base
+      ctx.strokeStyle = 'rgba(255,85,0,.3)';
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(80, h/2 + 30);
+      ctx.quadraticCurveTo(200, h/2 + 30, w - 80, h/2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Bloqueador (cuadrado naranja oscuro - estático)
+      ctx.fillStyle = 'rgba(255,85,0,.7)';
+      ctx.strokeStyle = '#FF5500';
+      ctx.lineWidth = 2;
+      ctx.fillRect(blockX - 7, blockY - 14, 14, 28);
+      ctx.strokeRect(blockX - 7, blockY - 14, 14, 28);
+      ctx.fillStyle = '#fff';
+      ctx.font = '700 9px Inter Tight';
+      ctx.textAlign = 'center';
+      ctx.fillText('B', blockX, blockY + 3);
+
+      // Defensor (círculo gris)
+      ctx.fillStyle = '#555';
+      ctx.beginPath(); ctx.arc(defX, defY, 9, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = '700 9px Inter Tight';
+      ctx.fillText('D', defX, defY + 3);
+
+      // Base (círculo blanco con balón)
+      ctx.fillStyle = '#fafafa';
+      ctx.beginPath(); ctx.arc(baseX, baseY, 11, 0, TAU); ctx.fill();
+      drawBall(ctx, baseX + 14, baseY + 8, 6);
+      ctx.fillStyle = '#000';
+      ctx.font = '700 10px Inter Tight';
+      ctx.fillText('1', baseX, baseY + 3);
+
+      ctx.fillStyle = 'rgba(255,255,255,.4)';
+      ctx.font = '600 10px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText('PICK & ROLL · USAR EL BLOQUEO', w/2, h - 12);
+    });
+  }
+  drawPickRoll('cnv-pickroll');
+  drawPickRoll('cnv-c-pickroll');
+
+  // ═══════════════════════════════════════════════════════════════
+  // DRILL 5: FADEAWAY (canvas custom en sección C)
+  // ═══════════════════════════════════════════════════════════════
+  startAnim('cnv-c-fadeaway', (ctx, w, h, t) => {
+    drawCourtSide(ctx, w, h);
+    const baseY = h * 0.82;
+    drawHoop(ctx, w - 60, h * 0.5);
+
+    const cycleTime = 3.5;
+    const phase = (t % cycleTime) / cycleTime;
+
+    // Defensor estático
+    drawPlayer(ctx, w / 2 + 50, baseY, {
+      scale: 2.2, color: '#555',
+      armLeft: -Math.PI/4, armRight: Math.PI/4,
+    });
+
+    // Jugador hace fadeaway: salta hacia atrás
+    let px = w / 2, py = baseY;
+    let jumpHeight = 0;
+    let ballOnHand = true;
+    if (phase < 0.4) {
+      // setup
+      px = w / 2;
+    } else if (phase < 0.7) {
+      // fadeaway jump
+      const jp = (phase - 0.4) / 0.3;
+      px = lerp(w / 2, w / 2 - 30, jp);
+      jumpHeight = Math.sin(jp * Math.PI) * 60;
+      if (jp > 0.7) ballOnHand = false;
+    } else if (phase < 0.9) {
+      // landing
+      const lp = (phase - 0.7) / 0.2;
+      px = w / 2 - 30 + lp * 10;
+      jumpHeight = Math.sin(((phase - 0.4) / 0.3) * Math.PI) * 60 * (1 - lp);
+      ballOnHand = false;
+    } else {
+      px = w / 2;
+    }
+
+    drawPlayer(ctx, px, baseY, {
+      scale: 2.2,
+      armLeft: -Math.PI/3, armRight: -Math.PI/4,
+      jump: jumpHeight,
+      torsoLean: phase > 0.4 && phase < 0.7 ? -0.2 : 0,
+    });
+
+    // balón con parábola al aro
+    if (!ballOnHand && phase < 0.9) {
+      const bp = (phase - 0.55) / 0.35;
+      if (bp >= 0 && bp <= 1) {
+        const bx = lerp(px - 5, w - 64, bp);
+        const by = lerp(baseY - 60 - jumpHeight, h * 0.5 - 4, bp) - Math.sin(bp * Math.PI) * 30;
+        drawBall(ctx, bx, by, 11);
+        // trail
+        for (let i = 1; i < 6; i++) {
+          const bpp = bp - i * 0.06;
+          if (bpp < 0) break;
+          const tx = lerp(px - 5, w - 64, bpp);
+          const ty = lerp(baseY - 60 - jumpHeight, h * 0.5 - 4, bpp) - Math.sin(bpp * Math.PI) * 30;
+          ctx.fillStyle = `rgba(255,85,0,${0.18 - i*0.025})`;
+          ctx.beginPath(); ctx.arc(tx, ty, 9, 0, TAU); ctx.fill();
+        }
+      }
+    }
+    if (ballOnHand) {
+      drawBall(ctx, px - 5, baseY - 60 - jumpHeight, 10);
+    }
+
+    ctx.fillStyle = 'rgba(255,255,255,.4)';
+    ctx.font = '600 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('FADEAWAY · SUSPENSIÓN HACIA ATRÁS', w/2, h - 12);
+  });
+
+  // ─── HANDLE Lottie carga (mostrar mensaje si falla) ────────────
+  document.querySelectorAll('lottie-player').forEach(player => {
+    let loaded = false;
+    player.addEventListener('load', () => { loaded = true; });
+    setTimeout(() => {
+      if (!loaded) {
+        const wrap = player.closest('.anim-canvas-wrap');
+        wrap.innerHTML = `
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;text-align:center;">
+            <div style="font-size:2rem;margin-bottom:.5rem;">⚠️</div>
+            <div style="font-weight:700;color:#fafafa;font-size:.9rem;margin-bottom:.3rem;">Lottie no cargó</div>
+            <div style="font-size:.78rem;color:#8a8a8a;line-height:1.4;">Esta URL pública no está disponible. En producción se descargan los .json al repo y se cargan localmente — verás la calidad real cuando se elija esta opción.</div>
+          </div>`;
+      }
+    }, 3500);
+  });
+  </script>
+
+</body>
+</html>
