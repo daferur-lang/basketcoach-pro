@@ -5,25 +5,28 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // ─── Config por drill ─────────────────────────────────────────
+// Cámaras: [posX, posY, posZ, lookAtX, lookAtY, lookAtZ]
+// Las distancias Z son grandes (5-9m) para que se vea el jugador entero
+// LookAt Y = 1.0 = altura central del torso (jugador ~1.8m)
 const DRILL_CONFIGS = {
-  'dribble-alt': { anim: 'idle',  cam: [2.2, 1.6, 2.8, 0, 1.0, 0], ball: 'dualDribble', label: 'DRIBBLE ALTERNADO' },
-  'crossover':   { anim: 'idle',  cam: [0,   1.6, 3.4, 0, 1.0, 0], ball: 'crossover',   label: 'CROSSOVER FRONTAL' },
-  'between-legs':{ anim: 'idle',  cam: [0,   0.8, 3.6, 0, 0.7, 0], ball: 'betweenLegs', label: 'ENTRE PIERNAS' },
-  'hesitation':  { anim: 'multi', cam: [4,   2.5, 4.5, 0, 1.0, 0], ball: 'attached',    label: 'AVANCE · PAUSA · EXPLOSIÓN', moveCycle:'hesitation' },
+  'dribble-alt': { anim: 'idle',  cam: [3.5, 2.5, 6.0, 0, 1.0, 0], ball: 'dualDribble', label: 'DRIBBLE ALTERNADO' },
+  'crossover':   { anim: 'idle',  cam: [0,   2.5, 6.5, 0, 1.0, 0], ball: 'crossover',   label: 'CROSSOVER FRONTAL' },
+  'between-legs':{ anim: 'idle',  cam: [0,   2.0, 6.5, 0, 0.9, 0], ball: 'betweenLegs', label: 'ENTRE PIERNAS' },
+  'hesitation':  { anim: 'multi', cam: [5.5, 3.5, 6.5, 0, 1.0, 0], ball: 'attached',    label: 'AVANCE · PAUSA · EXPLOSIÓN', moveCycle:'hesitation' },
 
-  'pase-pecho':  { anim: 'idle',  cam: [3.5, 2.0, 3.5, 0.5, 1.2, 0], ball: 'chestPass', label: 'PASE DE PECHO', extras:['secondPlayer'] },
-  'nolook':      { anim: 'idle',  cam: [3.5, 2.0, 3.5, 0.5, 1.2, 0], ball: 'noLook',    label: 'NO-LOOK PASS',  extras:['secondPlayer'] },
+  'pase-pecho':  { anim: 'idle',  cam: [4.5, 3.0, 6.5, 1.0, 1.2, 0], ball: 'chestPass', label: 'PASE DE PECHO', extras:['secondPlayer'] },
+  'nolook':      { anim: 'idle',  cam: [4.5, 3.0, 6.5, 1.0, 1.2, 0], ball: 'noLook',    label: 'NO-LOOK PASS',  extras:['secondPlayer'] },
 
-  'reconocer-bloqueo':{ anim:'multi', cam:[0, 6.5, 3.5, 0, 0, 0], ball:'attached', label:'PICK & ROLL', moveCycle:'pickRoll', extras:['blocker','defender'] },
+  'reconocer-bloqueo':{ anim:'multi', cam:[0, 9, 5, 0, 0, 0], ball:'attached', label:'PICK & ROLL', moveCycle:'pickRoll', extras:['blocker','defender'] },
 
-  'posicion-def':{ anim:'idle', cam:[3, 2, 3, 0, 1, 0], ball:null, label:'POSICIÓN DEFENSIVA', moveCycle:'lateralSlide' },
+  'posicion-def':{ anim:'idle', cam:[4.5, 2.8, 5.5, 0, 1.0, 0], ball:null, label:'POSICIÓN DEFENSIVA', moveCycle:'lateralSlide' },
 
-  'layup-debil': { anim:'multi', cam:[4, 2.5, 4.5, 1, 1.3, 0], ball:'layup', label:'LAYUP', moveCycle:'layup', extras:['hoop'] },
-  'floater':     { anim:'multi', cam:[3.5, 2, 4, 0.3, 1.4, 0], ball:'floater', label:'FLOATER', moveCycle:'floater', extras:['hoop','defenderTall'] },
-  'gancho':      { anim:'idle',  cam:[3.5, 1.8, 3.8, 0, 1.4, 0], ball:'hook',  label:'GANCHO', moveCycle:'hook', extras:['hoop'] },
-  'fadeaway':    { anim:'multi', cam:[4, 2, 4.2, 0, 1.4, 0], ball:'fadeaway', label:'FADEAWAY', moveCycle:'fadeaway', extras:['hoop','defender'] },
-  'timing-rebote':{anim:'multi', cam:[4, 2.5, 4.5, 0, 2, 0], ball:'rebound', label:'REBOTE', moveCycle:'rebound', extras:['hoop'] },
-  'tape':        { anim:'multi', cam:[3.5, 2.5, 4, 0, 2, 0], ball:'blocked', label:'TAPER', moveCycle:'tape', extras:['hoop','attacker'] },
+  'layup-debil': { anim:'multi', cam:[5.5, 3.2, 6.5, 1.2, 1.4, 0], ball:'layup', label:'LAYUP', moveCycle:'layup', extras:['hoop'] },
+  'floater':     { anim:'multi', cam:[5, 3.0, 6.5, 0.5, 1.4, 0], ball:'floater', label:'FLOATER', moveCycle:'floater', extras:['hoop','defenderTall'] },
+  'gancho':      { anim:'idle',  cam:[5, 3.0, 6.5, 0.3, 1.4, 0], ball:'hook',  label:'GANCHO', moveCycle:'hook', extras:['hoop'] },
+  'fadeaway':    { anim:'multi', cam:[5.5, 3.0, 6.5, 0, 1.4, 0], ball:'fadeaway', label:'FADEAWAY', moveCycle:'fadeaway', extras:['hoop','defender'] },
+  'timing-rebote':{anim:'multi', cam:[5.5, 3.5, 6.5, 0, 1.8, 0], ball:'rebound', label:'REBOTE', moveCycle:'rebound', extras:['hoop'] },
+  'tape':        { anim:'multi', cam:[5, 3.2, 6.5, 0, 1.8, 0], ball:'blocked', label:'TAPER', moveCycle:'tape', extras:['hoop','attacker'] },
 };
 
 let _viewer = null;
@@ -55,8 +58,8 @@ export class BasketballViewer {
     this.scene.fog = new THREE.Fog(0x0a0a0a, 6, 16);
 
     const aspect = canvas.clientWidth / canvas.clientHeight;
-    this.camera = new THREE.PerspectiveCamera(38, aspect, 0.1, 50);
-    this.camera.position.set(3, 1.8, 4);
+    this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
+    this.camera.position.set(4, 2.5, 6);
     this.camera.lookAt(0, 1, 0);
     this.camTarget = new THREE.Vector3(0, 1, 0);
     this.camTargetPos = new THREE.Vector3(3, 1.8, 4);
@@ -126,12 +129,14 @@ export class BasketballViewer {
       color: 0xff6b00, roughness: 0.55, metalness: 0.15,
       emissive: 0xff5500, emissiveIntensity: 0.15
     });
-    this.ball = new THREE.Mesh(new THREE.SphereGeometry(0.12, 24, 24), ballMat);
+    // Balón real de basketball: ~24cm de diámetro → radio 0.12m
+    // Pero en proporción visual queda mejor un pelín más pequeño (0.11)
+    this.ball = new THREE.Mesh(new THREE.SphereGeometry(0.11, 32, 32), ballMat);
     this.ball.castShadow = true;
     this.ball.visible = false;
     this.scene.add(this.ball);
 
-    this.ball2 = new THREE.Mesh(new THREE.SphereGeometry(0.12, 24, 24), ballMat.clone());
+    this.ball2 = new THREE.Mesh(new THREE.SphereGeometry(0.11, 32, 32), ballMat.clone());
     this.ball2.castShadow = true;
     this.ball2.visible = false;
     this.scene.add(this.ball2);
@@ -245,13 +250,27 @@ export class BasketballViewer {
   _installModel(gltf) {
     this.model = gltf.scene;
 
-    // ESCALA: Mixamo viene en unidades raras, normalizar a ~1.7m de altura
-    const bbox = new THREE.Box3().setFromObject(this.model);
-    const size = new THREE.Vector3();
-    bbox.getSize(size);
-    this.modelScale = 1.7 / Math.max(size.y, 0.001);
+    // Xbot de three.js viene en metros, escala 1.0 = altura natural (~1.8m)
+    // Sin auto-bbox que a veces falla con skinned meshes
+    this.modelScale = 1.0;
     this.model.scale.setScalar(this.modelScale);
     this.model.position.set(0, 0, 0);
+
+    // DIAGNÓSTICO: medir altura real para ajustar cámara si hace falta
+    requestAnimationFrame(() => {
+      const bbox = new THREE.Box3().setFromObject(this.model);
+      const size = new THREE.Vector3();
+      bbox.getSize(size);
+      this.modelHeight = size.y;
+      // Si el modelo es demasiado grande (>3m) o pequeño (<0.5m), corrige
+      if (size.y > 3) {
+        this.modelScale = 1.8 / size.y;
+        this.model.scale.setScalar(this.modelScale);
+      } else if (size.y < 0.5 && size.y > 0) {
+        this.modelScale = 1.8 / size.y;
+        this.model.scale.setScalar(this.modelScale);
+      }
+    });
 
     this.model.traverse(node => {
       if (node.isMesh) {
