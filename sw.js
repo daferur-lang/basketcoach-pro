@@ -1,4 +1,4 @@
-const CACHE = 'basketcoach-v3';
+const CACHE = 'basketcoach-v4';
 const SCOPE = new URL(self.registration.scope).pathname;
 const ASSETS = [SCOPE, SCOPE + 'index.html', SCOPE + 'manifest.json'];
 
