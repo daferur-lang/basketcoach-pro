@@ -1,11 +1,11 @@
-const CACHE = 'basketcoach-v6';
+const CACHE = 'basketcoach-v7';
 const SCOPE = new URL(self.registration.scope).pathname;
 const ASSETS = [
   SCOPE,
   SCOPE + 'index.html',
   SCOPE + 'manifest.json',
   SCOPE + 'js/viewer3d.js',
-  SCOPE + 'models/RobotExpressive.glb',
+  SCOPE + 'models/Xbot.glb',
 ];
 
 self.addEventListener('install', e => {
