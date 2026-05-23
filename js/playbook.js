@@ -357,7 +357,7 @@ export class PlayViewer {
     this._render();
   }
 
-  play() {
+  start() {
     this.playing = true;
     this.lastTime = performance.now();
     this._tick();
@@ -373,7 +373,7 @@ export class PlayViewer {
   }
   toggle() {
     if (this.playing) this.pause();
-    else this.play();
+    else this.start();
   }
 
   _tick() {
@@ -639,7 +639,7 @@ export function mountPlayViewer(canvas, play) {
   if (_viewer) _viewer.destroy();
   _viewer = new PlayViewer(canvas);
   _viewer.load(play);
-  _viewer.play();
+  _viewer.start();
   return _viewer;
 }
 
@@ -657,7 +657,7 @@ export function toggleViewer() {
 export function restartViewer() {
   if (_viewer) {
     _viewer.restart();
-    _viewer.play();
+    _viewer.start();
   }
 }
 
