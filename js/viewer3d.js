@@ -324,6 +324,7 @@ export class BasketballViewer {
   setDrill(drillId) {
     if (!this.modelReady) {
       this.pendingDrill = drillId;
+      this.currentDrillId = drillId;
       return;
     }
     const cfg = DRILL_CONFIGS[drillId];
@@ -332,6 +333,7 @@ export class BasketballViewer {
     this._clearExtras();
     this.tElapsed = 0;
     this.drillCfg = cfg;
+    this.currentDrillId = drillId;
     this.boneRotOffsets = {};
 
     // Cámara
@@ -423,11 +425,10 @@ export class BasketballViewer {
           const pp = (p - 0.5) / 0.2;
           this.model.position.set(0.3 + pp * 0.5, Math.sin(pp * Math.PI) * 0.7, 0);
           this._playAction('run', 0.5); // jumpando
-          this._raiseRightArm(pp); // brazo arriba al lanzar
+          // brazos animados desde _animateArms
         } else if (p < 0.95) {
           const pp = (p - 0.7) / 0.25;
           this.model.position.set(0.8 + pp * 0.2, Math.sin(((p - 0.5)/0.2) * Math.PI) * 0.7 * (1-pp), 0);
-          this._raiseRightArm(1 - pp);
         } else {
           this.model.position.set(-1.7, 0, 0);
         }
@@ -442,7 +443,6 @@ export class BasketballViewer {
         } else if (p < 0.65) {
           const pp = (p - 0.3) / 0.35;
           this.model.position.set(-0.8 + pp * 0.3, Math.sin(pp * Math.PI) * 0.4, 0);
-          this._raiseRightArm(pp * 1.2);
         } else {
           this.model.position.set(-0.5, 0, 0);
           this._playAction('idle');
@@ -456,7 +456,6 @@ export class BasketballViewer {
         this.model.rotation.y = Math.PI / 2;
         this._playAction('idle');
         // arco del brazo
-        this._hookArm(p);
         break;
       }
       case 'fadeaway': {
@@ -468,7 +467,6 @@ export class BasketballViewer {
         } else if (p < 0.7) {
           const pp = (p - 0.4) / 0.3;
           this.model.position.set(-pp * 0.4, Math.sin(pp * Math.PI) * 0.5, 0.3 - pp * 0.2);
-          this._raiseRightArm(pp);
         } else if (p < 0.95) {
           const pp = (p - 0.7) / 0.25;
           this.model.position.set(-0.4 + pp * 0.2, Math.sin(((p-0.4)/0.3) * Math.PI) * 0.5 * (1-pp), 0.1 + pp * 0.1);
@@ -484,7 +482,6 @@ export class BasketballViewer {
         if (p > 0.4 && p < 0.7) {
           const pp = (p - 0.4) / 0.3;
           this.model.position.y = Math.sin(pp * Math.PI) * 0.55;
-          this._raiseBothArms(pp);
           this._playAction('idle');
         } else {
           this._playAction('idle');
@@ -498,7 +495,6 @@ export class BasketballViewer {
         if (p > 0.3 && p < 0.6) {
           const pp = (p - 0.3) / 0.3;
           this.model.position.y = Math.sin(pp * Math.PI) * 0.6;
-          this._raiseRightArm(pp);
         } else {
           this._playAction('idle');
         }
@@ -507,36 +503,198 @@ export class BasketballViewer {
     }
   }
 
-  // === Helpers procedurales para brazos (sin animación pre-hecha) ===
-  _raiseRightArm(amount) {
-    const arm = this.bones['mixamorigRightArm'] || this.bones['RightArm'] || this.bones['mixamorig:RightArm'];
-    const forearm = this.bones['mixamorigRightForeArm'] || this.bones['RightForeArm'] || this.bones['mixamorig:RightForeArm'];
-    if (arm) arm.rotation.z = -amount * Math.PI * 0.55;
-    if (forearm) forearm.rotation.y = -amount * 0.6;
+  // === Helper: obtener hueso por nombre (varios formatos) ===
+  _bone(name) {
+    return this.bones['mixamorig:' + name]
+        || this.bones['mixamorig' + name]
+        || this.bones[name]
+        || null;
   }
-  _raiseLeftArm(amount) {
-    const arm = this.bones['mixamorigLeftArm'] || this.bones['LeftArm'] || this.bones['mixamorig:LeftArm'];
-    if (arm) arm.rotation.z = amount * Math.PI * 0.55;
+
+  // === Posición world de la mano (para anclar balón) ===
+  _handWorldPos(side, offsetY = -0.08, offsetX = 0, offsetZ = 0) {
+    const hand = this._bone(side === 'right' ? 'RightHand' : 'LeftHand');
+    if (!hand) return null;
+    const p = new THREE.Vector3();
+    hand.getWorldPosition(p);
+    p.y += offsetY;
+    p.x += offsetX;
+    p.z += offsetZ;
+    return p;
   }
-  _raiseBothArms(amount) {
-    this._raiseRightArm(amount);
-    this._raiseLeftArm(amount);
-  }
-  _hookArm(p) {
-    // gira el brazo derecho en arco de hook
-    const arm = this.bones['mixamorigRightArm'] || this.bones['RightArm'] || this.bones['mixamorig:RightArm'];
-    if (arm) {
-      // 0 → -π : abajo a arriba en círculo
-      arm.rotation.z = -Math.sin(p * Math.PI) * 1.0 - 0.3;
-      arm.rotation.y = Math.cos(p * Math.PI) * 0.4;
+
+  // === ANIMACIÓN PROCEDURAL DE BRAZOS por drill ===
+  // Se aplica DESPUÉS del mixer.update() para sobrescribir el clip idle
+  _animateArms(t) {
+    if (!this.drillCfg || !this.modelReady) return;
+    const cfg = this.drillCfg;
+    const drillId = this.currentDrillId;
+
+    // helpers compactos
+    const setArm = (side, x, y, z) => {
+      const b = this._bone(side + 'Arm');
+      if (b) b.rotation.set(x, y, z);
+    };
+    const setForearm = (side, x, y, z) => {
+      const b = this._bone(side + 'ForeArm');
+      if (b) b.rotation.set(x, y, z);
+    };
+
+    switch (drillId) {
+      case 'dribble-alt': {
+        // Ambos brazos abajo, manos bombeando alternativamente
+        const cyc = 0.6;
+        const pR = (t % cyc) / cyc;
+        const pL = ((t + cyc/2) % cyc) / cyc;
+        const pump = (p) => Math.sin(p * Math.PI); // 0→1→0
+        // Brazo apunta hacia abajo: en Mixamo Z rotation negativa = brazo baja
+        setArm('Right', 0, 0, -1.35 + pump(pR) * 0.25);
+        setForearm('Right', 0, 0, 0.3 + pump(pR) * 0.2);
+        setArm('Left', 0, 0, 1.35 - pump(pL) * 0.25);
+        setForearm('Left', 0, 0, -0.3 - pump(pL) * 0.2);
+        break;
+      }
+      case 'crossover': {
+        // Una mano activa, balón cruza
+        const cyc = 1.5;
+        const p = (t % cyc) / cyc;
+        const phase = Math.sin(p * Math.PI * 2);  // -1..1
+        // Brazo derecho baja cuando phase>0, sube cuando phase<0 (espejo izq)
+        setArm('Right', 0, phase * 0.4, -1.3 + Math.abs(phase) * 0.2);
+        setForearm('Right', 0, 0, 0.4 + Math.sin(p * Math.PI * 4) * 0.2);
+        setArm('Left', 0, -phase * 0.4, 1.3 - Math.abs(phase) * 0.2);
+        setForearm('Left', 0, 0, -0.4 - Math.sin(p * Math.PI * 4) * 0.2);
+        break;
+      }
+      case 'between-legs': {
+        // Brazos abajo agachados, alternancia profunda
+        const cyc = 1.8;
+        const p = (t % cyc) / cyc;
+        const wave = Math.sin(p * Math.PI * 2);
+        setArm('Right', 0.3, wave * 0.3, -1.4);
+        setForearm('Right', 0, 0, 0.8);
+        setArm('Left', 0.3, -wave * 0.3, 1.4);
+        setForearm('Left', 0, 0, -0.8);
+        break;
+      }
+      case 'hesitation': {
+        // Brazo derecho controla balón a la altura de la cintura
+        setArm('Right', 0, 0, -1.1);
+        setForearm('Right', 0, 0, 0.7);
+        break;
+      }
+      case 'pase-pecho': {
+        // Pase de pecho: ambos brazos al frente, se extienden al lanzar
+        const cyc = 2.0;
+        const p = (t % cyc) / cyc;
+        const extend = p < 0.4 ? p / 0.4 : (p < 0.6 ? 1.0 : Math.max(0, 1 - (p - 0.6) / 0.4));
+        // brazos hacia adelante (rotacion.x positiva sube el brazo, rotacion.z lateral)
+        setArm('Right', -extend * 1.3, 0, -0.8 + extend * 0.5);
+        setForearm('Right', 0, 0, 0.4 - extend * 0.3);
+        setArm('Left', -extend * 1.3, 0, 0.8 - extend * 0.5);
+        setForearm('Left', 0, 0, -0.4 + extend * 0.3);
+        break;
+      }
+      case 'nolook': {
+        // Mira al lado opuesto, lanza con un brazo
+        const cyc = 2.4;
+        const p = (t % cyc) / cyc;
+        const extend = p < 0.5 ? p / 0.5 : Math.max(0, 1 - (p - 0.5) / 0.4);
+        setArm('Right', -extend * 1.0, -extend * 0.6, -1.0 + extend * 0.5);
+        setForearm('Right', 0, 0, 0.5 - extend * 0.3);
+        // Cabeza mirando al lado contrario (-y)
+        const head = this._bone('Head');
+        if (head) head.rotation.y = -0.5;
+        break;
+      }
+      case 'reconocer-bloqueo': {
+        // El jugador corre con balón, brazo a un lado
+        setArm('Right', 0, 0, -1.2);
+        setForearm('Right', 0, 0, 0.6);
+        break;
+      }
+      case 'posicion-def': {
+        // Postura defensiva: ambos brazos abiertos a los lados
+        setArm('Right', 0, 0, -0.9);
+        setArm('Left', 0, 0, 0.9);
+        setForearm('Right', 0, 0, 0.3);
+        setForearm('Left', 0, 0, -0.3);
+        break;
+      }
+      case 'layup-debil': {
+        // Brazo izquierdo (mano débil) sube al lanzar
+        const cyc = 3.2;
+        const p = (t % cyc) / cyc;
+        if (p < 0.5) {
+          // corriendo, brazo abajo
+          setArm('Left', 0, 0, 1.1);
+          setForearm('Left', 0, 0, -0.5);
+        } else if (p < 0.85) {
+          // saltando, brazo arriba
+          const pp = (p - 0.5) / 0.35;
+          setArm('Left', 0, 0, 1.4 + pp * 1.4); // sube
+          setForearm('Left', 0, 0, -0.3 + pp * 0.2);
+        }
+        break;
+      }
+      case 'floater': {
+        // Brazo derecho arriba con muñeca relajada
+        const cyc = 2.8;
+        const p = (t % cyc) / cyc;
+        if (p < 0.3) {
+          setArm('Right', 0, 0, -1.0);
+        } else if (p < 0.65) {
+          const pp = (p - 0.3) / 0.35;
+          setArm('Right', -pp * 0.8, 0, -1.5 - pp * 1.0);
+          setForearm('Right', 0, 0, 0.3 - pp * 0.2);
+        }
+        break;
+      }
+      case 'gancho': {
+        // Brazo en arco: sube de abajo a arriba en círculo
+        const cyc = 2.4;
+        const p = (t % cyc) / cyc;
+        const ang = p * Math.PI; // 0 → π
+        // arm.z = -sin(ang) * 2 va de 0 (abajo) → -2 (arriba) → 0
+        setArm('Right', 0, Math.cos(ang) * 0.4, -1.0 - Math.sin(ang) * 1.5);
+        setForearm('Right', 0, 0, 0.3);
+        break;
+      }
+      case 'fadeaway': {
+        // Fadeaway: ambos brazos suben al lanzar
+        const cyc = 3.2;
+        const p = (t % cyc) / cyc;
+        if (p < 0.4) {
+          setArm('Right', 0, 0, -1.0);
+        } else if (p < 0.7) {
+          const pp = (p - 0.4) / 0.3;
+          setArm('Right', -pp * 1.2, 0, -1.5 - pp * 1.2);
+          setForearm('Right', 0, 0, 0.3 - pp * 0.2);
+          setArm('Left', -pp * 0.6, 0, 1.0 + pp * 0.3);
+        }
+        break;
+      }
+      case 'timing-rebote': {
+        // Ambos brazos arriba
+        const cyc = 2.5;
+        const p = (t % cyc) / cyc;
+        const raise = (p > 0.4 && p < 0.7) ? Math.sin(((p - 0.4) / 0.3) * Math.PI) : 0;
+        setArm('Right', 0, 0, -1.0 - raise * 1.5);
+        setArm('Left', 0, 0, 1.0 + raise * 1.5);
+        setForearm('Right', 0, 0, 0.2);
+        setForearm('Left', 0, 0, -0.2);
+        break;
+      }
+      case 'tape': {
+        // Bloqueo: brazo derecho explota arriba
+        const cyc = 2.6;
+        const p = (t % cyc) / cyc;
+        const raise = (p > 0.3 && p < 0.6) ? Math.sin(((p - 0.3) / 0.3) * Math.PI) : 0;
+        setArm('Right', 0, 0, -1.0 - raise * 1.8);
+        setForearm('Right', 0, 0, 0.2);
+        break;
+      }
     }
-  }
-  _resetArms() {
-    ['mixamorigRightArm','mixamorigLeftArm','mixamorigRightForeArm','mixamorigLeftForeArm',
-     'RightArm','LeftArm','RightForeArm','LeftForeArm',
-     'mixamorig:RightArm','mixamorig:LeftArm'].forEach(n => {
-      if (this.bones[n]) this.bones[n].rotation.set(0,0,0);
-    });
   }
 
   _updateBall(t) {
@@ -546,20 +704,50 @@ export class BasketballViewer {
 
     switch (type) {
       case 'dualDribble': {
+        // Cada balón rebota debajo de su mano correspondiente
         const cyc = 0.6;
-        const pA = Math.abs(Math.sin(((t % cyc) / cyc) * Math.PI));
-        const pB = Math.abs(Math.sin((((t + cyc/2) % cyc) / cyc) * Math.PI));
-        this.ball.position.set(-0.35, 0.12 + pA * 0.55, 0.35);
-        this.ball2.position.set(0.35, 0.12 + pB * 0.55, 0.35);
+        const pR = (t % cyc) / cyc;
+        const pL = ((t + cyc/2) % cyc) / cyc;
+        const bounceR = Math.abs(Math.sin(pR * Math.PI));
+        const bounceL = Math.abs(Math.sin(pL * Math.PI));
+        // Posición horizontal: bajo la mano (lee posición real)
+        const handR = this._handWorldPos('right', 0);
+        const handL = this._handWorldPos('left', 0);
+        if (handR) {
+          // Y oscila entre suelo (0.12) y altura de la mano
+          const handY = handR.y;
+          this.ball.position.set(handR.x, 0.12 + bounceR * (handY - 0.12), handR.z);
+        } else {
+          this.ball.position.set(-0.35, 0.12 + bounceR * 0.55, 0.35);
+        }
+        if (handL) {
+          const handY = handL.y;
+          this.ball2.position.set(handL.x, 0.12 + bounceL * (handY - 0.12), handL.z);
+        } else {
+          this.ball2.position.set(0.35, 0.12 + bounceL * 0.55, 0.35);
+        }
         break;
       }
       case 'crossover': {
+        // Balón cruza de una mano a la otra rebotando en el suelo
         const cyc = 1.5;
         const p = (t % cyc) / cyc;
-        const x = Math.sin(p * Math.PI * 2) * 0.5;
-        const sub = (p * 2) % 1;
-        const bounce = Math.abs(Math.sin(sub * Math.PI));
-        this.ball.position.set(x, 0.12 + bounce * 0.45, 0.35);
+        // Half 1: derecha→izquierda, half 2: izquierda→derecha
+        const goingLeft = p < 0.5;
+        const sub = goingLeft ? p * 2 : (p - 0.5) * 2;
+        const fromHand = this._handWorldPos(goingLeft ? 'right' : 'left', 0);
+        const toHand   = this._handWorldPos(goingLeft ? 'left' : 'right', 0);
+        if (fromHand && toHand) {
+          // Interpolación + rebote (parábola hacia abajo)
+          const x = fromHand.x + (toHand.x - fromHand.x) * sub;
+          const z = fromHand.z + (toHand.z - fromHand.z) * sub;
+          // El balón baja al suelo en el centro del recorrido
+          const bounce = 1 - Math.abs(Math.sin(sub * Math.PI)); // 0 en extremos, 1 en suelo
+          const y = fromHand.y + (toHand.y - fromHand.y) * sub - bounce * (fromHand.y - 0.12);
+          this.ball.position.set(x, Math.max(0.12, y), z);
+        } else {
+          this.ball.position.set(Math.sin(p * Math.PI * 2) * 0.5, 0.12 + Math.abs(Math.sin(((p*2)%1) * Math.PI)) * 0.45, 0.35);
+        }
         break;
       }
       case 'betweenLegs': {
@@ -590,8 +778,13 @@ export class BasketballViewer {
         break;
       }
       case 'attached': {
-        // pegada al jugador
-        this.ball.position.set(mp.x + 0.3, mp.y + 0.7, mp.z + 0.15);
+        // Pegada a la mano derecha real del jugador
+        const hand = this._handWorldPos('right', 0.02);
+        if (hand) {
+          this.ball.position.copy(hand);
+        } else {
+          this.ball.position.set(mp.x + 0.3, mp.y + 0.7, mp.z + 0.15);
+        }
         break;
       }
       case 'layup': {
@@ -707,11 +900,16 @@ export class BasketballViewer {
     const animate = () => {
       const delta = Math.min(this.clock.getDelta(), 0.1);
       this.tElapsed += delta;
-      // reset bones rotation antes de procedural updates
-      if (this.modelReady) this._resetArms();
+      // 1. Mixer aplica clip (idle, walk, run)
       if (this.mixer) this.mixer.update(delta);
+      // 2. Update modelo (position, rotation, moveCycle)
       this._updateModel(this.tElapsed);
+      // 3. Animación procedural de brazos ENCIMA del clip (sobrescribe)
+      this._animateArms(this.tElapsed);
+      // 4. Update balón (puede leer posición real de la mano gracias a updateMatrixWorld)
+      this.model?.updateMatrixWorld(true);
       this._updateBall(this.tElapsed);
+      // 5. Cámara
       this._updateCamera(delta);
       this.renderer.render(this.scene, this.camera);
       this.raf = requestAnimationFrame(animate);
