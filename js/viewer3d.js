@@ -80,25 +80,34 @@ export class BasketballViewer {
   }
 
   _setupLights() {
-    this.scene.add(new THREE.AmbientLight(0x303040, 1.4));
+    // Ambient potente
+    this.scene.add(new THREE.AmbientLight(0xffffff, 1.8));
 
-    const key = new THREE.DirectionalLight(0xfff3e0, 2.2);
-    key.position.set(3, 6, 4);
+    // Hemisphere light (cielo arriba, suelo abajo) para iluminación natural
+    const hemi = new THREE.HemisphereLight(0xfff5e0, 0x222633, 1.2);
+    hemi.position.set(0, 5, 0);
+    this.scene.add(hemi);
+
+    // Key light frontal-derecha (donde está la cámara)
+    const key = new THREE.DirectionalLight(0xffffff, 3.5);
+    key.position.set(4, 6, 6);
     key.castShadow = true;
     key.shadow.mapSize.set(1024, 1024);
     key.shadow.camera.near = 0.5;
-    key.shadow.camera.far = 18;
-    key.shadow.camera.left = -4; key.shadow.camera.right = 4;
-    key.shadow.camera.top = 5; key.shadow.camera.bottom = -2;
+    key.shadow.camera.far = 22;
+    key.shadow.camera.left = -5; key.shadow.camera.right = 5;
+    key.shadow.camera.top = 6; key.shadow.camera.bottom = -2;
     key.shadow.bias = -0.0005;
     this.scene.add(key);
 
-    const rim = new THREE.DirectionalLight(0xff5500, 1.3);
-    rim.position.set(-4, 3, -3);
+    // Rim light (detrás) — naranja basketball para borde
+    const rim = new THREE.DirectionalLight(0xff7733, 2.0);
+    rim.position.set(-3, 3, -4);
     this.scene.add(rim);
 
-    const fill = new THREE.DirectionalLight(0x6080ff, 0.4);
-    fill.position.set(-2, 2, 3);
+    // Fill suave azulado izquierda
+    const fill = new THREE.DirectionalLight(0x88aaff, 0.9);
+    fill.position.set(-3, 2, 3);
     this.scene.add(fill);
   }
 
@@ -355,10 +364,10 @@ export class BasketballViewer {
     if (!this.model || !this.drillCfg) return;
     const cfg = this.drillCfg;
 
-    // Default position
+    // Default position - mirando a cámara (Xbot por defecto mira hacia +Z donde está la cámara, así que rotation 0)
     if (!cfg.moveCycle) {
       this.model.position.set(0, 0, 0);
-      this.model.rotation.y = Math.PI; // mirando a cámara
+      this.model.rotation.y = 0;
       return;
     }
 
