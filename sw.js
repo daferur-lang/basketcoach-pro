@@ -1,10 +1,11 @@
-const CACHE = 'basketcoach-v12';
+const CACHE = 'basketcoach-v13';
 const SCOPE = new URL(self.registration.scope).pathname;
 const ASSETS = [
   SCOPE,
   SCOPE + 'index.html',
   SCOPE + 'manifest.json',
   SCOPE + 'js/viewer3d.js',
+  SCOPE + 'js/playbook.js',
   SCOPE + 'models/Xbot.glb',
 ];
 

@@ -59,6 +59,7 @@
       <symbol id="i-logo" viewBox="0 0 32 32"><path d="M16 2 L28 9 L28 23 L16 30 L4 23 L4 9 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M11 11 v10 M11 11 h4 a3 3 0 0 1 0 6 h-4 M11 17 h4 a3 3 0 0 1 0 6 h-4 M21 13 v6 M18 13 h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
       <symbol id="i-sound-on" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16 8a5 5 0 0 1 0 8M19 5a9 9 0 0 1 0 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
       <symbol id="i-sound-off" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16 9l6 6m0-6l-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-tactics" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8" cy="11" r="1.5" fill="currentColor"/><circle cx="16" cy="11" r="1.5" fill="currentColor"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/><circle cx="12" cy="15" r="1.5" fill="currentColor"/><path d="M8 11 L12 7 L16 11 L12 15 Z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 2" opacity=".6"/></symbol>
     </defs>
   </svg>
 
@@ -446,6 +447,53 @@
     }
 
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* ═══════════════════════════════════════════════════
+       SCREEN 8/9 — PLAYS (Jugadas tácticas)
+    ═══════════════════════════════════════════════════ */
+    .plays-grid {
+      display:flex; flex-direction:column; gap:.6rem;
+      padding:1rem 1.2rem;
+    }
+    .play-card {
+      background: var(--card); border:1px solid var(--border); border-radius: var(--r);
+      padding: 1rem 1.05rem; display:flex; align-items:center; gap:.9rem; cursor:pointer;
+      transition: border-color .15s, transform .15s var(--ease), background .15s;
+    }
+    .play-card:hover  { border-color: var(--border-strong); }
+    .play-card:active { transform:scale(.99); background: var(--card-hover); }
+    .play-thumb {
+      width:48px; height:48px; border-radius:12px;
+      background: var(--bg-elev); border:1px solid var(--border-strong);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+      color: var(--accent);
+    }
+    .play-thumb svg { width:24px; height:24px; }
+    .play-info { flex:1; min-width:0; }
+    .play-name { font-weight:600; font-size:.93rem; letter-spacing:-.005em; }
+    .play-desc { font-size:.78rem; color: var(--text-muted); margin-top:.3rem; line-height:1.4; }
+    .play-meta { display:flex; align-items:center; gap:.4rem; margin-top:.5rem; flex-wrap:wrap; }
+
+    .play-viewer-wrap {
+      margin: .4rem 1.2rem 1rem;
+      background: var(--card); border:1px solid var(--border); border-radius: var(--r);
+      position: relative; overflow:hidden;
+      aspect-ratio: 4/3;
+    }
+    .play-viewer-wrap canvas {
+      width: 100%; height: 100%; display: block;
+      background: var(--bg-elev);
+    }
+    .play-controls {
+      display:flex; gap:.7rem; justify-content:center;
+      padding: .5rem 1.2rem 1rem;
+    }
+    .play-controls .timer-btn { width: 44px; height: 44px; }
+
+    /* Bottom-nav con 5 items en móvil pequeño */
+    @media (max-width: 380px) {
+      .nav-item span { font-size: .6rem; }
+    }
 
     /* ── TOAST ──────────────────────────────────────── */
     .toast {
@@ -955,6 +1003,7 @@
     <nav class="bottom-nav">
       <div class="nav-item active" onclick="goTo('screen-home')"><svg><use href="#i-home"/></svg><span>Inicio</span></div>
       <div class="nav-item" onclick="goTo('screen-training')"><svg><use href="#i-dumbbell"/></svg><span>Drills</span></div>
+      <div class="nav-item" onclick="goTo('screen-plays')"><svg><use href="#i-tactics"/></svg><span>Jugadas</span></div>
       <div class="nav-item" onclick="goTo('screen-plan')"><svg><use href="#i-calendar"/></svg><span>Plan</span></div>
       <div class="nav-item" onclick="goTo('screen-progress')"><svg><use href="#i-chart"/></svg><span>Progreso</span></div>
     </nav>
@@ -1134,9 +1183,77 @@
     <nav class="bottom-nav">
       <div class="nav-item" onclick="goTo('screen-home')"><svg><use href="#i-home"/></svg><span>Inicio</span></div>
       <div class="nav-item" onclick="goTo('screen-training')"><svg><use href="#i-dumbbell"/></svg><span>Drills</span></div>
+      <div class="nav-item" onclick="goTo('screen-plays')"><svg><use href="#i-tactics"/></svg><span>Jugadas</span></div>
       <div class="nav-item" onclick="goTo('screen-plan')"><svg><use href="#i-calendar"/></svg><span>Plan</span></div>
       <div class="nav-item active" onclick="goTo('screen-progress')"><svg><use href="#i-chart"/></svg><span>Progreso</span></div>
     </nav>
+  </section>
+
+  <!-- ╔══════════════════════════════════╗
+       ║  SCREEN 8 — PLAYS LIST           ║
+       ╚══════════════════════════════════╝ -->
+  <section id="screen-plays" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" onclick="goTo('screen-home')"><svg><use href="#i-back"/></svg></button>
+      <span class="topbar-title">Jugadas Tácticas</span>
+      <div style="width:36px;"></div>
+    </div>
+    <div class="filter-tabs-wrap">
+      <div class="filter-tabs" id="plays-filter-tabs"></div>
+    </div>
+    <div class="scroll-area">
+      <div class="plays-grid" id="plays-grid"></div>
+    </div>
+    <nav class="bottom-nav">
+      <div class="nav-item" onclick="goTo('screen-home')"><svg><use href="#i-home"/></svg><span>Inicio</span></div>
+      <div class="nav-item" onclick="goTo('screen-training')"><svg><use href="#i-dumbbell"/></svg><span>Drills</span></div>
+      <div class="nav-item active" onclick="goTo('screen-plays')"><svg><use href="#i-tactics"/></svg><span>Jugadas</span></div>
+      <div class="nav-item" onclick="goTo('screen-plan')"><svg><use href="#i-calendar"/></svg><span>Plan</span></div>
+      <div class="nav-item" onclick="goTo('screen-progress')"><svg><use href="#i-chart"/></svg><span>Progreso</span></div>
+    </nav>
+  </section>
+
+  <!-- ╔══════════════════════════════════╗
+       ║  SCREEN 9 — PLAY DETAIL          ║
+       ╚══════════════════════════════════╝ -->
+  <section id="screen-play" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" onclick="goTo('screen-plays')"><svg><use href="#i-back"/></svg></button>
+      <span class="topbar-title">Jugada</span>
+      <div style="width:36px;"></div>
+    </div>
+    <div class="scroll-area">
+      <div class="drill-hero">
+        <div class="drill-hero-icon"><svg><use href="#i-tactics"/></svg></div>
+        <div class="drill-hero-info">
+          <div class="drill-hero-name" id="play-detail-name">Nombre</div>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.55rem;" id="play-detail-badges"></div>
+        </div>
+      </div>
+      <p class="body-md" style="padding:0 1.2rem 1rem;" id="play-detail-desc"></p>
+
+      <div class="play-viewer-wrap">
+        <span class="drill-animation-label">Vista táctica</span>
+        <canvas id="play-canvas"></canvas>
+      </div>
+
+      <div class="play-controls">
+        <button class="timer-btn timer-btn-aux" onclick="window._playRestart()"><svg><use href="#i-reset"/></svg></button>
+        <button class="timer-btn timer-btn-start" id="play-toggle-btn" onclick="window._playToggle()"><svg id="play-toggle-icon"><use href="#i-pause"/></svg></button>
+      </div>
+
+      <div class="steps-section">
+        <div class="label" style="margin:0 0 .8rem; padding-left:.1rem;">Ejecución</div>
+        <div id="play-steps"></div>
+      </div>
+
+      <div class="tips-section">
+        <div class="tips-title">Notas tácticas</div>
+        <div id="play-tips"></div>
+      </div>
+
+      <div style="padding:1.2rem;"></div>
+    </div>
   </section>
 
   <!-- Toast -->
@@ -2671,6 +2788,116 @@ async function load3DModule() {
   }
 }
 
+// Cache del módulo Playbook (lazy)
+let _playbookModule = null;
+async function loadPlaybook() {
+  if (_playbookModule) return _playbookModule;
+  try {
+    _playbookModule = await import('./js/playbook.js');
+    return _playbookModule;
+  } catch (e) { console.warn('Playbook failed:', e); return null; }
+}
+
+// ── PLAYS (JUGADAS TÁCTICAS) ──────────────────────────────────
+let _playsFilter = 'all'; // all | ofensiva | defensiva | ato
+let _currentPlay = null;
+
+async function renderPlaysList() {
+  const mod = await loadPlaybook();
+  if (!mod) return;
+  const filterTabs = document.getElementById('plays-filter-tabs');
+  const grid = document.getElementById('plays-grid');
+
+  const cats = [
+    { id: 'all', name: 'Todas' },
+    { id: 'ofensiva', name: 'Ofensivas' },
+    { id: 'defensiva', name: 'Defensivas' },
+    { id: 'ato', name: 'ATO / Fin partido' },
+  ];
+  filterTabs.innerHTML = cats.map(c =>
+    `<div class="filter-tab${_playsFilter === c.id ? ' active' : ''}" onclick="setPlaysFilter('${c.id}')">${c.name}</div>`
+  ).join('');
+
+  const filtered = _playsFilter === 'all'
+    ? mod.PLAYS
+    : mod.PLAYS.filter(p => p.category === _playsFilter);
+
+  const catLabel = { ofensiva: 'Ofensiva', defensiva: 'Defensiva', ato: 'ATO' };
+  grid.innerHTML = filtered.map(p => `
+    <div class="play-card" onclick="openPlay('${p.id}')">
+      <div class="play-thumb">${svgIcon('i-tactics')}</div>
+      <div class="play-info">
+        <div class="play-name">${p.name}</div>
+        <div class="play-desc">${p.description}</div>
+        <div class="play-meta">
+          <span class="chip chip-accent">${catLabel[p.category]}</span>
+          ${diffChip(p.difficulty)}
+          <span class="chip">${svgIcon('i-clock')} ${p.duration}s</span>
+        </div>
+      </div>
+      <div class="drill-arrow">${svgIcon('i-arrow-mini')}</div>
+    </div>
+  `).join('');
+}
+
+function setPlaysFilter(cat) {
+  _playsFilter = cat;
+  renderPlaysList();
+}
+
+async function openPlay(playId) {
+  const mod = await loadPlaybook();
+  if (!mod) return;
+  const play = mod.PLAYS.find(p => p.id === playId);
+  if (!play) return;
+  _currentPlay = play;
+
+  document.getElementById('play-detail-name').textContent = play.name;
+  document.getElementById('play-detail-desc').textContent = play.description;
+  const catLabel = { ofensiva: 'Ofensiva', defensiva: 'Defensiva', ato: 'ATO' };
+  document.getElementById('play-detail-badges').innerHTML = `
+    <span class="chip chip-accent">${catLabel[play.category]}</span>
+    ${diffChip(play.difficulty)}
+    <span class="chip">${svgIcon('i-clock')} ${play.duration}s</span>
+  `;
+
+  document.getElementById('play-steps').innerHTML = play.steps.map((s, i) => `
+    <div class="step-item">
+      <div class="step-num">${i+1}</div>
+      <div class="step-content">
+        <div class="step-title">${s.t}</div>
+        <div class="step-text">${s.d}</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('play-tips').innerHTML = play.tips.map(t =>
+    `<div class="tip-row">${svgIcon('i-bolt')}<span>${t}</span></div>`
+  ).join('');
+
+  goTo('screen-play');
+
+  // Montar viewer tras la transición de pantalla
+  setTimeout(() => {
+    const canvas = document.getElementById('play-canvas');
+    mod.mountPlayViewer(canvas, play);
+    document.getElementById('play-toggle-icon').innerHTML = `<use href="#i-pause"/>`;
+  }, 100);
+}
+
+window._playToggle = function() {
+  if (!_playbookModule) return;
+  _playbookModule.toggleViewer();
+  const st = _playbookModule.getViewerState();
+  document.getElementById('play-toggle-icon').innerHTML =
+    `<use href="#i-${st && st.playing ? 'pause' : 'play'}"/>`;
+};
+window._playRestart = function() {
+  if (!_playbookModule) return;
+  _playbookModule.restartViewer();
+  document.getElementById('play-toggle-icon').innerHTML = `<use href="#i-pause"/>`;
+};
+
 function renderDrillAnimation(drill) {
   const container = document.getElementById('drill-animation');
   container.innerHTML = `
@@ -3189,10 +3416,15 @@ window.goTo = function(screenId) {
     stopAnim();
     if (_viewer3dModule) _viewer3dModule.stop3DViewer();
   }
+  // Si salimos del detalle de jugada, paramos el viewer 2D táctico
+  if (screenId !== 'screen-play' && _playbookModule) {
+    _playbookModule.stopPlayViewer();
+  }
   _goTo(screenId);
   if (screenId === 'screen-training') renderTraining(state.activeModule);
   if (screenId === 'screen-plan')     renderPlan();
   if (screenId === 'screen-progress') renderProgress();
+  if (screenId === 'screen-plays')    renderPlaysList();
 };
 
 // ── INIT ─────────────────────────────────────────────────────────
