@@ -541,82 +541,80 @@ export class BasketballViewer {
     };
 
     switch (drillId) {
+      // NOTA Mixamo rig: bone.rotation.z POSITIVO = brazo HACIA ABAJO (junto al cuerpo),
+      // NEGATIVO = brazo HACIA ARRIBA (sobre la cabeza). Para LeftArm los signos están invertidos.
       case 'dribble-alt': {
-        // Ambos brazos abajo, manos bombeando alternativamente
         const cyc = 0.6;
         const pR = (t % cyc) / cyc;
         const pL = ((t + cyc/2) % cyc) / cyc;
-        const pump = (p) => Math.sin(p * Math.PI); // 0→1→0
-        // Brazo apunta hacia abajo: en Mixamo Z rotation negativa = brazo baja
-        setArm('Right', 0, 0, -1.35 + pump(pR) * 0.25);
-        setForearm('Right', 0, 0, 0.3 + pump(pR) * 0.2);
-        setArm('Left', 0, 0, 1.35 - pump(pL) * 0.25);
-        setForearm('Left', 0, 0, -0.3 - pump(pL) * 0.2);
+        const pump = (p) => Math.sin(p * Math.PI);
+        // Brazos hacia abajo bombeando
+        setArm('Right', 0, 0, 1.35 - pump(pR) * 0.3);
+        setForearm('Right', 0, 0, 0.4 + pump(pR) * 0.2);
+        setArm('Left', 0, 0, -1.35 + pump(pL) * 0.3);
+        setForearm('Left', 0, 0, -0.4 - pump(pL) * 0.2);
         break;
       }
       case 'crossover': {
-        // Una mano activa, balón cruza
         const cyc = 1.5;
         const p = (t % cyc) / cyc;
-        const phase = Math.sin(p * Math.PI * 2);  // -1..1
-        // Brazo derecho baja cuando phase>0, sube cuando phase<0 (espejo izq)
-        setArm('Right', 0, phase * 0.4, -1.3 + Math.abs(phase) * 0.2);
-        setForearm('Right', 0, 0, 0.4 + Math.sin(p * Math.PI * 4) * 0.2);
-        setArm('Left', 0, -phase * 0.4, 1.3 - Math.abs(phase) * 0.2);
-        setForearm('Left', 0, 0, -0.4 - Math.sin(p * Math.PI * 4) * 0.2);
+        const phase = Math.sin(p * Math.PI * 2);
+        // Brazos hacia abajo controlando balón
+        setArm('Right', 0, phase * 0.3, 1.25 - Math.abs(phase) * 0.15);
+        setForearm('Right', 0, 0, 0.5);
+        setArm('Left', 0, -phase * 0.3, -1.25 + Math.abs(phase) * 0.15);
+        setForearm('Left', 0, 0, -0.5);
         break;
       }
       case 'between-legs': {
-        // Brazos abajo agachados, alternancia profunda
         const cyc = 1.8;
         const p = (t % cyc) / cyc;
         const wave = Math.sin(p * Math.PI * 2);
-        setArm('Right', 0.3, wave * 0.3, -1.4);
-        setForearm('Right', 0, 0, 0.8);
-        setArm('Left', 0.3, -wave * 0.3, 1.4);
-        setForearm('Left', 0, 0, -0.8);
+        // Brazos profundamente abajo entre las piernas
+        setArm('Right', 0.3, wave * 0.2, 1.45);
+        setForearm('Right', 0, 0, 0.9);
+        setArm('Left', 0.3, -wave * 0.2, -1.45);
+        setForearm('Left', 0, 0, -0.9);
         break;
       }
       case 'hesitation': {
-        // Brazo derecho controla balón a la altura de la cintura
-        setArm('Right', 0, 0, -1.1);
+        setArm('Right', 0, 0, 1.1);
         setForearm('Right', 0, 0, 0.7);
+        setArm('Left', 0, 0, -1.1);
+        setForearm('Left', 0, 0, -0.4);
         break;
       }
       case 'pase-pecho': {
-        // Pase de pecho: ambos brazos al frente, se extienden al lanzar
         const cyc = 2.0;
         const p = (t % cyc) / cyc;
         const extend = p < 0.4 ? p / 0.4 : (p < 0.6 ? 1.0 : Math.max(0, 1 - (p - 0.6) / 0.4));
-        // brazos hacia adelante (rotacion.x positiva sube el brazo, rotacion.z lateral)
-        setArm('Right', -extend * 1.3, 0, -0.8 + extend * 0.5);
-        setForearm('Right', 0, 0, 0.4 - extend * 0.3);
-        setArm('Left', -extend * 1.3, 0, 0.8 - extend * 0.5);
-        setForearm('Left', 0, 0, -0.4 + extend * 0.3);
+        // brazos al frente: rotation.x negativo levanta hacia frente (en Mixamo)
+        setArm('Right', -extend * 1.5, 0, 0.7 - extend * 0.4);
+        setForearm('Right', 0, 0, 0.5 - extend * 0.4);
+        setArm('Left', -extend * 1.5, 0, -0.7 + extend * 0.4);
+        setForearm('Left', 0, 0, -0.5 + extend * 0.4);
         break;
       }
       case 'nolook': {
-        // Mira al lado opuesto, lanza con un brazo
         const cyc = 2.4;
         const p = (t % cyc) / cyc;
         const extend = p < 0.5 ? p / 0.5 : Math.max(0, 1 - (p - 0.5) / 0.4);
-        setArm('Right', -extend * 1.0, -extend * 0.6, -1.0 + extend * 0.5);
+        setArm('Right', -extend * 1.2, -extend * 0.6, 0.8 - extend * 0.3);
         setForearm('Right', 0, 0, 0.5 - extend * 0.3);
-        // Cabeza mirando al lado contrario (-y)
         const head = this._bone('Head');
-        if (head) head.rotation.y = -0.5;
+        if (head) head.rotation.y = -0.6;
         break;
       }
       case 'reconocer-bloqueo': {
-        // El jugador corre con balón, brazo a un lado
-        setArm('Right', 0, 0, -1.2);
+        setArm('Right', 0, 0, 1.2);
         setForearm('Right', 0, 0, 0.6);
+        setArm('Left', 0, 0, -1.0);
         break;
       }
       case 'posicion-def': {
-        // Postura defensiva: ambos brazos abiertos a los lados
-        setArm('Right', 0, 0, -0.9);
-        setArm('Left', 0, 0, 0.9);
+        // Postura defensiva: brazos abiertos a media altura
+        setArm('Right', 0, 0, 0.9);
+        setArm('Left', 0, 0, -0.9);
         setForearm('Right', 0, 0, 0.3);
         setForearm('Left', 0, 0, -0.3);
         break;
