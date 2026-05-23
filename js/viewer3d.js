@@ -364,10 +364,11 @@ export class BasketballViewer {
     if (!this.model || !this.drillCfg) return;
     const cfg = this.drillCfg;
 
-    // Default position - mirando a cámara (Xbot por defecto mira hacia +Z donde está la cámara, así que rotation 0)
+    // Default position - mirando a cámara
+    // Xbot por defecto mira hacia -Z; rotation PI lo gira para mirar +Z (cámara)
     if (!cfg.moveCycle) {
       this.model.position.set(0, 0, 0);
-      this.model.rotation.y = 0;
+      this.model.rotation.y = Math.PI;
       return;
     }
 
